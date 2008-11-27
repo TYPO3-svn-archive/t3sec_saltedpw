@@ -71,24 +71,14 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 					$msg = sprintf($this->pi_getLL('ll_forgot_email_nopassword', '', 0), $this->piVars['forgot_email']);
 				}
 
-
-					// Generate new password with md5 and save it in user record
-				if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) && t3lib_extMgm::isLoaded('kb_md5fepw')) {
-					$newPass = $this->generatePassword(8);
-					$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
-						'fe_users',
-						'uid=' . $row['uid'],
-						array('password' => md5($newPass))
-					);
-					$msg = sprintf($this->pi_getLL('ll_forgot_email_password', '', 0),$this->piVars['forgot_email'], $row['username'], $newPass);
-				}
-
 					// Generate new password with salted md5 and save it in user record
-				if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) && t3lib_extMgm::isLoaded('t3sec_saltedpw')) {
-					require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
+					// assumption: extension t3sec_saltedpw loaded
+				if ($GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
+					require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php';
 
-					$newPass = $this->generatePassword(8);
-					$saltedPass = tx_t3secsaltedpw_div::saltMD5($newPass);
+					$newPass = $this->generatePassword(9);
+					$objPHPass = new tx_t3secsaltedpw_phpass();
+					$saltedPass = $objPHPass->getHashedPassword($newPass);
 					$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
 						'fe_users',
 						'uid=' . $row['uid'],
