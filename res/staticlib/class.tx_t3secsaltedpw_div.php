@@ -159,14 +159,7 @@ class tx_t3secsaltedpw_div  {
 		 */
 		public static function isUsageEnabled() {
 				// Login Security Level Recognition
-			if (TYPO3_MODE == 'BE') {
-				if (0 == strcmp($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['loginSecurityLevel'], 'normal')) {
-					return true;
-				}
-			} else {
-				// Any other mode than BE would mean FE and if the extension is installed
-				// then the purpose is to salt passwords and there is only one mode, which can be intepreted as normal
-				// which means we should return true in order for letting the extension be activated
+			if (0 == strcmp($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['loginSecurityLevel'], 'normal')) {
 				return true;
 			}
 			return false;
