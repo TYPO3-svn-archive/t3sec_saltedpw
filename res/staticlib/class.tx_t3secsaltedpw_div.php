@@ -40,7 +40,7 @@
  * @package     TYPO3
  * @subpackage  tx_t3secfemd5salted
  */
-class tx_t3secfemd5salted_div  {
+class tx_t3secsaltedpw_div  {
 
 		/**
 		 * Encrypts a password with md5 using salt
@@ -70,7 +70,7 @@ class tx_t3secfemd5salted_div  {
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_femd5salted/res/staticlib/class.tx_t3secfemd5salted_div.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_femd5salted/res/staticlib/class.tx_t3secfemd5salted_div.php']);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_saltedpw/res/staticlib/class.tx_t3secsaltedpw_div.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_saltedpw/res/staticlib/class.tx_t3secsaltedpw_div.php']);
 }
 ?>

@@ -32,7 +32,7 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
-require_once t3lib_extMgm::extPath('t3sec_femd5salted').'res/staticlib/class.tx_t3secfemd5salted_div.php';
+require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
 
 /**
  * Class implementing salted md5 evaluation methods.
@@ -42,7 +42,7 @@ require_once t3lib_extMgm::extPath('t3sec_femd5salted').'res/staticlib/class.tx_
  * @package     TYPO3
  * @subpackage  tx_t3secfemd5salted
  */
-class tx_t3secfemd5salted_md5salted {
+class tx_t3secsaltedpw_md5 {
 
 
 	/**
@@ -80,8 +80,8 @@ class tx_t3secfemd5salted_md5salted {
 	 */
 	function evaluateFieldValue($value, $is_in, &$set) {
 
-		if(0 != strncmp($value, '$1$', 3)) {
-			$value = tx_t3secfemd5salted_div::saltMD5($value);
+		if(!empty($value) && 0 != strncmp($value, '$1$', 3)) {
+			$value = tx_t3secsaltedpw_div::saltMD5($value);
 		}
 
 		return $value;
@@ -89,7 +89,7 @@ class tx_t3secfemd5salted_md5salted {
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_femd5salted/res/eval/class.tx_t3secfemd5salted_md5salted.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_femd5salted/res/eval/class.tx_t3secfemd5salted_md5salted.php']);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_saltedpw/res/eval/class.tx_t3secsaltedpw_md5.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_saltedpw/res/eval/class.tx_t3secsaltedpw_md5.php']);
 }
 ?>
