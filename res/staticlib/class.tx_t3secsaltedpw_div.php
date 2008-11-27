@@ -44,14 +44,13 @@
 class tx_t3secsaltedpw_div  {
 
 
+
+
 		/**
 		 * Function creates a password.
 		 *
-		 * @author  Kraft Bernhard <kraftb@gmx.net>
-		 *
-		 * @access  public
-		 * @param   integer  $len  length of password to be created
-		 * @return  string         created password.
+		 * @param   integer $len  length of password to be created
+		 * @return  string        created password
 		 */
 		public static function generatePassword($len) {
 			$pass = "";
@@ -66,123 +65,84 @@ class tx_t3secsaltedpw_div  {
 			return $pass;
 		}
 
-		/**
-		 * Function returns salt of a md5 hashed password string.
-		 *
-		 * @access  protected
-		 * @param   string     $passString  password string including salt prefix
-		 * @return  string                  salt used to generate the md5 hash with
-		 */
-		protected static function getMD5Salt( &$passString ) {
-			$pos = strrpos($passString, '$');
-			$salt = substr($passString, 3, $pos);
-			return $salt;
-		}
 
 		/**
-		 * Function returns salt of a password string.
+		 * Returns a string of highly randomized bytes (over the full 8-bit range).
 		 *
-		 * @access  public
-		 * @param   string  $passString  password string including salt prefix
-		 * @return  string               salt used to generate the hash with
+		 * This function is better than simply calling mt_rand() or any other built-in
+		 * PHP function because it can return a long string of bytes (compared to < 4
+		 * bytes normally from mt_rand()) and uses the best available pseudo-random source.
+		 *
+		 * retrieved from Drupal CMS
+		 *
+		 * @param $count
+		 *   The number of characters (bytes) to return in the string.
 		 */
-		public static function getSaltByPasswdString( &$passString ) {
-			$salt = '';
-
-			$hashMethod = self::getHashMethodByPasswdString( $passString );
-
-			if ( !empty($hashMethod)
-				&& method_exists( get_class(), 'get' . strtoupper($hashMethod) . 'Salt')) {
-				$salt = call_user_func( get_class() . '::get' . strtoupper($hashMethod) . 'Salt', $passString );
+		public static function generateRandomBytes($count)  {
+				// We initialize with the somewhat random PHP process ID on the first call.
+			if (empty($random_state)) {
+				$random_state = getmypid();
 			}
-			return $salt;
-		}
-
-		/**
-		 * Function returns hashing method by looking at password string.
-		 *
-		 * @access  protected
-		 * @param   string     $passString  password string including salt prefix
-		 * @return  string                  salting method, if it is used (currently md5 only), otherwise empty string
-		 */
-		protected static function getHashMethodByPasswdString( &$passString ) {
-			$method = '';
-
-			if (!strncmp($passString, '$1$', 3)) {
-				$method = 'md5';
+			$output = '';
+				// /dev/urandom is available on many *nix systems and is considered the best
+				// commonly available pseudo-random source.
+			if ($fh = @fopen('/dev/urandom', 'rb')) {
+				$output = fread($fh, $count);
+				fclose($fh);
 			}
-			return $method;
+				// If /dev/urandom is not available or returns no bytes, this loop will
+				// generate a good set of pseudo-random bytes on any system.
+				// Note that it may be important that our $random_state is passed
+				// through md5() prior to being rolled into $output, that the two md5()
+				// invocations are different, and that the extra input into the first one -
+				// the microtime() - is prepended rather than appended.  This is to avoid
+				// directly leaking $random_state via the $output stream, which could
+				// allow for trivial prediction of further "random" numbers.
+			while (strlen($output) < $count) {
+				$random_state = md5(microtime() . mt_rand() . $random_state);
+				$output .= md5(mt_rand() . $random_state, true);
+			}
+			return substr($output, 0, $count);
 		}
 
 		/**
-		 * Returns the basic extension configuration data from localconf.php (configurable in Extension Manager)
+		 * Returns extension configuration data from localconf.php (configurable in Extension Manager)
 		 *
 		 * @author  Rainer Kuhn <kuhn@punkt.de>
 		 * @author  Marcus Krause <marcus#exp2008@t3sec.info>
-		 * @param   string      extension key of the extension to get its configuration
+		 *
+		 * @static
 		 * @global  array       $TYPO3_CONF_VARS
-		 * @return  array       basic extension configuration data from localconf.php
+		 * @param   string      extension key of the extension to get its configuration
+		 * @return  array       extension configuration data from localconf.php
 		 * @since   2006-05-18
 		 */
-		public static function returnExtConfArray($extKey) {
+		public static function returnExtConf( $extKey ) {
 
 			require(PATH_typo3conf.'localconf.php');  // don't use require_once here!
 
-			$baseConfArr = array();
-			$baseConfArr = unserialize($TYPO3_CONF_VARS['EXT']['extConf'][$extKey]);
+			$extConf = array();
 
-			return $baseConfArr;
+			if (isset($TYPO3_CONF_VARS['EXT']['extConf'][$extKey])) {
+				$extConf = unserialize($TYPO3_CONF_VARS['EXT']['extConf'][$extKey]);
+			}
+				// load defaults if necessary
+			if ( empty($extConf) && 0 == strcmp($extKey, 't3sec_saltedpw')) {
+				$extConf = self::returnExtConfDefaults();
+			}
+			return $extConf;
 		}
 
 		/**
-		 * Hashes a password with specified method in extension configuration using salt
+		 * Returns default configuration of this extension.
 		 *
-		 * @access  public
-		 * @param   string  cleartext password
-		 * @param   string  (optional) salt (default: generate random salt)
-		 * @return  string  encrypted password including salt
+		 * @static
+		 * @return  array  extension configuration data from localconf.php
 		 */
-		public static function salt($cleartext, $salt = '') {
-
-			$passwdString = '';
-			$baseConfArr = self::returnExtConfArray('t3sec_saltedpw');
-
-			$hashMethod = !empty($baseConfArr['hashingMethod']) ? strtoupper($baseConfArr['hashingMethod']) : 'MD5';
-
-			if ( !empty($hashMethod)
-				&& method_exists( get_class(), 'salt' . $hashMethod )) {
-				$passwdString = call_user_func( get_class() . '::salt' . $hashMethod, $cleartext, $salt );
-			} else {
-				$passwdString = self::saltMD5($cleartext, $salt );
-			}
-			return $passwdString;
-		}
-
-		/**
-		 * Hashes a password with md5 using salt.
-		 *
-		 * @access  public
-		 * @param   string  cleartext password
-		 * @param   string  (optional) salt (default: generate random salt)
-		 * @return  string  encrypted password including salt
-		 */
-		public static function saltMD5($cleartext, $salt='') {
-
-			$saltLength  = 8;
-			$excludeList = array(34, 36, 39, 96);
-
-			if ( empty($salt) || strlen($salt) < $saltLength ) {
-
-					// extend salt when char not in exclude list
-				while ( strlen($salt) < $saltLength ) {
-					$randomInt = rand(33, 126);
-					$salt .= !in_array($randomInt, $excludeList) ? chr($randomInt) : '';
-				}
-			} else {
-				$salt = substr($salt, 0 , $saltLength);
-			}
-
-			return '$1$' . $salt . '$' . md5($cleartext . $salt);
+		public static function returnExtConfDefaults() {
+			return array(   'onlyAuthService' => '0',
+							'forcePHPasswd'   => '0',
+							'updatePasswd'    => '1');
 		}
 }
 
