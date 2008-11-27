@@ -40,7 +40,7 @@ require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3s
  * @author      Marcus Krause <marcus#exp2008@t3sec.info>
  * @since       2008-11-15
  * @package     TYPO3
- * @subpackage  tx_t3secfemd5salted
+ * @subpackage  tx_t3secsaltedpw
  */
 class tx_t3secsaltedpw_md5 {
 

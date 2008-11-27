@@ -2,6 +2,7 @@
 if (!defined ("TYPO3_MODE")) 	die ("Access denied.");
 
 $TYPO3_CONF_VARS['SC_OPTIONS']['tce']['formevals']['tx_t3secsaltedpw_md5'] = t3lib_extMgm::extPath($_EXTKEY, 'res/eval/class.tx_t3secsaltedpw_md5.php');
+$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/felogin/pi1/class.tx_felogin_pi1.php'] = t3lib_extMgm::extPath($_EXTKEY).'res/ux/class.ux_tx_felogin_pi1.php';
 
 t3lib_extMgm::addService(
 	't3sec_saltedpw',
