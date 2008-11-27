@@ -43,8 +43,101 @@
  */
 class tx_t3secsaltedpw_div  {
 
+
 		/**
-		 * Encrypts a password with md5 using salt
+		 * Function returns salt of a md5 hashed password string.
+		 *
+		 * @access  protected
+		 * @param   string     $passString  password string including salt prefix
+		 * @return  string                  salt used to generate the md5 hash with
+		 */
+		protected static function getMD5Salt( &$passString ) {
+			$pos = strrpos($passString, '$');
+			$salt = substr($passString, 3, $pos);
+			return $salt;
+		}
+
+		/**
+		 * Function returns salt of a password string.
+		 *
+		 * @access  public
+		 * @param   string  $passString  password string including salt prefix
+		 * @return  string               salt used to generate the hash with
+		 */
+		public static function getSaltByPasswdString( $passString ) {
+			$salt = '';
+
+			$hashMethod = self::getHashMethodByPasswdString( $passString );
+
+			if ( !empty($hashMethod)
+				&& method_exists( get_class(), 'get' . strtoupper($hashMethod) . 'Salt')) {
+				$salt = call_user_func( get_class() . '::get' . strtoupper($hashMethod) . 'Salt', $passString );
+			}
+			return $salt;
+		}
+
+		/**
+		 * Function returns hashing method by looking at password string.
+		 *
+		 * @access  protected
+		 * @param   string     $passString  password string including salt prefix
+		 * @return  string                  salting method, if it is used (currently md5 only), otherwise empty string
+		 */
+		protected static function getHashMethodByPasswdString( &$passString ) {
+			$method = '';
+
+			if (!strncmp($passString, '$1$', 3)) {
+				$method = 'md5';
+			}
+			return $method;
+		}
+
+		/**
+		 * Returns the basic extension configuration data from localconf.php (configurable in Extension Manager)
+		 *
+		 * @author  Rainer Kuhn <kuhn@punkt.de>
+		 * @author  Marcus Krause <marcus#exp2008@t3sec.info>
+		 * @param   string      extension key of the extension to get its configuration
+		 * @global  array       $TYPO3_CONF_VARS
+		 * @return  array       basic extension configuration data from localconf.php
+		 * @since   2006-05-18
+		 */
+		public static function returnExtConfArray($extKey) {
+
+			require(PATH_typo3conf.'localconf.php');  // don't use require_once here!
+
+			$baseConfArr = array();
+			$baseConfArr = unserialize($TYPO3_CONF_VARS['EXT']['extConf'][$extKey]);
+
+			return $baseConfArr;
+		}
+
+		/**
+		 * Hashes a password with specified method in extension configuration using salt
+		 *
+		 * @access  public
+		 * @param   string  cleartext password
+		 * @param   string  (optional) salt (default: generate random salt)
+		 * @return  string  encrypted password including salt
+		 */
+		public static function salt($cleartext, $salt = '') {
+
+			$passwdString = '';
+			$baseConfArr = self::returnExtConfArray('t3sec_saltedpw');
+
+			$hashMethod = !empty($baseConfArr['hashingMethod']) ? strtoupper($baseConfArr['hashingMethod']) : 'MD5';
+
+			if ( !empty($hashMethod)
+				&& method_exists( get_class(), 'salt' . $hashMethod )) {
+				$passwdString = call_user_func( get_class() . '::salt' . $hashMethod, $cleartext, $salt );
+			} else {
+				$passwdString = self::saltMD5($cleartext, $salt );
+			}
+			return $passwdString;
+		}
+
+		/**
+		 * Hashes a password with md5 using salt.
 		 *
 		 * @access  public
 		 * @param   string  cleartext password
@@ -68,16 +161,6 @@ class tx_t3secsaltedpw_div  {
 			}
 
 			return '$1$' . $salt . '$' . md5($cleartext . $salt);
-		}
-
-		public static function getSaltByPasswdString($passString) {
-			$salt = '';
-
-			if (!strncmp($passString, '$1$', 3)) {
-				$pos = strrpos($passString, '$');
-				$salt = substr($passString, 3, $pos);
-			}
-			return $salt;
 		}
 }
 

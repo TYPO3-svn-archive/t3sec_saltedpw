@@ -72,10 +72,10 @@ class tx_t3secsaltedpw_div_testcase extends tx_phpunit_testcase {
 	/**
 	 * Is used by forgot password - function with md5 option.
 	 *
-	 * @author	Bernhard Kraft
+	 * @author  Bernhard Kraft
 	 * @access  protected
-	 * @param	int			    length of new password
-	 * @return	string		    new password
+	 * @param   int             length of new password
+	 * @return  string          new password
 	 */
 	protected function generatePassword($len) {
 		$pass = '';

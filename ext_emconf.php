@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext: "t3sec_saltedpw"
 #
-# Auto generated 15-11-2008 16:30
+# Auto generated 15-11-2008 19:06
 #
 # Manual updates:
 # Only the data in the array - anything else is removed by next write.
@@ -31,11 +31,11 @@ $EM_CONF[$_EXTKEY] = array(
 	'author_company' => 'TYPO3 Security Team',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
-	'version' => '0.0.2',
+	'version' => '0.0.3',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '4.2.0-0.0.0',
-			'php' => '5.0.0-0.0.0',
+			'php' => '5.1.0-0.0.0',
 			'cms' => '',
 			'felogin' => '',
 		),
@@ -49,7 +49,7 @@ $EM_CONF[$_EXTKEY] = array(
 			'phpunit' => '',
 		),
 	),
-	'_md5_values_when_last_written' => 'a:12:{s:10:"README.txt";s:4:"b2e1";s:12:"ext_icon.gif";s:4:"4324";s:17:"ext_localconf.php";s:4:"317f";s:14:"ext_tables.php";s:4:"dbe6";s:14:"ext_tables.sql";s:4:"4163";s:45:"tests/class.tx_t3secsaltedpw_div_testcase.php";s:4:"b113";s:34:"res/ux/class.ux_t3lib_tceforms.php";s:4:"cfa9";s:34:"res/ux/class.ux_tx_felogin_pi1.php";s:4:"272b";s:44:"res/staticlib/class.tx_t3secsaltedpw_div.php";s:4:"8294";s:20:"res/js/md5_salted.js";s:4:"c692";s:39:"res/eval/class.tx_t3secsaltedpw_md5.php";s:4:"fe73";s:34:"sv1/class.tx_t3secsaltedpw_sv1.php";s:4:"2e1d";}',
+	'_md5_values_when_last_written' => 'a:13:{s:10:"README.txt";s:4:"b2e1";s:21:"ext_conf_template.txt";s:4:"642c";s:12:"ext_icon.gif";s:4:"4324";s:17:"ext_localconf.php";s:4:"19ee";s:14:"ext_tables.php";s:4:"3fb0";s:14:"ext_tables.sql";s:4:"4163";s:45:"tests/class.tx_t3secsaltedpw_div_testcase.php";s:4:"cb00";s:34:"res/ux/class.ux_t3lib_tceforms.php";s:4:"cfa9";s:34:"res/ux/class.ux_tx_felogin_pi1.php";s:4:"272b";s:44:"res/staticlib/class.tx_t3secsaltedpw_div.php";s:4:"a32b";s:20:"res/js/md5_salted.js";s:4:"c692";s:42:"res/eval/class.tx_t3secsaltedpw_salted.php";s:4:"5f83";s:34:"sv1/class.tx_t3secsaltedpw_sv1.php";s:4:"9f37";}',
 	'suggests' => array(
 	),
 );

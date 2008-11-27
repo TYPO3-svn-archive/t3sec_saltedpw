@@ -65,7 +65,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 
 		$salt = tx_t3secsaltedpw_div::getSaltByPasswdString( $user['password'] );
 		if (!empty($salt)) {
-			$cmp = tx_t3secsaltedpw_div::saltMD5($login['uident'], $salt);
+			$cmp = tx_t3secsaltedpw_div::salt($login['uident'], $salt);
 			if ($cmp == $user['password']) {
 				$OK = 200;
 				t3lib_div::devLog('Password ok :)', $this->extKey, 1);
