@@ -71,7 +71,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 		$validPasswd = false;
 
 			// we process only valid passwords inserted by Portable PHP password hashing framework
-		if (0 == strcmp(substr($user['password'], 0, 3), '$P$')) {
+		if (0 == strncmp($user['password'], '$P$', 3)) {
 			$validPasswd = $objPHPass->checkPassword($login['uident'], $user['password']);
 				// test if password needs hash update due to change of hash count value
 			if ($objPHPass->isHashUpdateNeeded($user['password'])) {
@@ -79,13 +79,13 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 			}
 		} 	// we process also clear-text, md5 and passwords updated by Portable PHP password hashing framework
 		else if (1 != intval($extConf['forcePHPasswd'])) {
-			if (0 == strcmp(substr($user['password'], 0, 4), 'M$P$')) {
+			if (0 == strncmp($user['password'], 'M$P$', 4)) {
 				$validPasswd = $objPHPass->checkPassword(md5($login['uident']), substr($user['password'], 1));
 					// test if password needs to be updated
 				if ($validPasswd && 1 == intval($extConf['updatePasswd'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($login['uident'])));
 				}
-			} else if (0 == strcmp(substr($user['password'], 0, 4), 'C$P$')) {
+			} else if (0 == strncmp($user['password'], 'C$P$', 4)) {
 				$validPasswd = $objPHPass->checkPassword($login['uident'], substr($user['password'], 1));
 					// test if password needs to be updated
 				if ($validPasswd && 1 == intval($extConf['updatePasswd'])) {
