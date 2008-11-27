@@ -32,6 +32,9 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
+	// Make sure that we are executed only in TYPO3 context
+if (!defined ("TYPO3_MODE")) die ("Access denied.");
+
 require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php';
 
 /**
@@ -71,7 +74,15 @@ class tx_t3secsaltedpw_salted {
 			// value not recognized as hashed password of Portable PHP hashing framework
 			// -> either clear-text one or an updated one created by Portable PHP hashing framework (prefix C||M)
 		if ($updateNeeded && !(strlen($value) == 35 && 0 == substr_compare($value, '$P$', 1, 3))) {
-			$value = $objPHPass->getHashedPassword($value);
+				// TODO remove following TCA eval functions are
+				//      properly considered for BE user passwords
+			if(TYPO3_MODE == 'BE'
+					&& preg_match('/[0-9abcdef]{32,32}/', $value)) {
+				$value = 'M' . $objPHPass->getHashedPassword($value);
+			} else {
+					// default
+				$value = $objPHPass->getHashedPassword($value);
+			}
 		}
 
 		return $value;
