@@ -18,7 +18,7 @@ t3lib_extMgm::addService(
 		'description' => '',
 		'subtype' => 'authUserFE',
 		'available' => TRUE,
-		'priority' => 60,
+		'priority' => 60, // must be higher than tx_sv_auth (50) and lower than OpenID (75)
 		'quality' => 50,
 		'os' => '',
 		'exec' => '',
