@@ -119,8 +119,9 @@ class tx_t3secsaltedpw_div  {
 			$extConf = array();
 
 			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extKey])) {
-				$extConf = unserialize($TYPO3_CONF_VARS['EXT']['extConf'][$extKey]);
+				$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extKey]);
 			}
+			
 				// load defaults if necessary
 			if ( empty($extConf) && 0 == strcmp($extKey, 't3sec_saltedpw')) {
 				$extConf = self::returnExtConfDefaults();
