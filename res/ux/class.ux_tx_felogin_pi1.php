@@ -38,18 +38,19 @@
  *
  * XCLASS that creates salted MD5 password hashes.
  *
- * @author      Marcus Krause <marcus#exp2008@t3sec.info>
- * @since       2008-11-15
- * @package     TYPO3
- * @subpackage  tx_t3secsaltedpw
+ * @author	   Steffen Kamper <info@sk-typo3.de>
+ * @author     Marcus Krause <marcus#exp2008@t3sec.info>
+ * @since      2008-11-15
+ * @package    TYPO3
+ * @subpackage tx_t3secsaltedpw
  */
 class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 
 	/**
-		* Shows the forgot password form
-		*
-		* @return	string		content
-		*/
+	 * Shows the forgot password form
+	 *
+	 * @return	string		content
+	*/
 	protected function showForgot() {
 		$subpart = $this->cObj->getSubpart($this->template, '###TEMPLATE_FORGOT###');
 		$subpartArray = $linkpartArray = array();
@@ -86,7 +87,7 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 				if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) && t3lib_extMgm::isLoaded('t3sec_saltedpw')) {
 					require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
 
-					$newPass = $this->generatePassword(8);var_dump($newPass);
+					$newPass = $this->generatePassword(8);
 					$saltedPass = tx_t3secsaltedpw_div::saltMD5($newPass);
 					$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
 						'fe_users',
