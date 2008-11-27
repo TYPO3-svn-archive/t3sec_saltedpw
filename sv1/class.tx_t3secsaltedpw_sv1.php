@@ -104,7 +104,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
 				}
 			} else {
-				$validPasswd = (0 == strcmp(md5($password), $user['password']) ? true : false);
+				$validPasswd = (0 == strcmp($password, $user['password']) ? true : false);
 					// test if password needs to be updated
 				if ($validPasswd && 1 == intval($this->extConf['updatePasswd'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));

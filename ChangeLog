@@ -1,3 +1,7 @@
+2008-11-21  Michael Stucki  <michael@typo3.org>
+
+	* Fix bug in ->compareUident(): Plaintext passwords were treated as md5
+
 2008-11-17  Dmitry Dulepov  <dmitry@typo3.org>
 
 	* Changed "new" to t3lib_div::makeInstance()
