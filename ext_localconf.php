@@ -14,8 +14,8 @@ t3lib_extMgm::addService(
 	'auth',
 	'tx_t3secsaltedpw_sv1',
 	array(
-		'title' => 'FE Authentification salted',
-		'description' => '',
+		'title' => 'FE/BE Authentification salted',
+		'description' => 'Salting of passwords with PHPassword for Frontend and Backend',
 		'subtype' => 'authUserFE,authUserBE',
 		'available' => TRUE,
 		'priority' => 60, // must be higher than tx_sv_auth (50) and lower than OpenID (75)
