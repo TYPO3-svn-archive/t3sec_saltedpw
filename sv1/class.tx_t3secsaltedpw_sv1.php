@@ -49,34 +49,76 @@ require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3s
  */
 class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 
+
+	/**
+	 * Keeps class name.
+	 *
+	 * @var string
+	 */
 	public $prefixId =      'tx_t3secsaltedpw_sv1';
+
+	/**
+	 * Keeps path to this script relative to the extension directory.
+	 *
+	 * @var string
+	 */
 	public $scriptRelPath = 'sv1/class.tx_t3secsaltedpw_sv1.php';
+
+	/**
+	 * Keeps extension key.
+	 *
+	 * @var string
+	 */
 	public $extKey =        't3sec_saltedpw';
+
+	/**
+	 * Keeps extension configuration.
+	 *
+	 * @var  mixed
+	 */
 	protected $extConf;
 
 
 	/**
-	 * Check the login data with the user record data for builtin login methods
+	 * Checks if service is available. In case of this service we check that
+	 * following prerequesties are fulfilled:
+	 * - loginSecurityLevel of according TYPO3_MODE is set to normal
+	 *
+	 * @access  public
+	 * @return	boolean		true if service is available
+	 */
+	public function init() {
+		$available = false;
+
+			// Login Security Level Recognition
+		if (0 == strcmp($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['loginSecurityLevel'], 'normal')) {
+			$available = true;
+			$this->extConf = tx_t3secsaltedpw_div::returnExtConf();
+		}
+
+		return $available ? parent::init() : false;
+	}
+
+	/**
+	 * Checks the login data with the user record data for builtin login method.
 	 *
 	 * @param	array		user data array
 	 * @param	array		login data array
-	 * @param	string		security_level
+	 * @param	string		login security level (optional)
 	 * @return	boolean		true if login data matched
 	 */
-	function compareUident($user, $loginData, $security_level = '') {
+	function compareUident($user, $loginData, $security_level = 'normal') {
 		$validPasswd = false;
 		$objPHPass   = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 
 			// could be merged; still here to clarify
-		if (TYPO3_MODE == 'BE' && $GLOBALS['TYPO3_CONF_VARS']['BE']['loginSecurityLevel'] == 'normal') {
+		if (TYPO3_MODE == 'BE') {
 			$password = $loginData['uident_text'];
-		} else if (TYPO3_MODE == 'FE'
-						&& (($GLOBALS['TYPO3_CONF_VARS']['FE']['loginSecurityLevel'] == 'normal') || !empty($loginData['uident_text']))) {
-				// would work also without explicit setting
-				// $GLOBALS['TYPO3_CONF_VARS']['FE']['loginSecurityLevel']
+		} else if (TYPO3_MODE == 'FE') {
 			$password = $loginData['uident_text'];
 		}
 
+			// existing record is in format of Portable PHP password hashing framework
 		if (0 == strncmp($user['password'], '$P$', 3)) {
 			$validPasswd = $objPHPass->checkPassword($password, $user['password']);
 				// test if password needs hash update due to change of hash count value
@@ -117,28 +159,25 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 	/**
 	 * Method adds a further authUser method.
 	 *
+	 * Will return one of following authentication status codes:
+	 *  - 0 - authentication failure
+	 *  - 100 - just go on. User is not authenticated but there is still no reason to stop
+	 *  - 200 - the service was able to authenticate the user
+	 *
 	 * @access  public
 	 * @param   array     Array containing FE user data of the logged user.
-	 * @return  mixed     boolean false - false - this service was the right one to authenticate the user but it failed
-	 * 					  integer 0   - authentication failure
-	 * 					  integer 100 - just go on. User is not authenticated but there is still no reason to stop
-	 *                    integer 200 - the service was able to authenticate the user
+	 * @return  integer   authentication statuscode, one of 0,100 and 200
 	 */
 	public function authUser($user)	{
 		$OK = 100;
 		$validPasswd = false;
-		$this->extConf = tx_t3secsaltedpw_div::returnExtConf();
-
 
 		if ($this->login['uident'] && $this->login['uname'])	{
 
-				// Login Security Level Recognition
-			// $loginSecurityLevel = $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['loginSecurityLevel'];
 			if (!empty($this->login['uident_text'])) {
 				$validPasswd = $this->compareUident(
-								$this->fetchUserRecord($this->login['uname']),
-								$this->login,
-								'normal');
+									$this->fetchUserRecord($this->login['uname']),
+									$this->login);
 			}
 
 			if (!$validPasswd && 1 == intval($this->extConf['onlyAuthService'])) {
@@ -163,7 +202,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 	}
 
 	/**
-	 * Method updates a fe user record - in this case a new password string will be set.
+	 * Method updates a FE/BE user record - in this case a new password string will be set.
 	 *
 	 * @access  protected
 	 * @param   integer    $uid           uid of user record that will be updated

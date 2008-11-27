@@ -1,6 +1,23 @@
+2008-11-21  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Make configuration loginSecurityLevel set to 'normal' mandatory
+
 2008-11-21  Michael Stucki  <michael@typo3.org>
 
 	* Fix bug in ->compareUident(): Plaintext passwords were treated as md5
+
+2008-11-20  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Take a user's lockDomain configuration into account
+	* Add service for BE user authentication
+
+2008-11-19  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Set service priority to 60 (> 50 [tx_sv_auth] && < 75 [OpenID])
+
+2008-11-19  Lars Houmark    <lars@typo3.org>
+
+	* Fix bug: only enabled records were converted by update function
 
 2008-11-17  Dmitry Dulepov  <dmitry@typo3.org>
 
