@@ -43,13 +43,13 @@
  */
 
 	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) 	die ("Access denied.");
+if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
 
 
 /**
- * Class implements Portable PHP Hashing Framework.
+ * Class implements Portable PHP password hashing framework.
  *
  * @author  	Marcus Krause <marcus#exp2008@t3sec.info>
  *
