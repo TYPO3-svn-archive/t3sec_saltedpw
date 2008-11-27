@@ -90,8 +90,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 	public function init() {
 		$available = false;
 
-			// Login Security Level Recognition
-		if (0 == strcmp($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['loginSecurityLevel'], 'normal')) {
+		if (tx_t3secsaltedpw_div::isUsageEnabled()) {
 			$available = true;
 			$this->extConf = tx_t3secsaltedpw_div::returnExtConf();
 		}
