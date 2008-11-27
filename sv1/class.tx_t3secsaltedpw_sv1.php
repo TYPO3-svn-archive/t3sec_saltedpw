@@ -64,7 +64,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 		$OK = 100;
 		$login = $GLOBALS['TSFE']->fe_user->getLoginFormData();
 		$extConf = tx_t3secsaltedpw_div::returnExtConf( $this->extKey );
-		$objPHPass = new tx_t3secsaltedpw_phpass();
+		$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 
 		$validPasswd = false;
 

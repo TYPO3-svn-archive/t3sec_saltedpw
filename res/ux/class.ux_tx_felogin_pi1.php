@@ -77,7 +77,7 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 					// assumption: extension t3sec_saltedpw loaded
 				if ($GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
 					$newPass = $this->generatePassword(8);
-					$objPHPass = new tx_t3secsaltedpw_phpass();
+					$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 					$saltedPass = $objPHPass->getHashedPassword($newPass);
 					$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
 						'fe_users',

@@ -66,7 +66,7 @@ class tx_t3secsaltedpw_salted {
 	 */
 	function evaluateFieldValue($value, $is_in, &$set) {
 			// TODO what about $set; do I have to care about it
-		$objPHPass = new tx_t3secsaltedpw_phpass();
+		$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 		$updateNeeded = !empty($value) ? $objPHPass->isHashUpdateNeeded( $value ) : false;
 
 			// value not recognized as hashed password of Portable PHP hashing framework

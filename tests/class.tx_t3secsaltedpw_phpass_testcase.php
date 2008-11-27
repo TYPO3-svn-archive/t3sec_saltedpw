@@ -57,7 +57,7 @@ class tx_t3secsaltedpw_phpass_testcase extends tx_phpunit_testcase {
 
 
 	public function __construct() {
-		$this->objPHPass = new tx_t3secsaltedpw_phpass();
+		$this->objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 	}
 
 	public function testUpdateNecessityMD5() {

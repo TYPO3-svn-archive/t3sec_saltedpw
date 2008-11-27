@@ -155,7 +155,7 @@ class ext_update {
 
 	function processUserRecords(&$res) {
 		require_once (t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php');
-		$objPHPass = new tx_t3secsaltedpw_phpass();
+		$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 		$updatedPassword = '';
 
 		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
