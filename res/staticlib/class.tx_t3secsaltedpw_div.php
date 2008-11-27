@@ -44,6 +44,12 @@
 class tx_t3secsaltedpw_div  {
 
 
+		/**
+		 * Keeps this extension's key.
+		 *
+		 * @constant EXTKEY
+		 */
+		const EXTKEY = 't3sec_saltedpw';
 
 
 		/**
@@ -98,7 +104,8 @@ class tx_t3secsaltedpw_div  {
 				// the microtime() - is prepended rather than appended.  This is to avoid
 				// directly leaking $random_state via the $output stream, which could
 				// allow for trivial prediction of further "random" numbers.
-			while (strlen($output) < $count) {
+			while (!isset($output[$count])) {
+					// while (strlen($output) < $count)
 				$random_state = md5(microtime() . mt_rand() . $random_state);
 				$output .= md5(mt_rand() . $random_state, true);
 			}
@@ -112,18 +119,19 @@ class tx_t3secsaltedpw_div  {
 		 * @author  Marcus Krause <marcus#exp2008@t3sec.info>
 		 *
 		 * @static
-		 * @param   string      extension key of the extension to get its configuration
+		 * @param   string      extension key of the extension to get its configuration (optional);
+		 * 						if obmitted, the configuration of this extension is returned
 		 * @return  array       extension configuration data
 		 */
-		public static function returnExtConf( $extKey ) {
+		public static function returnExtConf( $extKey = self::EXTKEY ) {
 			$extConf = array();
 
 			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extKey])) {
 				$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extKey]);
 			}
-			
+
 				// load defaults if necessary
-			if ( empty($extConf) && 0 == strcmp($extKey, 't3sec_saltedpw')) {
+			if ( empty($extConf) && 0 == strcmp($extKey, self::EXTKEY)) {
 				$extConf = self::returnExtConfDefaults();
 			}
 			return $extConf;
