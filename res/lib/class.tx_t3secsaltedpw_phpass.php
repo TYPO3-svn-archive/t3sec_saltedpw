@@ -262,7 +262,7 @@ class tx_t3secsaltedpw_phpass {
 	 * @see                $hashCount
 	 * @see                setHashCount()
 	 */
-	protected function getHashCount() {
+	public function getHashCount() {
 		return isset($this->hashCount) ? $this->hashCount : self::HASH_COUNT;
 	}
 
@@ -304,7 +304,7 @@ class tx_t3secsaltedpw_phpass {
 	 * @see              $maxHashCount
 	 * @see              setMaxHashCount()
 	 */
-	protected function getMaxHashCount() {
+	public function getMaxHashCount() {
 		return isset($this->maxHashCount) ? $this->maxHashCount : self::MAX_HASH_COUNT;
 	}
 
@@ -316,7 +316,7 @@ class tx_t3secsaltedpw_phpass {
 	 * @see              $minHashCount
 	 * @see              setMinHashCount()
 	 */
-	protected function getMinHashCount() {
+	public function getMinHashCount() {
 		return isset($this->minHashCount) ? $this->minHashCount : self::MIN_HASH_COUNT;
 	}
 
@@ -351,7 +351,7 @@ class tx_t3secsaltedpw_phpass {
 	 * @see                         $hashCount
 	 * @see                         getHashCount()
 	 */
-	protected function setHashCount($hashCount = null) {
+	public function setHashCount($hashCount = null) {
 		$this->hashCount = isset($hashCount) ? intval($hashCount) : self::HASH_COUNT;
 	}
 
@@ -364,7 +364,7 @@ class tx_t3secsaltedpw_phpass {
 	 * @see                            $minHashCount
 	 * @see                            getMinHashCount()
 	 */
-	protected function setMinHashCount($minHashCount = null) {
+	public function setMinHashCount($minHashCount = null) {
 		$this->minHashCount = isset($minHashCount) ? intval($minHashCount) : self::MIN_HASH_COUNT;
 	}
 
@@ -377,7 +377,7 @@ class tx_t3secsaltedpw_phpass {
 	 * @see                            $maxHashCount
 	 * @see                            getMaxHashCount()
 	 */
-	protected function setMaxHashCount($maxHashCount = null) {
+	public function setMaxHashCount($maxHashCount = null) {
 		$this->maxHashCount = isset($maxHashCount) ? $maxHashCount : self::MAX_HASH_COUNT;
 	}
 }
