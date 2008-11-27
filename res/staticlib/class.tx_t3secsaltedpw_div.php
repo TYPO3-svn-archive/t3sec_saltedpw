@@ -46,8 +46,6 @@ class tx_t3secsaltedpw_div  {
 
 		/**
 		 * Keeps this extension's key.
-		 *
-		 * @constant EXTKEY
 		 */
 		const EXTKEY = 't3sec_saltedpw';
 
