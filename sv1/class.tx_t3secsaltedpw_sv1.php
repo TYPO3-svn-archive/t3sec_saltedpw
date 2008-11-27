@@ -76,7 +76,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 					$this->updatePassword(intval($user['uid']));
 			}
 		} 	// we process also clear-text, md5 and passwords updated by Portable PHP password hashing framework
-		else if (0 == intval($extConf['forcePHPasswd'])) {
+		else if (1 != intval($extConf['forcePHPasswd'])) {
 			if (0 == strcmp(substr($user['password'], 0, 4), 'M$P$')) {
 				$validPasswd = $objPHPass->checkPassword(md5($login['uident']), substr($user['password'], 1));
 					// test if password needs to be updated
