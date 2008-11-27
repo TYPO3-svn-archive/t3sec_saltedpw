@@ -76,7 +76,6 @@ class ext_update {
 	}
 
 	function access() {
-		$showFunction = false;
 
 		$colCrdate = $this->getColumnNameByTCA('crdate', 'crdate');
 
@@ -86,21 +85,17 @@ class ext_update {
 														'', 		          // WHERE
 														'',                   // GROUP BY
 														$colCrdate . ' DESC', // ORDER BY
-														10                    // LIMIT
+														1                     // LIMIT
 		);
 
 		$sumRows = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
 		if ($sumRows) {
 			$passLen = array();
-			while($row = $GLOBALS['TYPO3_DB']->sql_fetch_row($res)) {
-				$passLen[] = strlen($row[0]);
-			}
-			$GLOBALS['TYPO3_DB']->sql_free_result($res);
-
-			$passLen = array_unique($passLen);
-				// show UPDATE function only if not all password have a fixed length
-			if ((min($passLen) == 32 && max($passLen) == 32) ||
-				(min($passLen) < 32 && $sumRows > 1 && count($passLen) > 1)) {
+			$row = $GLOBALS['TYPO3_DB']->sql_fetch_row($res);
+			if ((0 == strncmp($row[0], '$P$', 3))
+					|| 0 == substr_compare($row[0], '$P$', 1, 3)) {
+				$showFunction = false;
+			} else {
 				$showFunction = true;
 			}
 		}
