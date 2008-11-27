@@ -25,7 +25,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Modifying the tx_felogin_pi1.php class file so the md5 salted password hashes
+ * Modifying the tx_felogin_pi1.php class file so the salted password hashes
  * are created in case of forgotten passwords.
  *
  * $Id$

@@ -45,6 +45,28 @@ class tx_t3secsaltedpw_div  {
 
 
 		/**
+		 * Function creates a password.
+		 *
+		 * @author  Kraft Bernhard <kraftb@gmx.net>
+		 *
+		 * @access  public
+		 * @param   integer  $len  length of password to be created
+		 * @return  string         created password.
+		 */
+		public static function generatePassword($len) {
+			$pass = "";
+			while ($len--) {
+				$char = rand(0,35);
+				if ($char < 10) {
+					$pass .= ''.$char;
+				} else {
+					$pass .= chr($char-10+97);
+				}
+			}
+			return $pass;
+		}
+
+		/**
 		 * Function returns salt of a md5 hashed password string.
 		 *
 		 * @access  protected
@@ -64,7 +86,7 @@ class tx_t3secsaltedpw_div  {
 		 * @param   string  $passString  password string including salt prefix
 		 * @return  string               salt used to generate the hash with
 		 */
-		public static function getSaltByPasswdString( $passString ) {
+		public static function getSaltByPasswdString( &$passString ) {
 			$salt = '';
 
 			$hashMethod = self::getHashMethodByPasswdString( $passString );

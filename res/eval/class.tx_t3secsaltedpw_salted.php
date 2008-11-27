@@ -81,7 +81,9 @@ class tx_t3secsaltedpw_salted {
 	 */
 	function evaluateFieldValue($value, $is_in, &$set) {
 
-		if(!empty($value) && 0 != strncmp($value, '$1$', 3)) {
+		$salt = !empty($value) ? tx_t3secsaltedpw_div::getSaltByPasswdString( $value ) : '';
+
+		if (strlen($value) < 44 || empty($salt)) {
 			$value = tx_t3secsaltedpw_div::salt($value);
 		}
 

@@ -1,0 +1,4 @@
+plugin.feadmin.fe_users {
+		# cat=plugin.feadmin.fe_users/file; type=file[html,htm,tmpl,txt]; label= Template File: HTML-template file
+	file.templateFile = EXT:t3sec_saltedpw/res/tmpl/fe_admin_fe_users.tmpl
+}
