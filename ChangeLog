@@ -1,5 +1,6 @@
 2008-11-27  Marcus Krause   <marcus#exp2008@t3sec.info>
 
+	* Limit felogin XCLASS usage to TYPO3 versions below 4.2.4
 	* Fix bug: add bulk processing protection for sysext felogin
 
 2008-11-26  Marcus Krause   <marcus#exp2008@t3sec.info>
