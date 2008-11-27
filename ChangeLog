@@ -1,10 +1,11 @@
 2008-11-21  Marcus Krause   <marcus#exp2008@t3sec.info>
 
+	* Fix bug in fe_adminLib.inc(CREATE): Salted password hashes were shown to user
 	* Make configuration loginSecurityLevel set to 'normal' mandatory
 
 2008-11-21  Michael Stucki  <michael@typo3.org>
 
-	* Fix bug in fe_adminLib.inc(EDIT): Hide salted password hash from user
+	* Fix bug in fe_adminLib.inc(EDIT): Salted password hashes were shown to user
 	* Fix bug in ->compareUident(): Plaintext passwords were treated as md5
 
 2008-11-20  Marcus Krause   <marcus#exp2008@t3sec.info>

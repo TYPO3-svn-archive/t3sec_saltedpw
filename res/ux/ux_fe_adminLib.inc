@@ -346,6 +346,16 @@ class ux_user_feAdmin extends user_feAdmin	{
 			default:
 				if ($this->conf['create'])	{
 					$newFieldList = implode(',',array_intersect(explode(',',$this->fieldList),t3lib_div::trimExplode(',',$this->conf['create.']['fields'],1)));
+					$dataArr_new = array();
+					foreach ($this->dataArr as $k=>$v) {
+						$matches = array();
+						if (preg_match('#^(.*)_parsed$#', $k, $matches)) {
+							$dataArr_new[$matches[1]] = $v;
+						} else {
+							$dataArr_new[$k] = $v;
+						}
+					}
+					$this->dataArr = $dataArr_new;
 					$this->cObj->DBgetInsert($this->theTable, $this->thePid, $this->dataArr, $newFieldList, TRUE);
 					$newId = $GLOBALS['TYPO3_DB']->sql_insert_id();
 
