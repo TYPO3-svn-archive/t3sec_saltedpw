@@ -1,6 +1,13 @@
-2008-11-22  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-24  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Add extension manual
+
+2008-11-23  Marcus Krause   <marcus#exp2008@t3sec.info>
 
 	* Fix bug: Install tool was still creating md5 hashed passwords
+
+2008-11-22  Marcus Krause   <marcus#exp2008@t3sec.info>
+
 	* Centralize loginSecurityLevel check
 	* Fix bug: access method was not returning a boolean for empty tables
 	* Fix bug: ext felogin was always assuming that salted password hashes are used in the FE
