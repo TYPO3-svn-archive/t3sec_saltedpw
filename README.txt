@@ -1,7 +1,7 @@
 = Implementation =
-This extension uses Portable PHP password hashing framwork [1]
+This extension uses Portable PHP password hashing framework [1]
 to create salted hashed passwords. The framework has been properly
-tested and reviewd. The framework is used amongst others by
+tested and reviewed. The framework is used amongst others by
 Drupal CMS and Wordpress.
 By that, you could import or export user accounts between
 these applications without having to change passwords.
