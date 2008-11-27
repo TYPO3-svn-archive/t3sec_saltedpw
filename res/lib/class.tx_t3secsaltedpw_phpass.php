@@ -189,119 +189,118 @@ class tx_t3secsaltedpw_phpass {
 		return './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 	}
 
-		/**
-		 * Check whether a user's hashed password needs to be replaced with a new hash.
-		 *
-		 * This is typically called during the login process when the plain text
-		 * password is available.  A new hash is needed when the desired iteration count
-		 * has changed through a change in the variable password_count_log2 or
-		 * T3X_T3SECSALTEDPW_HASH_COUNT or if the user's password hash was generated in an update
-		 * like user_update_7000().
-		 *
-		 * Alternative implementations of this function might use other criteria based
-		 * on the fields in $account.
-		 *
-		 * @param $account
-		 *   A user object with at least the fields from the {users} table.
-		 *
-		 * @return
-		 *   TRUE or FALSE.
-		 */
-		public function isHashUpdateNeeded($passString) {
-				// Check whether this was an updated password.
-			if ((substr($passString, 0, 3) != '$P$') || (strlen($passString) != 34)) {
-				return true;
+	/**
+	 * Check whether a user's hashed password needs to be replaced with a new hash.
+	 *
+	 * This is typically called during the login process when the plain text
+	 * password is available.  A new hash is needed when the desired iteration count
+	 * has changed through a change in the variable password_count_log2 or
+	 * T3X_T3SECSALTEDPW_HASH_COUNT or if the user's password hash was generated in an update
+	 * like user_update_7000().
+	 *
+	 * Alternative implementations of this function might use other criteria based
+	 * on the fields in $account.
+	 *
+	 * @param $account
+	 *   A user object with at least the fields from the {users} table.
+	 *
+	 * @return
+	 *   TRUE or FALSE.
+	 */
+	public function isHashUpdateNeeded($passString) {
+			// Check whether this was an updated password.
+		if ((substr($passString, 0, 3) != '$P$') || (strlen($passString) != 34)) {
+			return true;
+		}
+			// Check whether the iteration count used differs from the standard number.
+		return ($this->getCountLog2($passString) != T3X_T3SECSALTEDPW_HASH_COUNT);
+	}
+
+	/**
+	 * Hash a password using a secure hash.
+	 *
+	 * @param $password
+	 *   A plain-text password.
+	 * @param $count_log2
+	 *   Optional integer to specify the iteration count. Generally used only during
+	 *   mass operations where a value less than the default is needed for speed.
+	 *
+	 * @return
+	 *   A string containing the hashed password (and a salt), or FALSE on failure.
+	 */
+	public function getHashedPassword($password, $count_log2 = 0) {
+		if (empty($count_log2)) {
+				// Use the standard iteration count.
+			$count_log2 = $this->getHashCount();
+		}
+		return $this->cryptPassword($password, $this->getGeneratedSalt($count_log2));
+	}
+
+	/**
+	 * Generates a random base 64-encoded salt prefixed with settings for the hash.
+	 *
+	 * Proper use of salts may defeat a number of attacks, including:
+	 *  - The ability to try candidate passwords against multiple hashes at once.
+	 *  - The ability to use pre-hashed lists of candidate passwords.
+	 *  - The ability to determine whether two users have the same (or different)
+	 *    password without actually having to guess one of the passwords.
+	 *
+	 * @param $count_log2
+	 *   Integer that determines the number of iterations used in the hashing
+	 *   process. A larger value is more secure, but takes more time to complete.
+	 *
+	 * @return
+	 *   A 12 character string containing the iteration count and a random salt.
+	 */
+	protected function getGeneratedSalt($count_log2) {
+		$output = '$P$';
+			// Minimum log2 iterations is T3X_T3SECSALTEDPW_MIN_HASH_COUNT.
+		$count_log2 = max($count_log2, $this->getMinHashCount());
+			// Maximum log2 iterations is T3X_T3SECSALTEDPW_MAX_HASH_COUNT.
+			// We encode the final log2 iteration count in base 64.
+		$itoa64 = $this->getItoa64();
+		$output .= $itoa64[min($count_log2, $this->getMaxHashCount())];
+			// 6 bytes is the standard salt for a portable phpass hash.
+		$output .= $this->base64Encode(tx_t3secsaltedpw_div::generateRandomBytes(6), 6);
+		return $output;
+	}
+
+	/**
+	 * Encode bytes into printable base 64 using the *nix standard from crypt().
+	 *
+	 * @param $input
+	 *   The string containing bytes to encode.
+	 * @param $count
+	 *   The number of characters (bytes) to encode.
+	 *
+	 * @return
+	 *   Encoded string
+	 */
+	protected function base64Encode($input, $count)  {
+		$output = '';
+		$i = 0;
+		$itoa64 = $this->getItoa64();
+		do {
+			$value = ord($input[$i++]);
+			$output .= $itoa64[$value & 0x3f];
+			if ($i < $count) {
+				$value |= ord($input[$i]) << 8;
 			}
-				// Check whether the iteration count used differs from the standard number.
-			return ($this->getCountLog2($passString) != T3X_T3SECSALTEDPW_HASH_COUNT);
-		}
-
-		/**
-		 * Hash a password using a secure hash.
-		 *
-		 * @param $password
-		 *   A plain-text password.
-		 * @param $count_log2
-		 *   Optional integer to specify the iteration count. Generally used only during
-		 *   mass operations where a value less than the default is needed for speed.
-		 *
-		 * @return
-		 *   A string containing the hashed password (and a salt), or FALSE on failure.
-		 */
-		public function getHashedPassword($password, $count_log2 = 0) {
-			if (empty($count_log2)) {
-					// Use the standard iteration count.
-				$count_log2 = $this->getHashCount();
+			$output .= $itoa64[($value >> 6) & 0x3f];
+			if ($i++ >= $count) {
+				break;
 			}
-			return $this->cryptPassword($password, $this->getGeneratedSalt($count_log2));
-		}
-
-		/**
-		 * Generates a random base 64-encoded salt prefixed with settings for the hash.
-		 *
-		 * Proper use of salts may defeat a number of attacks, including:
-		 *  - The ability to try candidate passwords against multiple hashes at once.
-		 *  - The ability to use pre-hashed lists of candidate passwords.
-		 *  - The ability to determine whether two users have the same (or different)
-		 *    password without actually having to guess one of the passwords.
-		 *
-		 * @param $count_log2
-		 *   Integer that determines the number of iterations used in the hashing
-		 *   process. A larger value is more secure, but takes more time to complete.
-		 *
-		 * @return
-		 *   A 12 character string containing the iteration count and a random salt.
-		 */
-		protected function getGeneratedSalt($count_log2) {
-			$output = '$P$';
-				// Minimum log2 iterations is T3X_T3SECSALTEDPW_MIN_HASH_COUNT.
-			$count_log2 = max($count_log2, $this->getMinHashCount());
-				// Maximum log2 iterations is T3X_T3SECSALTEDPW_MAX_HASH_COUNT.
-				// We encode the final log2 iteration count in base 64.
-			$itoa64 = $this->getItoa64();
-			$output .= $itoa64[min($count_log2, $this->getMaxHashCount())];
-				// 6 bytes is the standard salt for a portable phpass hash.
-			$output .= $this->base64Encode(tx_t3secsaltedpw_div::generateRandomBytes(6), 6);
-			return $output;
-		}
-
-		/**
-		 * Encode bytes into printable base 64 using the *nix standard from crypt().
-		 *
-		 * @param $input
-		 *   The string containing bytes to encode.
-		 * @param $count
-		 *   The number of characters (bytes) to encode.
-		 *
-		 * @return
-		 *   Encoded string
-		 */
-		protected function base64Encode($input, $count)  {
-			$output = '';
-			$i = 0;
-			$itoa64 = $this->getItoa64();
-			do {
-				$value = ord($input[$i++]);
-				$output .= $itoa64[$value & 0x3f];
-				if ($i < $count) {
-					$value |= ord($input[$i]) << 8;
-				}
-				$output .= $itoa64[($value >> 6) & 0x3f];
-				if ($i++ >= $count) {
-					break;
-				}
-				if ($i < $count) {
-					$value |= ord($input[$i]) << 16;
-				}
-				$output .= $itoa64[($value >> 12) & 0x3f];
-				if ($i++ >= $count) {
-					break;
-				}
-				$output .= $itoa64[($value >> 18) & 0x3f];
-			} while ($i < $count);
-
-			return $output;
-		}
+			if ($i < $count) {
+				$value |= ord($input[$i]) << 16;
+			}
+			$output .= $itoa64[($value >> 12) & 0x3f];
+			if ($i++ >= $count) {
+				break;
+			}
+			$output .= $itoa64[($value >> 18) & 0x3f];
+		} while ($i < $count);
+		return $output;
+	}
 }
 
 
