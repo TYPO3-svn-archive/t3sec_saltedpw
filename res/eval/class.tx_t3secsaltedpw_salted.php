@@ -70,7 +70,7 @@ class tx_t3secsaltedpw_salted {
 
 			// value not recognized as hashed password of Portable PHP hashing framework
 			// -> either clear-text one or an updated one created by Portable PHP hashing framework (prefix C||M)
-		if ($updateNeeded && !(strlen($value) == 35 && 0 == strcmp(substr($value,1,3), '$P$'))) {
+		if ($updateNeeded && !(strlen($value) == 35 && 0 == substr_compare($value, '$P$', 1, 3))) {
 			$value = $objPHPass->getHashedPassword($value);
 		}
 
