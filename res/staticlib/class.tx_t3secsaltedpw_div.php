@@ -106,24 +106,19 @@ class tx_t3secsaltedpw_div  {
 		}
 
 		/**
-		 * Returns extension configuration data from localconf.php (configurable in Extension Manager)
+		 * Returns extension configuration data from $TYPO3_CONF_VARS (configurable in Extension Manager)
 		 *
 		 * @author  Rainer Kuhn <kuhn@punkt.de>
 		 * @author  Marcus Krause <marcus#exp2008@t3sec.info>
 		 *
 		 * @static
-		 * @global  array       $TYPO3_CONF_VARS
 		 * @param   string      extension key of the extension to get its configuration
-		 * @return  array       extension configuration data from localconf.php
-		 * @since   2006-05-18
+		 * @return  array       extension configuration data
 		 */
 		public static function returnExtConf( $extKey ) {
-
-			require(PATH_typo3conf.'localconf.php');  // don't use require_once here!
-
 			$extConf = array();
 
-			if (isset($TYPO3_CONF_VARS['EXT']['extConf'][$extKey])) {
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extKey])) {
 				$extConf = unserialize($TYPO3_CONF_VARS['EXT']['extConf'][$extKey]);
 			}
 				// load defaults if necessary
@@ -141,7 +136,7 @@ class tx_t3secsaltedpw_div  {
 		 */
 		public static function returnExtConfDefaults() {
 			return array(   'onlyAuthService' => '0',
-							'forcePHPasswd'   => '0',
+							'forcePHPasswd'   => '1',
 							'updatePasswd'    => '1');
 		}
 }

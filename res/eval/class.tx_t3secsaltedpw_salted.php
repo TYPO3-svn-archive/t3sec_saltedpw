@@ -61,11 +61,10 @@ class tx_t3secsaltedpw_salted {
 	 *
 	 * @param	mixed		$value: The value that has to be checked.
 	 * @param	string		$is_in: Is-In String
-	 * @param	integer		$set: Determines if the field can be set (value correct) or not (PASSED BY REFERENCE!)
+	 * @param	integer		$set: Determines if the field can be set (value correct) or not, e.g. if input is required but the value is empty, then $set should be set to false. (PASSED BY REFERENCE!)
 	 * @return	The new value of the field
 	 */
 	function evaluateFieldValue($value, $is_in, &$set) {
-			// TODO what about $set; do I have to care about it
 		$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 		$updateNeeded = !empty($value) ? $objPHPass->isHashUpdateNeeded( $value ) : false;
 
