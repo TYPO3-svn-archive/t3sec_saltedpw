@@ -1,3 +1,7 @@
+2008-11-22  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Fix bug: ext felogin was always assuming that salted password hashes are used in the FE
+
 2008-11-21  Marcus Krause   <marcus#exp2008@t3sec.info>
 
 	* Add additional default eval und parse functions to TypoScript setup
@@ -25,3 +29,7 @@
 2008-11-17  Dmitry Dulepov  <dmitry@typo3.org>
 
 	* Changed "new" to t3lib_div::makeInstance()
+
+2008-11-14  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Initial work on this extension

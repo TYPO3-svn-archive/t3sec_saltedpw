@@ -146,6 +146,24 @@ class tx_t3secsaltedpw_div  {
 							'forcePHPasswd'   => '1',
 							'updatePasswd'    => '1');
 		}
+
+		/**
+		 * Returns information if salted password hashes are
+		 * indeed used in the TYPO3_MODE.
+		 *
+		 * @static
+		 * @access  public
+		 * @since   2008-11-22
+		 * @return  boolean     true, is salted password hashes are used in the
+		 *                      TYPO3_MODE, otherwise false
+		 */
+		public static function isUsageEnabled() {
+				// Login Security Level Recognition
+			if (0 == strcmp($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['loginSecurityLevel'], 'normal')) {
+				return true;
+			}
+			return false;
+		}
 }
 
 
