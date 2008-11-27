@@ -38,19 +38,21 @@ of FE users so that Portable PHP password hashing framwork could use them.
 There's a detection mechanism that tries to find out if an update is needed.
 If so, you will find function "UPDATE!"  when extension has been selection
 (just to help you: other functions would be "Information", "Edit files", "Backup/Delete")
-Due to security reasons, the extension's service won't use these updates passwords
+Due to security reasons, the extension's service won't use these updated passwords
 by default. If you would like to use them, disable extension configuration
 variable "forcePHPasswd".
 
 
-The provided template is exactely that one of extension feuser_admin,
+The provided template is exactly that one of extension feuser_admin,
 but reduced by one single line which allowed an instant login by
 transmitting credentials via GET.
 
 Usage with extension feuser_admin:
 please set following TypoScript to enable usage of
-Portable PHP password hashing framework
+Portable PHP password hashing framework:
+
 # plugin.feadmin.fe_users.parseValues.password = trim,saltedHash
+
 if not set, passwords will be created the common way (clear-text, md5)
 and FE users might not be able to log in with the provided service
 
