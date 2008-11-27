@@ -35,15 +35,13 @@
 /**
  * Defines number of user records that will be updated per run.
  */
-define('T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN', 1);
-
-require_once (t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php');
+define('T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN', 1000);
 
 
 class ext_update {
 
-	var $table = 'fe_users';
 
+	var $table = 'fe_users';
 
 
 	function access() {
@@ -69,9 +67,9 @@ class ext_update {
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
 			$passLen = array_unique($passLen);
-
 				// show UPDATE function only if not all password have a fixed length
-			if (min($passLen) < 32 && $sumRows > 1 && count($passLen) > 1) {
+			if ((min($passLen) == 32 && max($passLen) == 32) ||
+				(min($passLen) < 32 && $sumRows > 1 && count($passLen) > 1)) {
 				$showFunction = true;
 			}
 		}
@@ -99,15 +97,26 @@ class ext_update {
 						.  'the remaining user records.</p></p><p>&nbsp;</p>'
 						.  $this->getUpdateForm();
 			} else {
-				$content .= '<p>All records have been updated.</p>';
+				$extConfDefault = tx_t3secsaltedpw_div::returnExtConfDefaults();
+				$extConf = tx_t3secsaltedpw_div::returnExtConf( $this->extKey );
+				$content .= '<p>All records have been updated.</p><p>&nbsp;</p>'
+						.  '<strong>Please make sure that extension configuration variable '
+						.  '<i>forcePHPasswd</i> is disabled to use the updated passwords.</strong><br>'
+						.  'This variable is by <strong>default</strong> '
+						. (intval($extConfDefault['forcePHPasswd']) == 1 ? 'enabled' : 'disabled')
+						. '. ';
+
+				$content .= 'This variable is currently '
+						. (intval($extConf['forcePHPasswd']) == 1 ? 'enabled' : 'disabled')
+						. '.</p>';
 			}
 		} else {
 			$content = '<p>It\'s most likely necessary to update FE user passwords as it seems that '
-					.  'they are not encrypted/hashed.</p><p>&nbsp;</p>'
+					.  'they are not encrypted/hashed with the method brought with this extension.</p><p>&nbsp;</p>'
 					.  '<p>Do <strong>not execute</strong> the update if all or part of existing '
 					.  'passwords are <strong>neither clear-text nor md5 hashed</strong> ones!<p>&nbsp;</p>'
 					.  '<p>Do you want me to update the passwords for all records? Please mind that '
-					.  'it might take some time! Only non deleted and non disabled user records will be '
+					.  'it might take some time!<br>Only non deleted and non disabled user records will be '
 					.  'updated. Every script run will convert a <strong>maximum of '
 					.  T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN . ' user records</strong>.'
 					.  '</p><p>&nbsp;</p>'
@@ -145,19 +154,22 @@ class ext_update {
 	}
 
 	function processUserRecords(&$res) {
+		require_once (t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php');
 		$objPHPass = new tx_t3secsaltedpw_phpass();
 		$updatedPassword = '';
 
 		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-			$updatedPassword = $objPHPass->getHashedPassword($this->testPasswd);
-				// testing of clear-text or md5 hashes
-			if(preg_match('/[0-9abcdef]{32,32}/', $password))
-				$updatedPassword = 'U' . $updatedPassword;
-			$this->updatePassword(intval($row['uid']) ,$updatedPassword);
+			$updatedPassword = $objPHPass->getHashedPassword($row['password']);
+				// testing of clear-text or md5 hashed passwords
+				// prefix C or prefix M
+			if(preg_match('/[0-9abcdef]{32,32}/', $row['password']))
+				$this->updatePassword(intval($row['uid']) ,'M' . $updatedPassword);
+			else
+				$this->updatePassword(intval($row['uid']) ,'C' . $updatedPassword);
 		}
 	}
 
-	function updatePassword($uid, &$updatedPassword) {
+	function updatePassword($uid, $updatedPassword) {
 		$GLOBALS['TYPO3_DB']->exec_UPDATEquery( $this->table,
 												'uid = ' . $uid,
 												array('password' => $updatedPassword,));

@@ -101,7 +101,7 @@ class tx_t3secsaltedpw_phpass_testcase extends tx_phpunit_testcase {
 
 	public function testAuthenticationAfterUpdatedMD5() {
 		$md5Hash = md5($this->testPasswd);
-		$updateHash = 'U' . $this->objPHPass->getHashedPassword($md5Hash, 11);
+		$updateHash = 'M' . $this->objPHPass->getHashedPassword($md5Hash, 11);
 		$this->assertFalse($this->objPHPass->checkPassword($this->testPasswd, $updateHash));
 	}
 }
