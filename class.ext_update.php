@@ -50,13 +50,33 @@ class ext_update {
 	 */
 	const PASSWD_UPDATE_RUN = 1000;
 
+	/**
+	 * Defines constant, used to indicate that BE users table needs an update.
+	 *
+	 * bitmask for 1st bit (0x1)
+	 */
+	const NEED_UPDATE_BE = 1;
 
 	/**
-	 * Keeps the table name the update will do the update on.
+	 * Defines constant, used to indicate that FE users table needs an update.
+	 *
+	 * bitmask for 1st bit (0x2)
+	 */
+	const NEED_UPDATE_FE = 2;
+
+	/**
+	 * Keeps the table name of frontend users the update will do the update on.
 	 *
 	 * @var  string
 	 */
-	var $table = 'fe_users';
+	var $tableBE = 'be_users';
+
+	/**
+	 * Keeps the table name of frontend users the update will do the update on.
+	 *
+	 * @var  string
+	 */
+	var $tableFE = 'fe_users';
 
 
 	/**
@@ -67,51 +87,91 @@ class ext_update {
 	 * @return  string                column name if TCA entry could be found,
 	 *                                otherwise null
 	 */
-	function getColumnNameByTCA ($property, $defaultName = null) {
+	function getColumnNameByTCA ($table, $property, $defaultName = null) {
 		$columnName = null;
-		$columnName = isset($GLOBALS['TCA'][$this->table]['ctrl'][$property])
-						? $GLOBALS['TCA'][$this->table]['ctrl'][$property]
+		$columnName = isset($GLOBALS['TCA'][$table]['ctrl'][$property])
+						? $GLOBALS['TCA'][$table]['ctrl'][$property]
 						: $defaultName;
 		return $columnName;
 	}
 
-	function access() {
+	/**
+	 * Enter description here...
+	 *
+	 * @return integer
+	 */
+	function checkRecentRecord() {
+		return $this->checkRecentRecordByTable($this->tableBE)
+				| $this->checkRecentRecordByTable($this->tableFE);
+	}
 
-		$colCrdate = $this->getColumnNameByTCA('crdate', 'crdate');
+	function checkRecentRecordByTable(&$table) {
+		$colCrdate = $this->getColumnNameByTCA($table, 'crdate', 'crdate');
 
-			// retrieving recent records from fe_users table
+					// retrieving recent records from fe_users table
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'password',           // SELECT
-														'fe_users',           // FROM
+														$table,               // FROM
 														'', 		          // WHERE
 														'',                   // GROUP BY
 														$colCrdate . ' DESC', // ORDER BY
 														1                     // LIMIT
 		);
-
-		$showFunction = true;
+		$result = 0;
 		$sumRows = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
 		if ($sumRows) {
 			$passLen = array();
 			$row = $GLOBALS['TYPO3_DB']->sql_fetch_row($res);
-			if ((0 == strncmp($row[0], '$P$', 3))
-					|| 0 == substr_compare($row[0], '$P$', 1, 3)) {
-				$showFunction = false;
+			if ((0 != strncmp($row[0], '$P$', 3))
+					&& 0 != substr_compare($row[0], '$P$', 1, 3)) {
+				switch($table) {
+					case 'be_users':    $result = self::NEED_UPDATE_BE;
+										break;
+					case 'fe_users':	$result = self::NEED_UPDATE_FE;
+										break;
+					default:            break;
+				}
 			}
 		}
-		return $showFunction;
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+		return $result;
 	}
 
+	/**
+	 * Enter description here...
+	 *
+	 * @return  boolean  true, if user record passwords need an update,
+	 *                   otherwise false
+	 */
+	function access() {
+		if ($this->checkRecentRecord() > 0) return true;
+		else return false;
+	}
+
+	/**
+	 * Main method
+	 *
+	 * @return  string  html text
+	 */
 	function main() {
 
-		$content = '<h2 class="typo3-tstemplate-ceditor-subcat">Update of FE user passwords</h2><p>&nbsp;</p>';
+		$content = '<h2 class="typo3-tstemplate-ceditor-subcat">Update of BE/FE user passwords</h2><p>&nbsp;</p>';
 
 		if (t3lib_div::_GP('update')) {
-			$sumRecords = $this->updateUsersRecords();
-			$content = '<p>Updated records: ' . $sumRecords . '</p><p>&nbsp;</p>';
-			if (intval($sumRecords) == self::PASSWD_UPDATE_RUN) {
+			$sumRecords = 0;
+				// BE user update
+			if (in_array('be', t3lib_div::_GP('update'))) {
+				$sumRecords += $this->updateUsersRecords($this->tableBE, in_array('fe',t3lib_div::_GP('update')) ? ceil(1/3 * self::PASSWD_UPDATE_RUN) : self::PASSWD_UPDATE_RUN);
+			}
+				// FE user update
+			if (in_array('fe', t3lib_div::_GP('update'))) {
+				$sumRecords += $this->updateUsersRecords($this->tableFE, in_array('be',t3lib_div::_GP('update')) ? ceil(2/3 * self::PASSWD_UPDATE_RUN) : self::PASSWD_UPDATE_RUN);
+			}
+			$content .= '<p>Updated records: ' . $sumRecords . '</p><p>&nbsp;</p>';
+			$intNeedUpdate = $this->checkRecentRecord();
+			if ($intNeedUpdate > 0) {
 				$content .= '<p>You will need to run this script again to update '
 						.  'the remaining user records.</p></p><p>&nbsp;</p>'
-						.  $this->getUpdateForm();
+						.  $this->getUpdateForm($this->checkRecentRecord());
 			} else {
 				require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
 				$extConfDefault = tx_t3secsaltedpw_div::returnExtConfDefaults();
@@ -119,16 +179,16 @@ class ext_update {
 				$content .= '<p>All records have been updated.</p><p>&nbsp;</p>'
 						.  '<strong>Please make sure that extension configuration variable '
 						.  '<i>forcePHPasswd</i> is disabled to use the updated passwords.</strong><br>'
-						.  'This variable is by <strong>default</strong> '
+						.  'This variable is <strong>by default '
 						. (intval($extConfDefault['forcePHPasswd']) == 1 ? 'enabled' : 'disabled')
-						. '. ';
+						. '</strong>. ';
 
-				$content .= 'This variable is currently '
+				$content .= 'This variable is <strong>currently '
 						. (intval($extConf['forcePHPasswd']) == 1 ? 'enabled' : 'disabled')
-						. '.</p>';
+						. '</strong>.</p>';
 			}
 		} else {
-			$content = '<p>It\'s most likely necessary to update FE user passwords as it seems that '
+			$content.= '<p>It\'s most likely necessary to update user passwords as it seems that '
 					.  'they are not encrypted/hashed with the method brought with this extension.</p><p>&nbsp;</p>'
 					.  '<p>Do <strong>not execute</strong> the update if all or part of existing '
 					.  'passwords are <strong>neither clear-text nor md5 hashed</strong> ones!<p>&nbsp;</p>'
@@ -137,41 +197,61 @@ class ext_update {
 					.  'Every script run will convert a <strong>maximum of '
 					.  self::PASSWD_UPDATE_RUN . ' user records</strong>.'
 					.  '</p><p>&nbsp;</p>'
-					.  $this->getUpdateForm();
+					.  $this->getUpdateForm($this->checkRecentRecord());
 
 		}
 		return $content;
 	}
 
-	function getUpdateForm() {
+	/**
+	 * Enter description here...
+	 *
+	 * @param   integer  $bitUpdateTables  bitmask indicating which table needs an update
+	 * @return  string                     html text form
+	 */
+	function getUpdateForm($bitUpdateTables) {
 		$content = '<form name="tx_t3secsaltedpw_form" action="'
 				.  htmlspecialchars(t3lib_div::linkThisScript()) .  '" method="post">'
-				.  '<input name="update" value="Update" type="submit" style="font-weight: bold;"/>'
+				.  '<fieldset><legend>Update user records</legend>';
+		if ($bitUpdateTables & self::NEED_UPDATE_BE) {
+			$content.= '<input type="checkbox" name="update[]" value="be">backend users<br>';
+		}
+		if ($bitUpdateTables & self::NEED_UPDATE_FE) {
+			$content.= '<input type="checkbox" name="update[]" value="fe">frontend users<br>';
+		}
+		$content.= '</fieldset><br><input name="update[]" value="Update" type="submit" style="font-weight: bold;"/>'
 				.  '</form>';
 		return $content;
 	}
 
-	function updateUsersRecords() {
-		$colCrdate = $this->getColumnNameByTCA('crdate', 'crdate');
+	/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $table
+	 * @param unknown_type $numRecords
+	 * @return unknown
+	 */
+	function updateUsersRecords(&$table, $numRecords) {
+		$colCrdate = $this->getColumnNameByTCA($table, 'crdate', 'crdate');
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'uid, password',                     // SELECT
-														'fe_users',                          // FROM
+														$table,                              // FROM
 														'1 = 1 '
-														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('M$P$%', $this->table) . ' '
-														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('C$P$%', $this->table) . ' '
-														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('$P$%', $this->table), // WHERE
+														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('M$P$%', $table) . ' '
+														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('C$P$%', $table) . ' '
+														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('$P$%',  $table), // WHERE
 														'',                                  // GROUP BY
 														$colCrdate . ' ASC',                 // ORDER BY
-														self::PASSWD_UPDATE_RUN              // LIMIT
+														$numRecords                          // LIMIT
 		);
 		$sumRow = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
 		if ($sumRow) {
-			$this->processUserRecords($res);
+			$this->processUserRecords($res, $table);
 			$GLOBALS['TYPO3_DB']->sql_free_result($res);
 		}
 		return $sumRow;
 	}
 
-	function processUserRecords(&$res) {
+	function processUserRecords(&$res, &$table) {
 		require_once (t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php');
 		$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 		$updatedPassword = '';
@@ -181,14 +261,21 @@ class ext_update {
 				// testing of clear-text or md5 hashed passwords
 				// prefix C or prefix M
 			if(preg_match('/[0-9abcdef]{32,32}/', $row['password']))
-				$this->updatePassword(intval($row['uid']) ,'M' . $updatedPassword);
+				$this->updatePassword($table, intval($row['uid']) ,'M' . $updatedPassword);
 			else
-				$this->updatePassword(intval($row['uid']) ,'C' . $updatedPassword);
+				$this->updatePassword($table, intval($row['uid']) ,'C' . $updatedPassword);
 		}
 	}
 
-	function updatePassword($uid, $updatedPassword) {
-		$GLOBALS['TYPO3_DB']->exec_UPDATEquery( $this->table,
+	/**
+	 * Enter description here...
+	 *
+	 * @param string $table
+	 * @param unknown_type $uid
+	 * @param unknown_type $updatedPassword
+	 */
+	function updatePassword(&$table, $uid, $updatedPassword) {
+		$GLOBALS['TYPO3_DB']->exec_UPDATEquery( $table,
 												'uid = ' . $uid,
 												array('password' => $updatedPassword,));
 	}
