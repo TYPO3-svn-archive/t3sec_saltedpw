@@ -47,10 +47,8 @@ class tx_t3secsaltedpw_salted {
 
 
 	/**
-	 * This function needs to return JavaScript code for client side evaluation of the
-	 * field value. The JavaScript variable "value" is set to the field value in the context
-	 * of this JS snippet.
-	 * In this example we just add the string "[added by JS]" to the field value.
+	 * This function just return the field value as it is. No transforming,
+	 * hashing will be done on server-side.
 	 *
 	 * @return	JavaScript code for evaluating the
 	 */
@@ -59,8 +57,7 @@ class tx_t3secsaltedpw_salted {
 	}
 
 	/**
-	 * This is the server side (i.e. PHP) side of the field evaluation.
-	 * In this example we just add the string "[added by PHP]" to the field value.
+	 * Function uses Portable PHP Hashing Framework to create a proper password string if needed
 	 *
 	 * @param	mixed		$value: The value that has to be checked.
 	 * @param	string		$is_in: Is-In String
@@ -68,6 +65,7 @@ class tx_t3secsaltedpw_salted {
 	 * @return	The new value of the field
 	 */
 	function evaluateFieldValue($value, $is_in, &$set) {
+			// TODO what about $set; do I have to care about it
 		$objPHPass = new tx_t3secsaltedpw_phpass();
 		$updateNeeded = !empty($value) ? $objPHPass->isHashUpdateNeeded( $value ) : false;
 
