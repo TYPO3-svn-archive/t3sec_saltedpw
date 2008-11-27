@@ -88,6 +88,7 @@ class ext_update {
 														1                     // LIMIT
 		);
 
+		$showFunction = true;
 		$sumRows = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
 		if ($sumRows) {
 			$passLen = array();
@@ -95,8 +96,6 @@ class ext_update {
 			if ((0 == strncmp($row[0], '$P$', 3))
 					|| 0 == substr_compare($row[0], '$P$', 1, 3)) {
 				$showFunction = false;
-			} else {
-				$showFunction = true;
 			}
 		}
 		return $showFunction;

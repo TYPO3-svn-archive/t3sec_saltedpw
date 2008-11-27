@@ -1,5 +1,6 @@
 2008-11-22  Marcus Krause   <marcus#exp2008@t3sec.info>
 
+	* Fix bug: access method was not returning a boolean for empty tables
 	* Fix bug: ext felogin was always assuming that salted password hashes are used in the FE
 
 2008-11-21  Marcus Krause   <marcus#exp2008@t3sec.info>
