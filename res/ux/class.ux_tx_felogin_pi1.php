@@ -33,25 +33,29 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
+	// Make sure that we are executed only in TYPO3 context
+if (!defined ("TYPO3_MODE")) die ("Access denied.");
+
 require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php';
 
 /**
  * Plugin 'Website User Login' for the 'felogin' extension.
  *
- * XCLASS that creates salted MD5 password hashes.
+ * XCLASS that creates salted password hashes.
  *
  * @author	   Steffen Kamper <info@sk-typo3.de>
  * @author     Marcus Krause <marcus#exp2008@t3sec.info>
  * @since      2008-11-15
  * @package    TYPO3
- * @subpackage tx_t3secsaltedpw
+ * @subpackage felogin
  */
 class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 
 	/**
 	 * Shows the forgot password form
 	 *
-	 * @return	string		content
+	 * @access  protected
+	 * @return	string	   content
 	*/
 	protected function showForgot() {
 		$subpart = $this->cObj->getSubpart($this->template, '###TEMPLATE_FORGOT###');
