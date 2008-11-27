@@ -104,7 +104,7 @@ class tx_t3secsaltedpw_div  {
 				// the microtime() - is prepended rather than appended.  This is to avoid
 				// directly leaking $random_state via the $output stream, which could
 				// allow for trivial prediction of further "random" numbers.
-			while (!isset($output[$count])) {
+			while (!isset($output{$count - 1})) {
 					// while (strlen($output) < $count)
 				$random_state = md5(microtime() . mt_rand() . $random_state);
 				$output .= md5(mt_rand() . $random_state, true);
