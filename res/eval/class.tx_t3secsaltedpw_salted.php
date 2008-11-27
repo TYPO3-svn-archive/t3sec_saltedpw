@@ -32,7 +32,7 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
-require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
+require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php';
 
 /**
  * Class implementing salted evaluation methods.
@@ -55,19 +55,7 @@ class tx_t3secsaltedpw_salted {
 	 * @return	JavaScript code for evaluating the
 	 */
 	function returnFieldJS() {
-		return '
-		var asciiSimplified =   "!#%&()*+,-./0123456789:;<=>?" +
-								"@ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-								"[\\]^_abcdefghijklmnopqrstuvwxyz{|}~";
-		var stringLen = 8;
-		var salt = \'\';
-
-		for (var i=0; i<stringLen; i++) {
-			var randomNum = Math.floor(Math.random() * asciiSimplified.length);
-			salt += asciiSimplified.substring(randomNum,randomNum + 1);
-		}
-
-		return \'$1$\' + salt + \'$\' + MD5(value + salt);';
+		return 'return value;';
 	}
 
 	/**
@@ -80,11 +68,13 @@ class tx_t3secsaltedpw_salted {
 	 * @return	The new value of the field
 	 */
 	function evaluateFieldValue($value, $is_in, &$set) {
+		$objPHPass = new tx_t3secsaltedpw_phpass();
+		$updateNeeded = !empty($value) ? $objPHPass->isHashUpdateNeeded( $value ) : false;
 
-		$salt = !empty($value) ? tx_t3secsaltedpw_div::getSaltByPasswdString( $value ) : '';
-
-		if (strlen($value) < 44 || empty($salt)) {
-			$value = tx_t3secsaltedpw_div::salt($value);
+			// value not recognized as hashed password of Portable PHP hashing framework
+			// -> either clear-text one or an updated one created by Portable PHP hashing framework (prefix C||M)
+		if ($updateNeeded && !(strlen($value) == 35 && 0 == strcmp(substr($value,1,3), '$P$'))) {
+			$value = $objPHPass->getHashedPassword($value);
 		}
 
 		return $value;
