@@ -32,22 +32,53 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
+
 /**
- * Defines number of user records that will be updated per run.
+ * Class that provides update functionality for existing user records.
+ *
+ * @author  	Marcus Krause <marcus#exp2008@t3sec.info>
+ *
+ * @since   	2008-11-16
+ * @package     TYPO3
+ * @subpackage  tx_t3secsaltedpw
  */
-define('T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN', 1000);
-
-
 class ext_update {
 
 
+	/**
+	 * Defines number of user records that will be updated per run.
+	 */
+	const PASSWD_UPDATE_RUN = 1000;
+
+
+	/**
+	 * Keeps the table name the update will do the update on.
+	 *
+	 * @var  string
+	 */
 	var $table = 'fe_users';
 
+
+	/**
+	 * Retrieves a column name by according TCA table property.
+	 *
+	 * @param   string  $property     table property to get the column name of
+	 * @param   string  $defaultName  default column name (optional)
+	 * @return  string                column name if TCA entry could be found,
+	 *                                otherwise null
+	 */
+	function getColumnNameByTCA ($property, $defaultName = null) {
+		$columnName = null;
+		$columnName = isset($GLOBALS['TCA'][$this->table]['ctrl'][$property])
+						? $GLOBALS['TCA'][$this->table]['ctrl'][$property]
+						: $defaultName;
+		return $columnName;
+	}
 
 	function access() {
 		$showFunction = false;
 
-		$colCrdate = $GLOBALS['TCA'][$table]['ctrl']['crdate'] ? $GLOBALS['TCA'][$table]['ctrl']['crdate'] : 'crdate';
+		$colCrdate = $this->getColumnNameByTCA('crdate', 'crdate');
 
 			// retrieving recent records from fe_users table
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'password',           // SELECT
@@ -81,9 +112,9 @@ class ext_update {
 		$content = '<h2 class="typo3-tstemplate-ceditor-subcat">Update of FE user passwords</h2><p>&nbsp;</p>';
 
 		if (t3lib_div::_GP('update')) {
-			$sumRecords = $this->getUsersRecords();
+			$sumRecords = $this->updateUsersRecords();
 			$content = '<p>Updated records: ' . $sumRecords . '</p><p>&nbsp;</p>';
-			if (intval($sumRecords) == T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN) {
+			if (intval($sumRecords) == self::PASSWD_UPDATE_RUN) {
 				$content .= '<p>You will need to run this script again to update '
 						.  'the remaining user records.</p></p><p>&nbsp;</p>'
 						.  $this->getUpdateForm();
@@ -110,7 +141,7 @@ class ext_update {
 					.  '<p>Do you want me to update the passwords for all records? Please mind that '
 					.  'it might take some time!<br>'
 					.  'Every script run will convert a <strong>maximum of '
-					.  T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN . ' user records</strong>.'
+					.  self::PASSWD_UPDATE_RUN . ' user records</strong>.'
 					.  '</p><p>&nbsp;</p>'
 					.  $this->getUpdateForm();
 
@@ -126,8 +157,8 @@ class ext_update {
 		return $content;
 	}
 
-	function getUsersRecords() {
-		$colCrdate = $GLOBALS['TCA'][$table]['ctrl']['crdate'] ? $GLOBALS['TCA'][$table]['ctrl']['crdate'] : 'crdate';
+	function updateUsersRecords() {
+		$colCrdate = $this->getColumnNameByTCA('crdate', 'crdate');
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'uid, password',                     // SELECT
 														'fe_users',                          // FROM
 														'1 = 1 '
@@ -136,7 +167,7 @@ class ext_update {
 														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('$P$%', $this->table), // WHERE
 														'',                                  // GROUP BY
 														$colCrdate . ' ASC',                 // ORDER BY
-														T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN  // LIMIT
+														self::PASSWD_UPDATE_RUN              // LIMIT
 		);
 		$sumRow = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
 		if ($sumRow) {
