@@ -32,6 +32,8 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
+if (!defined ("TYPO3_MODE")) 	die ("Access denied.");
+
 require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php';
 require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
 
@@ -63,7 +65,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 	public function authUser($user)	{
 		$OK = 100;
 		$login = $GLOBALS['TSFE']->fe_user->getLoginFormData();
-		$extConf = tx_t3secsaltedpw_div::returnExtConf( $this->extKey );
+		$extConf = tx_t3secsaltedpw_div::returnExtConf();
 		$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 
 		$validPasswd = false;
