@@ -50,12 +50,12 @@ class ext_update {
 		$colCrdate = $GLOBALS['TCA'][$table]['ctrl']['crdate'] ? $GLOBALS['TCA'][$table]['ctrl']['crdate'] : 'crdate';
 
 			// retrieving recent records from fe_users table
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'password',    // SELECT
-														'fe_users',                            // FROM
-														'', 																	 // WHERE
-														'',                                    // GROUP BY
-														$colCrdate,                            // ORDER BY
-														10                                     // LIMIT
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'password',           // SELECT
+														'fe_users',           // FROM
+														'', 		          // WHERE
+														'',                   // GROUP BY
+														$colCrdate . ' DESC', // ORDER BY
+														10                    // LIMIT
 		);
 
 		$sumRows = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
@@ -75,18 +75,6 @@ class ext_update {
 		}
 		return $showFunction;
 	}
-	
-	// for now just outcommented - i find no need for only treating non-deleted and non-disabled records
-	// since there is no reason for not updating ALL user passwords in the table
-	// 
-	// function enableFields() {
-	// 	$where = '';
-	// 	$deletedColumn  = $GLOBALS['TCA'][$table]['ctrl']['delete'] ? $GLOBALS['TCA'][$table]['ctrl']['delete'] : 'deleted';
-	// 	$disabledColumn = $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled'] ? $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled'] : 'disable';
-	// 
-	// 	$where .= ' AND ' . $deletedColumn . '=0 AND ' . $disabledColumn . '=0';
-	// 	return $where;
-	// }
 
 	function main() {
 
@@ -100,8 +88,9 @@ class ext_update {
 						.  'the remaining user records.</p></p><p>&nbsp;</p>'
 						.  $this->getUpdateForm();
 			} else {
+				require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
 				$extConfDefault = tx_t3secsaltedpw_div::returnExtConfDefaults();
-				$extConf = tx_t3secsaltedpw_div::returnExtConf( $this->extKey );
+				$extConf = tx_t3secsaltedpw_div::returnExtConf();
 				$content .= '<p>All records have been updated.</p><p>&nbsp;</p>'
 						.  '<strong>Please make sure that extension configuration variable '
 						.  '<i>forcePHPasswd</i> is disabled to use the updated passwords.</strong><br>'
@@ -139,15 +128,15 @@ class ext_update {
 
 	function getUsersRecords() {
 		$colCrdate = $GLOBALS['TCA'][$table]['ctrl']['crdate'] ? $GLOBALS['TCA'][$table]['ctrl']['crdate'] : 'crdate';
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'uid, password',                            // SELECT
-														'fe_users',                                 // FROM
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'uid, password',                     // SELECT
+														'fe_users',                          // FROM
 														'1 = 1 '
 														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('M$P$%', $this->table) . ' '
 														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('C$P$%', $this->table) . ' '
 														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('$P$%', $this->table), // WHERE
-														'',                                         // GROUP BY
-														$colCrdate,                                 // ORDER BY
-														T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN                                        // LIMIT
+														'',                                  // GROUP BY
+														$colCrdate . ' ASC',                 // ORDER BY
+														T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN  // LIMIT
 		);
 		$sumRow = $GLOBALS['TYPO3_DB']->sql_num_rows($res);
 		if ($sumRow) {
