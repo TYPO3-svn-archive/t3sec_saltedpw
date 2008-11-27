@@ -1,3 +1,3 @@
 CREATE TABLE fe_users (
-	password varchar(34) DEFAULT '' NOT NULL,
+	password varchar(35) DEFAULT '' NOT NULL,
 );
