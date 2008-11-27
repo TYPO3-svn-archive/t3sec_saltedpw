@@ -1,4 +1,5 @@
 <?php
+	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) 	die ("Access denied.");
 
 $TYPO3_CONF_VARS['SC_OPTIONS']['tce']['formevals']['tx_t3secsaltedpw_salted'] = t3lib_extMgm::extPath($_EXTKEY, 'res/eval/class.tx_t3secsaltedpw_salted.php');
@@ -17,7 +18,7 @@ t3lib_extMgm::addService(
 		'description' => '',
 		'subtype' => 'authUserFE',
 		'available' => TRUE,
-		'priority' => 90,
+		'priority' => 60,
 		'quality' => 50,
 		'os' => '',
 		'exec' => '',
