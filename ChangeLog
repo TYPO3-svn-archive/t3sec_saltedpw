@@ -1,0 +1,55 @@
+2008-11-27  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Limit felogin XCLASS usage to TYPO3 versions below 4.2.4
+	* Fix bug: add bulk processing protection for sysext felogin
+
+2008-11-26  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Feature: extend update functionality to be_users records also
+	* Commenting out XCLASS for sysext felogin
+
+2008-11-24  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Add extension manual
+
+2008-11-23  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Fix bug: Install tool was still creating md5 hashed passwords
+
+2008-11-22  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Centralize loginSecurityLevel check
+	* Fix bug: access method was not returning a boolean for empty tables
+	* Fix bug: ext felogin was always assuming that salted password hashes are used in the FE
+
+2008-11-21  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Add additional default eval und parse functions to TypoScript setup
+	* Fix bug in fe_adminLib.inc(CREATE): Salted password hashes were shown to user
+	* Make configuration loginSecurityLevel set to 'normal' mandatory
+
+2008-11-21  Michael Stucki  <michael@typo3.org>
+
+	* Fix bug in fe_adminLib.inc(EDIT): Salted password hashes were shown to user
+	* Fix bug in ->compareUident(): Plaintext passwords were treated as md5
+
+2008-11-20  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Take a user's lockDomain configuration into account
+	* Add service for BE user authentication
+
+2008-11-19  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Set service priority to 60 (> 50 [tx_sv_auth] && < 75 [OpenID])
+
+2008-11-19  Lars Houmark    <lars@typo3.org>
+
+	* Fix bug: only enabled records were converted by update function
+
+2008-11-17  Dmitry Dulepov  <dmitry@typo3.org>
+
+	* Changed "new" to t3lib_div::makeInstance()
+
+2008-11-14  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Initial work on this extension
