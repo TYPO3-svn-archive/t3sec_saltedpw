@@ -1,5 +1,6 @@
 2008-11-21  Marcus Krause   <marcus#exp2008@t3sec.info>
 
+	* Add additional default eval und parse functions to TypoScript setup
 	* Fix bug in fe_adminLib.inc(CREATE): Salted password hashes were shown to user
 	* Make configuration loginSecurityLevel set to 'normal' mandatory
 

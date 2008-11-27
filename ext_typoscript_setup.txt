@@ -1,0 +1,6 @@
+# use salted password hashes
+plugin.feadmin.fe_users.parseValues.password = trim,saltedHash
+# set minimum password length; do not remove eval function atLeastOrEmpty
+plugin.feadmin.fe_users.edit.evalValues.password = twice, atLeastOrEmpty[9]
+# set minimum password length; do not remove eval function atLeastOrEmpty
+plugin.feadmin.fe_users.create.evalValues.password = twice, atLeastOrEmpty[9]
