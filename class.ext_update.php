@@ -50,9 +50,9 @@ class ext_update {
 		$colCrdate = $GLOBALS['TCA'][$table]['ctrl']['crdate'] ? $GLOBALS['TCA'][$table]['ctrl']['crdate'] : 'crdate';
 
 			// retrieving recent records from fe_users table
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'password',                            // SELECT
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'password',    // SELECT
 														'fe_users',                            // FROM
-														'1 = 1' . $this->enableFields($this->table), // WHERE
+														'', 																	 // WHERE
 														'',                                    // GROUP BY
 														$colCrdate,                            // ORDER BY
 														10                                     // LIMIT
@@ -75,15 +75,18 @@ class ext_update {
 		}
 		return $showFunction;
 	}
-
-	function enableFields() {
-		$where = '';
-		$deletedColumn  = $GLOBALS['TCA'][$table]['ctrl']['delete'] ? $GLOBALS['TCA'][$table]['ctrl']['delete'] : 'deleted';
-		$disabledColumn = $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled'] ? $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled'] : 'disable';
-
-		$where .= ' AND ' . $deletedColumn . '=0 AND ' . $disabledColumn . '=0';
-		return $where;
-	}
+	
+	// for now just outcommented - i find no need for only treating non-deleted and non-disabled records
+	// since there is no reason for not updating ALL user passwords in the table
+	// 
+	// function enableFields() {
+	// 	$where = '';
+	// 	$deletedColumn  = $GLOBALS['TCA'][$table]['ctrl']['delete'] ? $GLOBALS['TCA'][$table]['ctrl']['delete'] : 'deleted';
+	// 	$disabledColumn = $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled'] ? $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled'] : 'disable';
+	// 
+	// 	$where .= ' AND ' . $deletedColumn . '=0 AND ' . $disabledColumn . '=0';
+	// 	return $where;
+	// }
 
 	function main() {
 
@@ -116,8 +119,8 @@ class ext_update {
 					.  '<p>Do <strong>not execute</strong> the update if all or part of existing '
 					.  'passwords are <strong>neither clear-text nor md5 hashed</strong> ones!<p>&nbsp;</p>'
 					.  '<p>Do you want me to update the passwords for all records? Please mind that '
-					.  'it might take some time!<br>Only non deleted and non disabled user records will be '
-					.  'updated. Every script run will convert a <strong>maximum of '
+					.  'it might take some time!<br>'
+					.  'Every script run will convert a <strong>maximum of '
 					.  T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN . ' user records</strong>.'
 					.  '</p><p>&nbsp;</p>'
 					.  $this->getUpdateForm();
@@ -138,9 +141,10 @@ class ext_update {
 		$colCrdate = $GLOBALS['TCA'][$table]['ctrl']['crdate'] ? $GLOBALS['TCA'][$table]['ctrl']['crdate'] : 'crdate';
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(  'uid, password',                            // SELECT
 														'fe_users',                                 // FROM
-														'1 = 1' . $this->enableFields($this->table) .' '
-														.'AND (password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('$P$%', $this->table) . ' '
-														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('U$P$%', $this->table) . ') ', // WHERE
+														'1 = 1 '
+														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('M$P$%', $this->table) . ' '
+														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('C$P$%', $this->table) . ' '
+														.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('$P$%', $this->table), // WHERE
 														'',                                         // GROUP BY
 														$colCrdate,                                 // ORDER BY
 														T3X_T3SECSALTEDPW_PASSWD_UPDATE_RUN                                        // LIMIT
