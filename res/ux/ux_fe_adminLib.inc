@@ -34,6 +34,7 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
+require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php';
 require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
 
 
@@ -141,13 +142,16 @@ class ux_user_feAdmin extends user_feAdmin	{
 							$this->dataArr[$theField]=hexdec(substr(md5(serialize($hashArray)),0,8));
 						break;
 						case 'saltedHash':
-							$salt = tx_t3secsaltedpw_div::getSaltByPasswdString( $this->dataArr[$theField] );
-							if (strlen($this->dataArr[$theField]) < 44 || empty($salt)) {
-								$passwdString = tx_t3secsaltedpw_div::salt( $this->dataArr[$theField] );
-								$this->dataArr[$theField] = $passwdString;
-								if (isset($this->dataArr[$theField . '_again'])) {
-									$this->dataArr[$theField . '_again'] =  $passwdString;
-								}
+							$objPHPass = new tx_t3secsaltedpw_phpass();
+							$updateNeeded = !empty($this->dataArr[$theField]) ? $objPHPass->isHashUpdateNeeded( $this->dataArr[$theField] ) : false;
+
+								// value not recognized as hashed password of Portable PHP hashing framework
+								// -> either clear-text one or an updated one created by Portable PHP hashing framework (prefix C||M)
+							if ($updateNeeded && !(strlen($this->dataArr[$theField]) == 35 && 0 == strcmp(substr($this->dataArr[$theField],1,3), '$P$'))) {
+								$this->dataArr[$theField] = $objPHPass->getHashedPassword($this->dataArr[$theField]);
+							}
+							if ($updateNeeded && isset($this->dataArr[$theField . '_again'])) {
+								$this->dataArr[$theField . '_again'] =  $this->dataArr[$theField];
 							}
 						break;
 					}
@@ -191,11 +195,11 @@ class ux_user_feAdmin extends user_feAdmin	{
 					//$GLOBALS['TSFE']->includeTCA();
 					//t3lib_div::loadTCA($this->theTable);
 					$recipient = $DBrows[0][$this->conf['email.']['field']];
-
+					$objPHPass = new tx_t3secsaltedpw_phpass();
 					foreach ($DBrows as $key => $row)	{
 						if ($DBrows[$key]['password'])	{
-							$newPass = tx_t3secsaltedpw_div::generatePassword(intval(8));
-							$saltedHash = tx_t3secsaltedpw_div::salt($newPass);
+							$newPass = tx_t3secsaltedpw_div::generatePassword(8);
+							$saltedHash = $objPHPass->getHashedPassword($newPass);
 							$DBrows[$key]['password'] = $newPass;
 							$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery($this->theTable, 'uid='.$row['uid'], array('password' => $saltedHash));
 						}
