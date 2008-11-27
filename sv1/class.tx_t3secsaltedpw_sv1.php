@@ -37,20 +37,23 @@ require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3s
 /**
  * Class implements salted MD5 authentification service.
  *
- * @access      public
  * @author  	Marcus Krause <marcus#exp2008@t3sec.info>
+ *
  * @since   	2008-11-14
  * @package     TYPO3
  * @subpackage  tx_t3secsaltedpw
  */
 class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
-	public $prefixId = 'tx_t3secsaltedpw_sv1';
+
+	public $prefixId =      'tx_t3secsaltedpw_sv1';
 	public $scriptRelPath = 'sv1/class.tx_t3secsaltedpw_sv1.php';
-	public $extKey = 't3sec_saltedpw';
+	public $extKey =        't3sec_saltedpw';
+
 
 	/**
 	 * Method adds a further authUser method.
 	 *
+	 * @access  public
 	 * @param   array     Array containing FE user data of the logged user.
 	 * @return  int       true - the service was able to authenticate the user
 	 * 					  false - false - this service was the right one to authenticate the user but it failed
@@ -60,9 +63,8 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 		$OK = 100;
 		$login = $GLOBALS['TSFE']->fe_user->getLoginFormData();
 
-		if (!strncmp($user['password'], '$1$', 3)) {
-			$pos = strrpos($user['password'], '$');
-			$salt = substr($user['password'], 3, $pos);
+		$salt = tx_t3secsaltedpw_div::getSaltByPasswdString( $user['password'] );
+		if (!empty($salt)) {
 			$cmp = tx_t3secsaltedpw_div::saltMD5($login['uident'], $salt);
 			if ($cmp == $user['password']) {
 				$OK = 200;

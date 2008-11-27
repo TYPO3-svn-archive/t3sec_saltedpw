@@ -32,8 +32,13 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
+require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_testcase.php');
+require_once (t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php');
+
 /**
- * General library class.
+ * Class implementing unit test(s) for extension t3sec_saltedpw.
+ *
+ * Intended to be used with unit test extension phpunit.
  *
  * @author      Marcus Krause <marcus#exp2008@t3sec.info>
  *
@@ -41,48 +46,48 @@
  * @package     TYPO3
  * @subpackage  tx_t3secsaltedpw
  */
-class tx_t3secsaltedpw_div  {
+class tx_t3secsaltedpw_div_testcase extends tx_phpunit_testcase {
 
-		/**
-		 * Encrypts a password with md5 using salt
-		 *
-		 * @access  public
-		 * @param   string  cleartext password
-		 * @param   string  (optional) salt (default: generate random salt)
-		 * @return  string  encrypted password including salt
-		 */
-		public static function saltMD5($cleartext, $salt='') {
 
-			$saltLength  = 8;
-			$excludeList = array(34, 36, 39, 96);
+	/**
+	 * Method tests if a password will reproducible result
+	 * into the same string when getting hashed (MD5) using salt.
+	 *
+	 * @author  Marcus Krause <marcus#exp2008@t3sec.info>
+	 * @access  public
+	 */
+	public function testEqualMD5SaltStrings() {
 
-			if ( empty($salt) || strlen($salt) < $saltLength ) {
+		$passwd = $this->generatePassword(8);
+		$refSaltString = tx_t3secsaltedpw_div::saltMD5($passwd);
 
-					// extend salt when char not in exclude list
-				while ( strlen($salt) < $saltLength ) {
-					$randomInt = rand(33, 126);
-					$salt .= !in_array($randomInt, $excludeList) ? chr($randomInt) : '';
-				}
+		$saltedPasswd = tx_t3secsaltedpw_div::saltMD5(  $passwd,
+														tx_t3secsaltedpw_div::getSaltByPasswdString($refSaltString));
+
+		$this->assertEquals(    $refSaltString,
+								$saltedPasswd,
+								'Testing salting algorithm.' );
+	}
+
+	/**
+	 * Is used by forgot password - function with md5 option.
+	 *
+	 * @author	Bernhard Kraft
+	 * @access  protected
+	 * @param	int			    length of new password
+	 * @return	string		    new password
+	 */
+	protected function generatePassword($len) {
+		$pass = '';
+		while ($len--) {
+			$char = rand(0,35);
+			if ($char < 10) {
+				$pass .= ''.$char;
 			} else {
-				$salt = substr($salt, 0 , $saltLength);
+				$pass .= chr($char-10+97);
 			}
-
-			return '$1$' . $salt . '$' . md5($cleartext . $salt);
 		}
-
-		public static function getSaltByPasswdString($passString) {
-			$salt = '';
-
-			if (!strncmp($passString, '$1$', 3)) {
-				$pos = strrpos($passString, '$');
-				$salt = substr($passString, 3, $pos);
-			}
-			return $salt;
-		}
-}
-
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_saltedpw/res/staticlib/class.tx_t3secsaltedpw_div.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_saltedpw/res/staticlib/class.tx_t3secsaltedpw_div.php']);
+		return $pass;
+	}
 }
 ?>
