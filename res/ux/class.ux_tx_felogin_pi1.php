@@ -50,77 +50,151 @@ if (!defined ("TYPO3_MODE")) die ("Access denied.");
  */
 class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 
-	/**
-	 * Shows the forgot password form
-	 *
-	 * @access  protected
-	 * @return	string	   content
-	*/
-	protected function showForgot() {
-		$subpart = $this->cObj->getSubpart($this->template, '###TEMPLATE_FORGOT###');
-		$subpartArray = $linkpartArray = array();
 
-		if ($this->piVars['forgot_email']) {
-			if (t3lib_div::validEmail($this->piVars['forgot_email'])) {
-					// look for user record and send the password
+	/**
+	 * Returns the header / message value from flexform if present, else from locallang.xml
+	 *
+	 * @param	string		label name
+	 * @param	string		TS stdWrap array
+	 * @return	string		label text
+	 */
+	protected function getDisplayText($label, $stdWrapArray=array()) {
+		global $LANG;
+		//return $this->flexFormValue($label,'s_messages') ? $this->cObj->stdWrap($this->flexFormValue($label,'s_messages'),$stdWrapArray) : $this->cObj->stdWrap($this->pi_getLL('ll_'.$label, '', 1), $stdWrapArray);
+		return $this->flexFormValue($label,'s_messages') ? $this->cObj->stdWrap($this->flexFormValue($label,'s_messages'),$stdWrapArray) : $this->cObj->stdWrap($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_'.$label,1), $stdWrapArray);
+	}
+
+	/**
+	 * Returns Array of markers filled with user fields
+	 *
+	 * @return	array		marker array
+	 */
+	protected function getUserFieldMarkers() {
+		$marker = array();
+		// replace markers with fe_user data
+		if ($GLOBALS['TSFE']->fe_user->user) {
+			// all fields of fe_user will be replaced, scheme is ###FEUSER_FIELDNAME###
+			foreach ($GLOBALS['TSFE']->fe_user->user as $field => $value) {
+				$marker['###FEUSER_' . t3lib_div::strtoupper($field) . '###'] = $this->cObj->stdWrap($value, $this->conf['userfields.'][$field . '.']);
+			}
+			// add ###USER### for compatibility
+			$marker['###USER###'] = $marker['###FEUSER_USERNAME###'];
+		}
+		return $marker;
+	}
+
+	/**
+		* Shows the forgot password form
+		*
+		* @return	string		content
+		*/
+	protected function showForgot() {
+		global $LANG;
+
+			// Get Template
+		$templateFile = 'EXT:t3sec_saltedpw/res/tmpl/felogin_template.html';
+		$template = $this->cObj->fileResource($templateFile);
+
+		$subpart = $this->cObj->getSubpart($template, '###TEMPLATE_FORGOT###');
+		$subpartArray = $linkpartArray = array();
+		$postData =  t3lib_div::_POST($this->prefixId);
+
+		if ($postData['forgot_email']) {
+
+				// get hashes for compare
+			$postedHash = $postData['forgot_hash'];
+			$hashData = $GLOBALS["TSFE"]->fe_user->getKey('ses', 'forgot_hash');
+
+
+			if ($postedHash == $hashData['forgot_hash']) {
+				$row = FALSE;
+
+					// look for user record
+				$data = $GLOBALS['TYPO3_DB']->fullQuoteStr($this->piVars['forgot_email'], 'fe_users');
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 					'uid, username, password',
 					'fe_users',
-					'email='.$GLOBALS['TYPO3_DB']->fullQuoteStr($this->piVars['forgot_email'], 'fe_users').' AND pid IN ('.$GLOBALS['TYPO3_DB']->cleanIntList($this->spid).') '.$this->cObj->enableFields('fe_users')
+					'(email=' . $data .' OR username=' . $data . ') AND pid IN ('.$GLOBALS['TYPO3_DB']->cleanIntList($this->spid).') '.$this->cObj->enableFields('fe_users')
 				);
 
 				if ($GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
 					$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-					$msg = sprintf($this->pi_getLL('ll_forgot_email_password', '', 0), $this->piVars['forgot_email'], $row['username'], $row['password']);
+					//$msg = sprintf($this->pi_getLL('ll_forgot_email_password', '', 0), $row['email'], $row['username'], $row['password']);
+					$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_password',1), $row['email'], $row['username'], $row['password']);
 				} else {
-					$msg = sprintf($this->pi_getLL('ll_forgot_email_nopassword', '', 0), $this->piVars['forgot_email']);
+					//$msg = sprintf($this->pi_getLL('ll_forgot_email_nopassword', '', 0), $postData['forgot_email']);
+					$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_nopassword',1), $postData['forgot_email']);
 				}
 
-					// Generate new password with salted md5 and save it in user record
-					// assumption: extension t3sec_saltedpw loaded and is enabled for FE usage
-				if (t3lib_extMgm::isLoaded('t3sec_saltedpw')) {
-					require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
+				if ($row) {
+						// only generate email and possible password if user record was found
 
-					if (tx_t3secsaltedpw_div::isUsageEnabled()
-							&& $GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
-						require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php';
+						// Generate new password with salted md5 and save it in user record
+						// assumption: extension t3sec_saltedpw loaded
+					if (t3lib_extMgm::isLoaded('t3sec_saltedpw')) {
+						require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
 
-						$newPass = $this->generatePassword(8);
-						$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
-						$saltedPass = $objPHPass->getHashedPassword($newPass);
-						$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
-							'fe_users',
-							'uid=' . $row['uid'],
-							array('password' => $saltedPass)
-						);
-						$msg = sprintf($this->pi_getLL('ll_forgot_email_password', '', 0),$this->piVars['forgot_email'], $row['username'], $newPass);
+						if (tx_t3secsaltedpw_div::isUsageEnabled()) {
+							require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php';
+
+							$newPass = $this->generatePassword(8);
+							$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
+							$saltedPass = $objPHPass->getHashedPassword($newPass);
+							$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
+								'fe_users',
+								'uid=' . $row['uid'],
+								array('password' => $saltedPass)
+							);
+							//$msg = sprintf($this->pi_getLL('ll_forgot_email_password', '', 0), $postData['forgot_email'], $row['username'], $newPass);
+							$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_password',1), $postData['forgot_email'], $row['username'], $newPass);
+						}
 					}
-				}
 
-				$this->cObj->sendNotifyEmail($msg, $this->piVars['forgot_email'], '', $this->conf['email_from'], $this->conf['email_fromName'], $this->conf['replyTo']);
-				$markerArray['###STATUS_MESSAGE###'] = $this->cObj->stdWrap(sprintf($this->pi_getLL('ll_forgot_message_emailSent', '', 1), '<em>' . htmlspecialchars($this->piVars['forgot_email']) .'</em>'), $this->conf['forgotMessage_stdWrap.']);
+
+					$this->cObj->sendNotifyEmail($msg, $row['email'], '', $this->conf['email_from'], $this->conf['email_fromName'], $this->conf['replyTo']);
+				}
+					// generate message
+				//$markerArray['###STATUS_MESSAGE###'] = $this->cObj->stdWrap(sprintf($this->pi_getLL('ll_forgot_message_emailSent', '', 1), '<em>' . htmlspecialchars($postData['forgot_email']) .'</em>'), $this->conf['forgotMessage_stdWrap.']);
+				$markerArray['###STATUS_MESSAGE###'] = $this->cObj->stdWrap(sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_message_emailSent',1), '<em>' . htmlspecialchars($postData['forgot_email']) .'</em>'), $this->conf['forgotMessage_stdWrap.']);
 				$subpartArray['###FORGOT_FORM###'] = '';
 
 
 			} else {
 					//wrong email
-				$markerArray['###STATUS_MESSAGE###'] = $this->getDisplayText('forgot_message',$this->conf['forgotMessage_stdWrap.']);
+				$markerArray['###STATUS_MESSAGE###'] = $this->getDisplayText('forgot_message', $this->conf['forgotMessage_stdWrap.']);
 				$markerArray['###BACKLINK_LOGIN###'] = '';
 			}
 		} else {
-			$markerArray['###STATUS_MESSAGE###'] = $this->getDisplayText('forgot_message',$this->conf['forgotMessage_stdWrap.']);
+			$markerArray['###STATUS_MESSAGE###'] = $this->getDisplayText('forgot_message', $this->conf['forgotMessage_stdWrap.']);
 			$markerArray['###BACKLINK_LOGIN###'] = '';
 		}
 
-		$markerArray['###BACKLINK_LOGIN###'] = $this->getPageLink($this->pi_getLL('ll_forgot_header_backToLogin', '', 1), array());
-		$markerArray['###STATUS_HEADER###'] = $this->getDisplayText('forgot_header',$this->conf['forgotHeader_stdWrap.']);
+		//$markerArray['###BACKLINK_LOGIN###'] = $this->getPageLink($this->pi_getLL('ll_forgot_header_backToLogin', '', 1), array());
+		$markerArray['###BACKLINK_LOGIN###'] = $this->getPageLink($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_header_backToLogin',1), array());
+		$markerArray['###STATUS_HEADER###'] = $this->getDisplayText('forgot_header', $this->conf['forgotHeader_stdWrap.']);
 
-		$markerArray['###LEGEND###'] = $this->pi_getLL('send_password', '', 1);
-		$markerArray['###ACTION_URI###'] = $this->getPageLink('',array($this->prefixId.'[forgot]'=>1),true);
-		$markerArray['###EMAIL_LABEL###'] = $this->pi_getLL('your_email', '', 1);
-		$markerArray['###FORGOT_PASSWORD_ENTEREMAIL###'] = $this->pi_getLL('forgot_password_enterEmail', '', 1);
+		//$markerArray['###LEGEND###'] = $this->pi_getLL('send_password', '', 1);
+		$markerArray['###LEGEND###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:send_password',1);
+		$markerArray['###ACTION_URI###'] = $this->getPageLink('', array($this->prefixId . '[forgot]'=>1), true);
+		//$markerArray['###EMAIL_LABEL###'] = $this->pi_getLL('your_email', '', 1);
+		$markerArray['###EMAIL_LABEL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:your_email',1);
+		//$markerArray['###FORGOT_PASSWORD_ENTEREMAIL###'] = $this->pi_getLL('forgot_password_enterEmail', '', 1);
+		$markerArray['###FORGOT_PASSWORD_ENTEREMAIL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:forgot_password_enterEmail',1);
 		$markerArray['###FORGOT_EMAIL###'] = $this->prefixId.'[forgot_email]';
-		$markerArray['###SEND_PASSWORD###'] = $this->pi_getLL('send_password', '', 1);
+		//$markerArray['###SEND_PASSWORD###'] = $this->pi_getLL('send_password', '', 1);
+		$markerArray['###SEND_PASSWORD###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:send_password',1);
+		//$markerArray['###DATA_LABEL###'] = $this->pi_getLL('ll_enter_your_data', '', 1);
+		$markerArray['###DATA_LABEL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_enter_your_data',1);
+
+
+
+		$markerArray = array_merge($markerArray, $this->getUserFieldMarkers());
+
+			// generate hash
+		$hash = md5($this->generatePassword(3));
+		$markerArray['###FORGOTHASH###'] = $hash;
+			// set hash in feuser session
+		$GLOBALS["TSFE"]->fe_user->setKey('ses', 'forgot_hash', array('forgot_hash' => $hash));
 
 		return $this->cObj->substituteMarkerArrayCached($subpart, $markerArray, $subpartArray, $linkpartArray);
 	}

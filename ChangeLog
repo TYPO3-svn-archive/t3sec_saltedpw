@@ -1,3 +1,7 @@
+2008-11-27  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Fix bug: add bulk processing protection for sysext felogin
+
 2008-11-26  Marcus Krause   <marcus#exp2008@t3sec.info>
 
 	* Feature: extend update functionality to be_users records also
