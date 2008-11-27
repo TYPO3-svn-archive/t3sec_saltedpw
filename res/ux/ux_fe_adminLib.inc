@@ -55,6 +55,153 @@ require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3s
  */
 class ux_user_feAdmin extends user_feAdmin	{
 
+	/**
+	 * Subfunction for displayEditScreen(); Takes a record and creates an edit form based on the template code for it.
+	 * This function is called if the user is editing a record and permitted to do so. Checked in displayEditScreen()
+	 *
+	 * This function overrides that one in the parent class. It clears
+	 * the password field.
+	 *
+	 * @param	array		The array with the record to edit
+	 * @return	string		HTML content
+	 * @access  private
+	 * @see                 parent::displayEditForm()
+	 * @see                 parent::displayEditScreen()
+	 */
+	function displayEditForm($origArr) {
+		$origArr['password'] = '';
+		return parent::displayEditForm($origArr);
+	}
+
+	/**
+	 * This will evaluate the input values from $this->dataArr to see if they conforms with the requirements configured in TypoScript per field.
+	 * For example this could be checking if a field contains a valid email address, a unique value, a value within a certain range etc.
+	 * It will populate arrays like $this->failure and $this->failureMsg with error messages (which can later be displayed in the template). Mostly it does NOT alter $this->dataArr (such parsing of values was done by parseValues())
+	 * Works based on configuration in TypoScript key [create/edit].evalValues
+	 *
+	 * @return	void
+	 * @see init(), parseValues()
+	 */
+	function evalValues()	{
+		// Check required, set failure if not ok.
+		reset($this->requiredArr);
+		$tempArr=array();
+		while(list(,$theField)=each($this->requiredArr))	{
+			if (!trim($this->dataArr[$theField]))	{
+				$tempArr[]=$theField;
+			}
+		}
+
+		// Evaluate: This evaluates for more advanced things than 'required' does. But it returns the same error code, so you must let the required-message tell, if further evaluation has failed!
+		$recExist=0;
+		if (is_array($this->conf[$this->cmdKey.'.']['evalValues.']))	{
+			switch($this->cmd)	{
+				case 'edit':
+					if (isset($this->dataArr['pid']))	{			// This may be tricked if the input has the pid-field set but the edit-field list does NOT allow the pid to be edited. Then the pid may be false.
+						$recordTestPid = intval($this->dataArr['pid']);
+					} else {
+						$tempRecArr = $GLOBALS['TSFE']->sys_page->getRawRecord($this->theTable,$this->dataArr['uid']);
+						$recordTestPid = intval($tempRecArr['pid']);
+					}
+					$recExist=1;
+				break;
+				default:
+					$recordTestPid = $this->thePid ? $this->thePid : t3lib_div::intval_positive($this->dataArr['pid']);
+				break;
+			}
+
+			reset($this->conf[$this->cmdKey.'.']['evalValues.']);
+			while(list($theField,$theValue)=each($this->conf[$this->cmdKey.'.']['evalValues.']))	{
+				$listOfCommands = t3lib_div::trimExplode(',',$theValue,1);
+				while(list(,$cmd)=each($listOfCommands))	{
+					$cmdParts = split('\[|\]',$cmd);	// Point is to enable parameters after each command enclosed in brackets [..]. These will be in position 1 in the array.
+					$theCmd = trim($cmdParts[0]);
+					switch($theCmd)	{
+						case 'uniqueGlobal':
+							if ($DBrows = $GLOBALS['TSFE']->sys_page->getRecordsByField($this->theTable,$theField,$this->dataArr[$theField],'','','','1'))	{
+								if (!$recExist || $DBrows[0]['uid']!=$this->dataArr['uid'])	{	// Only issue an error if the record is not existing (if new...) and if the record with the false value selected was not our self.
+									$tempArr[]=$theField;
+									$this->failureMsg[$theField][] = $this->getFailure($theField, $theCmd, 'The value existed already. Enter a new value.');
+								}
+							}
+						break;
+						case 'uniqueLocal':
+							if ($DBrows = $GLOBALS['TSFE']->sys_page->getRecordsByField($this->theTable,$theField,$this->dataArr[$theField], 'AND pid IN ('.$recordTestPid.')','','','1'))	{
+								if (!$recExist || $DBrows[0]['uid']!=$this->dataArr['uid'])	{	// Only issue an error if the record is not existing (if new...) and if the record with the false value selected was not our self.
+									$tempArr[]=$theField;
+									$this->failureMsg[$theField][] = $this->getFailure($theField, $theCmd, 'The value existed already. Enter a new value.');
+								}
+							}
+						break;
+						case 'twice':
+							if (strcmp($this->dataArr[$theField], $this->dataArr[$theField.'_again']))	{
+								$tempArr[]=$theField;
+								$this->failureMsg[$theField][] = $this->getFailure($theField, $theCmd, 'You must enter the same value twice');
+							}
+						break;
+						case 'email':
+							if (!$this->cObj->checkEmail($this->dataArr[$theField]))	{
+								$tempArr[]=$theField;
+								$this->failureMsg[$theField][] = $this->getFailure($theField, $theCmd, 'You must enter a valid email address');
+							}
+						break;
+						case 'required':
+							if (!trim($this->dataArr[$theField]))	{
+								$tempArr[]=$theField;
+								$this->failureMsg[$theField][] = $this->getFailure($theField, $theCmd, 'You must enter a value!');
+							}
+						break;
+						case 'atLeast':
+							$chars=intval($cmdParts[1]);
+							if (strlen($this->dataArr[$theField])<$chars)	{
+								$tempArr[]=$theField;
+								$this->failureMsg[$theField][] = sprintf($this->getFailure($theField, $theCmd, 'You must enter at least %s characters!'), $chars);
+							}
+						break;
+						case 'atLeastOrEmpty':
+							$chars=intval($cmdParts[1]);
+							if (strlen($this->dataArr[$theField]) && strlen($this->dataArr[$theField])<$chars)	{
+								$tempArr[]=$theField;
+								$this->failureMsg[$theField][] = sprintf($this->getFailure($theField, $theCmd, 'You must enter at least %s characters!'), $chars);
+							}
+						break;
+						case 'atMost':
+							$chars=intval($cmdParts[1]);
+							if (strlen($this->dataArr[$theField])>$chars)	{
+								$tempArr[]=$theField;
+								$this->failureMsg[$theField][] = sprintf($this->getFailure($theField, $theCmd, 'You must enter at most %s characters!'), $chars);
+							}
+						break;
+						case 'inBranch':
+							$pars = explode(';',$cmdParts[1]);
+							if (intval($pars[0]))	{
+								$pid_list = $this->cObj->getTreeList(
+									intval($pars[0]),
+									intval($pars[1]) ? intval($pars[1]) : 999,
+									intval($pars[2])
+								);
+								if (!$pid_list || !t3lib_div::inList($pid_list,$this->dataArr[$theField]))	{
+									$tempArr[]=$theField;
+									$this->failureMsg[$theField][] = sprintf($this->getFailure($theField, $theCmd, 'The value was not a valid valud from this list: %s'), $pid_list);
+								}
+							}
+						break;
+						case 'unsetEmpty':
+							if (!$this->dataArr[$theField])	{
+								$hash = array_flip($tempArr);
+								unset($hash[$theField]);
+								$tempArr = array_keys($hash);
+								unset($this->failureMsg[$theField]);
+								unset($this->dataArr[$theField]);	// This should prevent the field from entering the database.
+							}
+						break;
+					}
+				}
+				$this->markerArray['###EVAL_ERROR_FIELD_'.$theField.'###'] = is_array($this->failureMsg[$theField]) ? implode('<br />',$this->failureMsg[$theField]) : '';
+			}
+		}
+		$this->failure=implode(',',$tempArr);	 //$failure will show which fields were not OK
+	}
 
 	/**
 	 * Performs processing on the values found in the input data array, $this->dataArr.
@@ -151,15 +298,81 @@ class ux_user_feAdmin extends user_feAdmin	{
 								// value not recognized as hashed password of Portable PHP hashing framework
 								// -> either clear-text one or an updated one created by Portable PHP hashing framework (prefix C||M)
 							if ($updateNeeded && !(strlen($this->dataArr[$theField]) == 35 && 0 == strcmp(substr($this->dataArr[$theField],1,3), '$P$'))) {
-								$this->dataArr[$theField] = $objPHPass->getHashedPassword($this->dataArr[$theField]);
+								$this->dataArr[$theField . '_parsed'] = $objPHPass->getHashedPassword($this->dataArr[$theField]);
 							}
 							if ($updateNeeded && isset($this->dataArr[$theField . '_again'])) {
-								$this->dataArr[$theField . '_again'] =  $this->dataArr[$theField];
+								$this->dataArr[$theField . '_again_parsed'] = $this->dataArr[$theField . '_parsed'];
 							}
 						break;
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Performs the saving of records, either edited or created.
+	 *
+	 * @return	void
+	 * @see init()
+	 */
+	function save()	{
+		switch($this->cmd)	{
+			case 'edit':
+				$theUid = $this->dataArr['uid'];
+				$origArr = $GLOBALS['TSFE']->sys_page->getRawRecord($this->theTable,$theUid);		// Fetches the original record to check permissions
+				if ($this->conf['edit'] && ($GLOBALS['TSFE']->loginUser || $this->aCAuth($origArr)))	{	// Must be logged in in order to edit  (OR be validated by email)
+					$newFieldList = implode(',',array_intersect(explode(',',$this->fieldList),t3lib_div::trimExplode(',',$this->conf['edit.']['fields'],1)));
+					if ($this->aCAuth($origArr) || $this->cObj->DBmayFEUserEdit($this->theTable,$origArr,$GLOBALS['TSFE']->fe_user->user,$this->conf['allowedGroups'],$this->conf['fe_userEditSelf']))	{
+						$dataArr_new = array();
+						foreach ($this->dataArr as $k=>$v) {
+							$matches = array();
+							if (preg_match('#^(.*)_parsed$#', $k, $matches)) {
+								$dataArr_new[$matches[1]] = $v;
+							} else {
+								$dataArr_new[$k] = $v;
+							}
+						}
+						$this->dataArr = $dataArr_new;
+						$this->cObj->DBgetUpdate($this->theTable, $theUid, $this->dataArr, $newFieldList, TRUE);
+						$this->currentArr = $GLOBALS['TSFE']->sys_page->getRawRecord($this->theTable,$theUid);
+						$this->userProcess_alt($this->conf['edit.']['userFunc_afterSave'],$this->conf['edit.']['userFunc_afterSave.'],array('rec'=>$this->currentArr, 'origRec'=>$origArr));
+						$this->saved=1;
+					} else {
+						$this->error='###TEMPLATE_NO_PERMISSIONS###';
+					}
+				}
+			break;
+			default:
+				if ($this->conf['create'])	{
+					$newFieldList = implode(',',array_intersect(explode(',',$this->fieldList),t3lib_div::trimExplode(',',$this->conf['create.']['fields'],1)));
+					$this->cObj->DBgetInsert($this->theTable, $this->thePid, $this->dataArr, $newFieldList, TRUE);
+					$newId = $GLOBALS['TYPO3_DB']->sql_insert_id();
+
+					if ($this->theTable=='fe_users' && $this->conf['fe_userOwnSelf'])	{		// enables users, creating logins, to own them self.
+						$extraList='';
+						$dataArr = array();
+						if ($GLOBALS['TCA'][$this->theTable]['ctrl']['fe_cruser_id'])		{
+							$field=$GLOBALS['TCA'][$this->theTable]['ctrl']['fe_cruser_id'];
+							$dataArr[$field]=$newId;
+							$extraList.=','.$field;
+						}
+						if ($GLOBALS['TCA'][$this->theTable]['ctrl']['fe_crgroup_id'])	{
+							$field=$GLOBALS['TCA'][$this->theTable]['ctrl']['fe_crgroup_id'];
+							list($dataArr[$field])=explode(',',$this->dataArr['usergroup']);
+							$dataArr[$field]=intval($dataArr[$field]);
+							$extraList.=','.$field;
+						}
+						if (count($dataArr))	{
+							$this->cObj->DBgetUpdate($this->theTable, $newId, $dataArr, $extraList, TRUE);
+						}
+					}
+
+					$this->currentArr = $GLOBALS['TSFE']->sys_page->getRawRecord($this->theTable,$newId);
+					$this->userProcess_alt($this->conf['create.']['userFunc_afterSave'],$this->conf['create.']['userFunc_afterSave.'],array('rec'=>$this->currentArr));
+					$this->saved=1;
+				}
+			break;
 		}
 	}
 
