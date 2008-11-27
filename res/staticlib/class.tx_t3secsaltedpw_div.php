@@ -154,7 +154,7 @@ class tx_t3secsaltedpw_div  {
 		 * @static
 		 * @access  public
 		 * @since   2008-11-22
-		 * @return  boolean     true, is salted password hashes are used in the
+		 * @return  boolean     true, if salted password hashes are used in the
 		 *                      TYPO3_MODE, otherwise false
 		 */
 		public static function isUsageEnabled() {
