@@ -11,7 +11,7 @@
 ########################################################################
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'TYPO3 Security - Salted FE and BE user password hashes',
+	'title' => 'TYPO3 Security - Salted user password hashes',
 	'description' => 'Uses Portable PHP password hashing framework for storing passwords. Integrates into system extension "felogin" and extension "feuser_admin". Use SSL to secure datatransfer! PLEASE READ MANUAL FIRST!',
 	'category' => 'services',
 	'shy' => 0,

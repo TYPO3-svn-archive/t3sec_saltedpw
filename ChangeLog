@@ -1,3 +1,7 @@
+2008-12-10  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Bugfix #2242: Extension title too long
+
 2008-11-27  Marcus Krause   <marcus#exp2008@t3sec.info>
 
 	* Limit felogin XCLASS usage to TYPO3 versions below 4.2.4
