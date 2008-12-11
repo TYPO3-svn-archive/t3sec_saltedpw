@@ -83,31 +83,28 @@ class tx_t3secsaltedpw_div  {
 		 *   The number of characters (bytes) to return in the string.
 		 */
 		public static function generateRandomBytes($count)  {
-				// We initialize with the somewhat random PHP process ID on the first call.
-			if (empty($random_state)) {
-				$random_state = getmypid();
-			}
+
 			$output = '';
+
 				// /dev/urandom is available on many *nix systems and is considered the best
 				// commonly available pseudo-random source.
-			if ($fh = @fopen('/dev/urandom', 'rb')) {
+			if (TYPO3_OS != 'WIN' && ($fh = @fopen('/dev/urandom', 'rb'))) {
 				$output = fread($fh, $count);
 				fclose($fh);
 			}
-				// If /dev/urandom is not available or returns no bytes, this loop will
-				// generate a good set of pseudo-random bytes on any system.
-				// Note that it may be important that our $random_state is passed
-				// through md5() prior to being rolled into $output, that the two md5()
-				// invocations are different, and that the extra input into the first one -
-				// the microtime() - is prepended rather than appended.  This is to avoid
-				// directly leaking $random_state via the $output stream, which could
-				// allow for trivial prediction of further "random" numbers.
-			while (!isset($output{$count - 1})) {
-					// while (strlen($output) < $count)
-				$random_state = md5(microtime() . mt_rand() . $random_state);
-				$output .= md5(mt_rand() . $random_state, true);
+
+					// fallback if /dev/urandom is not available
+			if (!isset($output{$count - 1})) {
+					// We initialize with the somewhat random.
+				$randomState = $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']
+								. microtime() . getmypid();
+				while (!isset($output{$count - 1})) {
+					$randomState = md5(microtime() . mt_rand() . $randomState);
+					$output .= md5(mt_rand() . $randomState, true);
+				}
+				$output = substr($output, 0, $count);
 			}
-			return substr($output, 0, $count);
+			return $output;
 		}
 
 		/**

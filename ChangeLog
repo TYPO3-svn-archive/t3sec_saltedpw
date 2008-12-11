@@ -1,3 +1,7 @@
+2008-12-11  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Feature #2300: Backport improvements introduced by new method in trunk::t3lib_div
+
 2008-12-10  Marcus Krause   <marcus#exp2008@t3sec.info>
 
 	* Bugfix #2242: Extension title too long
