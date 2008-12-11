@@ -32,6 +32,10 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
+	// Make sure that we are executed only in TYPO3 context
+if (!defined ("TYPO3_MODE")) die ("Access denied.");
+
+require_once (PATH_t3lib.'class.t3lib_div.php');
 
 /**
  * Class that provides update functionality for existing user records.

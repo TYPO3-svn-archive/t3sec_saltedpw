@@ -32,9 +32,9 @@
  * @author	Marcus Krause <marcus#exp2008@t3sec.info>
  */
 
-require_once (t3lib_extMgm::extPath('phpunit').'class.tx_phpunit_testcase.php');
-require_once (t3lib_extMgm::extPath('t3sec_saltedpw').'res/lib/class.tx_t3secsaltedpw_phpass.php');
-require_once (t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php');
+require_once t3lib_extMgm::extPath('phpunit', 'class.tx_phpunit_testcase.php');
+require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/lib/class.tx_t3secsaltedpw_phpass.php');
+require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3secsaltedpw_div.php');
 
 /**
  * Class implementing unit test(s) for extension t3sec_saltedpw, in detail

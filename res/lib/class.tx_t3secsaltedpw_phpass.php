@@ -45,7 +45,8 @@
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
-require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
+require_once (PATH_t3lib.'class.t3lib_div.php');
+require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3secsaltedpw_div.php');
 
 
 /**
@@ -248,8 +249,14 @@ class tx_t3secsaltedpw_phpass {
 			// We encode the final log2 iteration count in base 64.
 		$itoa64 = $this->getItoa64();
 		$output .= $itoa64[min($countLog2, $this->getMaxHashCount())];
+
 			// 6 bytes is the standard salt for a portable phpass hash.
-		$output .= $this->base64Encode(tx_t3secsaltedpw_div::generateRandomBytes(6), 6);
+		if (version_compare(TYPO3_branch, '4.3', '>=')) {
+			$randomBytes = t3lib_div::generateRandomBytes(6);
+		} else {
+			$randomBytes = tx_t3secsaltedpw_div::generateRandomBytes(6);
+		}
+		$output .= $this->base64Encode($randomBytes, 6);
 		return $output;
 	}
 

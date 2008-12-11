@@ -1,7 +1,8 @@
 2008-12-11  Marcus Krause   <marcus#exp2008@t3sec.info>
 
-	* Feature #2301: Use randomBytes generator to create passwords
 	* Feature #2300: Backport improvements introduced by new method in trunk::t3lib_div
+	* Feature #2301: Use randomBytes generator to create passwords
+	* Feature #2302: Use randomBytes generator of t3lib_div for TYPO3 versions >= 4.3
 
 2008-12-10  Marcus Krause   <marcus#exp2008@t3sec.info>
 
