@@ -49,38 +49,45 @@ class tx_t3secsaltedpw_div  {
 		 */
 		const EXTKEY = 't3sec_saltedpw';
 
+		/**
+		 * Keeps pool of possible password characters.
+		 *
+		 */
+		const PASSWORDCHARS = 'abcdefghkmnopqrstuvwxyz023456789';
+
 
 		/**
 		 * Function creates a password.
 		 *
-		 * @param   integer $len  length of password to be created
-		 * @return  string        created password
+		 * @param   integer  length of password to be created
+		 * @return  string   created password
 		 */
 		public static function generatePassword($len) {
-			$pass = "";
-			while ($len--) {
-				$char = rand(0,35);
-				if ($char < 10) {
-					$pass .= ''.$char;
-				} else {
-					$pass .= chr($char-10+97);
-				}
+
+			if (version_compare(TYPO3_branch, '4.3', '>=')) {
+				$randomBytes = t3lib_div::generateRandomBytes($len);
+			} else {
+				$randomBytes = self::generateRandomBytes($len);
 			}
-			return $pass;
+			$passwordChars = self::PASSWORDCHARS;
+			$password = '';
+			while ($len-- > 0) {
+				$password .= $passwordChars{ord($randomBytes{$len}) & 0x1F};
+			}
+			return $password;
 		}
 
 
 		/**
 		 * Returns a string of highly randomized bytes (over the full 8-bit range).
 		 *
-		 * This function is better than simply calling mt_rand() or any other built-in
-		 * PHP function because it can return a long string of bytes (compared to < 4
-		 * bytes normally from mt_rand()) and uses the best available pseudo-random source.
+		 * @copyright  Drupal CMS
+		 * @license    GNU General Public License version 2
 		 *
-		 * retrieved from Drupal CMS
-		 *
-		 * @param $count
-		 *   The number of characters (bytes) to return in the string.
+		 * @static
+		 * @access  public
+		 * @param   integer  number of characters (bytes) to return
+		 * @return  string   random bytes
 		 */
 		public static function generateRandomBytes($count)  {
 
@@ -108,12 +115,24 @@ class tx_t3secsaltedpw_div  {
 		}
 
 		/**
+		 * Returns pool of password characters.
+		 *
+		 * @static
+		 * @access  public
+		 * @return  string  password character pool
+		 */
+		public static function getPasswordChars() {
+			return self::PASSWORDCHARS;
+		}
+
+		/**
 		 * Returns extension configuration data from $TYPO3_CONF_VARS (configurable in Extension Manager)
 		 *
 		 * @author  Rainer Kuhn <kuhn@punkt.de>
 		 * @author  Marcus Krause <marcus#exp2008@t3sec.info>
 		 *
 		 * @static
+		 * @access  public
 		 * @param   string      extension key of the extension to get its configuration (optional);
 		 * 						if obmitted, the configuration of this extension is returned
 		 * @return  array       extension configuration data
@@ -136,7 +155,8 @@ class tx_t3secsaltedpw_div  {
 		 * Returns default configuration of this extension.
 		 *
 		 * @static
-		 * @return  array  extension configuration data from localconf.php
+		 * @access  public
+		 * @return  array   extension configuration data from localconf.php
 		 */
 		public static function returnExtConfDefaults() {
 			return array(   'onlyAuthService' => '0',

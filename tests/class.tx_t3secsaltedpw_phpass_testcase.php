@@ -104,5 +104,23 @@ class tx_t3secsaltedpw_phpass_testcase extends tx_phpunit_testcase {
 		$updateHash = 'M' . $this->objPHPass->getHashedPassword($md5Hash, 11);
 		$this->assertFalse($this->objPHPass->checkPassword($this->testPasswd, $updateHash));
 	}
+
+	public function testPasswordLength() {
+		$len = 32;
+		$pass = tx_t3secsaltedpw_div::generatePassword($len);
+		$this->assertEquals(strlen($pass), $len);
+	}
+
+	public function testPasswordCharPool() {
+		$len = 32;
+		$pass = tx_t3secsaltedpw_div::generatePassword($len);
+		$passPool = tx_t3secsaltedpw_div::getPasswordChars();
+		$found = true;
+		while ($len-- > 0) {
+			$pos = stripos($passPool,$pass{$len});
+			if ($pos === false) $found = false;
+		}
+		$this->assertTrue($found);
+	}
 }
 ?>
