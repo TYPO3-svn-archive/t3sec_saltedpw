@@ -1,3 +1,8 @@
+2008-12-13  Marcus Krause   <marcus#exp2008@t3sec.info>
+
+	* Bug #2241: Manual gets not rendered on typo3.org
+	* Bug #2243: Refer to forge instead of bugtracker in regards to extension bugs.
+
 2008-12-11  Marcus Krause   <marcus#exp2008@t3sec.info>
 
 	* Feature #2300: Backport improvements introduced by new method in trunk::t3lib_div
