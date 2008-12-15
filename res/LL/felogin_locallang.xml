@@ -114,6 +114,7 @@ Wir konnten keine mit dem angegeben Benutzernamen verknüpfte Email-Adresse find
 						<label index="ll_forgot_message">Bitte geben Sie die Email Adresse ein, mit der Sie sich registiert haben. Anschließend klicken Sie auf &quot;Passwort senden&quot; und Ihr Passwort wird Ihnen umgehend zugesendet. Achten Sie auf die korrekte schreibweise Ihrer Email-Adresse.</label>
 						<label index="ll_forgot_message_emailSent">Ihr Passwort wurde nun zur Email Adresse %s gesendet</label>
 						<label index="ll_forgot_header_backToLogin">Zurück zum Anmeldeformular</label>
+						<label index="ll_enter_your_data">Benutzername oder Email Adresse ein:</label>
 				</languageKey>
 				<languageKey index="no" type="array">
 						<label index="ll_welcome_header">Brukerinnlogging</label>
@@ -214,6 +215,7 @@ Votre mot de passe est &quot;%s&quot;</label>
 						<label index="ll_forgot_message">Veuillez indiquer l'adresse mail que vous avez utilisée lors de la création de votre compte. Appuyez ensuite sur le bouton &quot;Envoyer le mot de passe&quot; et votre mot de passe vous sera directement envoyé par courrier électronique. Veillez à saisir correctement votre adresse mail.</label>
 						<label index="ll_forgot_message_emailSent">Votre mot de passe a été envoyé à l'adresse %s</label>
 						<label index="ll_forgot_header_backToLogin">Retourner au formulaire d'identification</label>
+						<label index="ll_enter_your_data">Nom d'utilisateur ou l'adresse mail:</label>
 				</languageKey>
 				<languageKey index="es" type="array">
 						<label index="ll_welcome_header">Iniciar sesión de usuario</label>
