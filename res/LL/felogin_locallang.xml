@@ -114,7 +114,7 @@ Wir konnten keine mit dem angegeben Benutzernamen verknüpfte Email-Adresse find
 						<label index="ll_forgot_message">Bitte geben Sie die Email Adresse ein, mit der Sie sich registiert haben. Anschließend klicken Sie auf &quot;Passwort senden&quot; und Ihr Passwort wird Ihnen umgehend zugesendet. Achten Sie auf die korrekte schreibweise Ihrer Email-Adresse.</label>
 						<label index="ll_forgot_message_emailSent">Ihr Passwort wurde nun zur Email Adresse %s gesendet</label>
 						<label index="ll_forgot_header_backToLogin">Zurück zum Anmeldeformular</label>
-						<label index="ll_enter_your_data">Benutzername oder Email Adresse ein:</label>
+						<label index="ll_enter_your_data">Benutzername oder Email Adresse:</label>
 				</languageKey>
 				<languageKey index="no" type="array">
 						<label index="ll_welcome_header">Brukerinnlogging</label>
