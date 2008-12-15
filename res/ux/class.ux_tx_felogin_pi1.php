@@ -65,7 +65,6 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 			$LANG = t3lib_div::makeInstance('language');
 			$LANG->init($GLOBALS['TSFE']->lang);
 		}
-		//return $this->flexFormValue($label,'s_messages') ? $this->cObj->stdWrap($this->flexFormValue($label,'s_messages'),$stdWrapArray) : $this->cObj->stdWrap($this->pi_getLL('ll_'.$label, '', 1), $stdWrapArray);
 		return $this->flexFormValue($label,'s_messages') ? $this->cObj->stdWrap($this->flexFormValue($label,'s_messages'),$stdWrapArray) : $this->cObj->stdWrap($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_'.$label,1), $stdWrapArray);
 	}
 
@@ -128,10 +127,8 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 
 				if ($GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
 					$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-					//$msg = sprintf($this->pi_getLL('ll_forgot_email_password', '', 0), $row['email'], $row['username'], $row['password']);
 					$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_password',1), $row['email'], $row['username'], $row['password']);
 				} else {
-					//$msg = sprintf($this->pi_getLL('ll_forgot_email_nopassword', '', 0), $postData['forgot_email']);
 					$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_nopassword',1), $postData['forgot_email']);
 				}
 
@@ -154,7 +151,6 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 								'uid=' . $row['uid'],
 								array('password' => $saltedPass)
 							);
-							//$msg = sprintf($this->pi_getLL('ll_forgot_email_password', '', 0), $postData['forgot_email'], $row['username'], $newPass);
 							$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_password',1), $postData['forgot_email'], $row['username'], $newPass);
 						}
 					}
@@ -163,7 +159,6 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 					$this->cObj->sendNotifyEmail($msg, $row['email'], '', $this->conf['email_from'], $this->conf['email_fromName'], $this->conf['replyTo']);
 				}
 					// generate message
-				//$markerArray['###STATUS_MESSAGE###'] = $this->cObj->stdWrap(sprintf($this->pi_getLL('ll_forgot_message_emailSent', '', 1), '<em>' . htmlspecialchars($postData['forgot_email']) .'</em>'), $this->conf['forgotMessage_stdWrap.']);
 				$markerArray['###STATUS_MESSAGE###'] = $this->cObj->stdWrap(sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_message_emailSent',1), '<em>' . htmlspecialchars($postData['forgot_email']) .'</em>'), $this->conf['forgotMessage_stdWrap.']);
 				$subpartArray['###FORGOT_FORM###'] = '';
 
@@ -178,21 +173,14 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 			$markerArray['###BACKLINK_LOGIN###'] = '';
 		}
 
-		//$markerArray['###BACKLINK_LOGIN###'] = $this->getPageLink($this->pi_getLL('ll_forgot_header_backToLogin', '', 1), array());
 		$markerArray['###BACKLINK_LOGIN###'] = $this->getPageLink($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_header_backToLogin',1), array());
 		$markerArray['###STATUS_HEADER###'] = $this->getDisplayText('forgot_header', $this->conf['forgotHeader_stdWrap.']);
-
-		//$markerArray['###LEGEND###'] = $this->pi_getLL('send_password', '', 1);
 		$markerArray['###LEGEND###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:send_password',1);
 		$markerArray['###ACTION_URI###'] = $this->getPageLink('', array($this->prefixId . '[forgot]'=>1), true);
-		//$markerArray['###EMAIL_LABEL###'] = $this->pi_getLL('your_email', '', 1);
 		$markerArray['###EMAIL_LABEL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:your_email',1);
-		//$markerArray['###FORGOT_PASSWORD_ENTEREMAIL###'] = $this->pi_getLL('forgot_password_enterEmail', '', 1);
 		$markerArray['###FORGOT_PASSWORD_ENTEREMAIL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:forgot_password_enterEmail',1);
 		$markerArray['###FORGOT_EMAIL###'] = $this->prefixId.'[forgot_email]';
-		//$markerArray['###SEND_PASSWORD###'] = $this->pi_getLL('send_password', '', 1);
 		$markerArray['###SEND_PASSWORD###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:send_password',1);
-		//$markerArray['###DATA_LABEL###'] = $this->pi_getLL('ll_enter_your_data', '', 1);
 		$markerArray['###DATA_LABEL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_enter_your_data',1);
 
 
