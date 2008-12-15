@@ -3,6 +3,7 @@
 	* Bug #2310: LL label "ll_enter_your_data" only available in english
 	* Bug #2311: ux_felogin_pi1: Send mail with password
 	* Bug #2312: $LANG not available
+	* Bug #2319: BE-User password is salted, but user auth is used the normal
 
 2008-12-13  Marcus Krause   <marcus#exp2008@t3sec.info>
 

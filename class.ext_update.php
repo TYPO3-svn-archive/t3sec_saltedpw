@@ -36,6 +36,7 @@
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 require_once (PATH_t3lib.'class.t3lib_div.php');
+require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3secsaltedpw_div.php');
 
 /**
  * Class that provides update functionality for existing user records.
@@ -147,8 +148,14 @@ class ext_update {
 	 *                   otherwise false
 	 */
 	function access() {
-		if ($this->checkRecentRecord() > 0) return true;
-		else return false;
+		$accessAllowed = false;
+			// allow updating existing passwords only when ext usage
+			// is enabled for either BE or FE or both
+		if (tx_t3secsaltedpw_div::isUsageEnabled('FE')
+				|| tx_t3secsaltedpw_div::isUsageEnabled('BE')) {
+			if ($this->checkRecentRecord() > 0) $accessAllowed = true;
+		}
+		return $accessAllowed;
 	}
 
 	/**

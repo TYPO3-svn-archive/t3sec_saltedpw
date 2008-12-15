@@ -36,6 +36,7 @@
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/lib/class.tx_t3secsaltedpw_phpass.php');
+require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3secsaltedpw_div.php');
 
 /**
  * Class implementing salted evaluation methods.
@@ -68,20 +69,22 @@ class tx_t3secsaltedpw_salted {
 	 * @return	The new value of the field
 	 */
 	function evaluateFieldValue($value, $is_in, &$set) {
-		$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
-		$updateNeeded = !empty($value) ? $objPHPass->isHashUpdateNeeded( $value ) : false;
-
-			// value not recognized as hashed password of Portable PHP hashing framework
-			// -> either clear-text one or an updated one created by Portable PHP hashing framework (prefix C||M)
-		if ($updateNeeded && !(strlen($value) == 35 && 0 == substr_compare($value, '$P$', 1, 3))) {
-				// TODO remove following if TCA eval functions are
-				//      properly considered for BE user passwords
-			if(TYPO3_MODE == 'BE'
-					&& preg_match('/[0-9abcdef]{32,32}/', $value)) {
-				$value = 'M' . $objPHPass->getHashedPassword($value);
-			} else {
-					// default
-				$value = $objPHPass->getHashedPassword($value);
+		if (tx_t3secsaltedpw_div::isUsageEnabled()) {
+			$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
+			$updateNeeded = !empty($value) ? $objPHPass->isHashUpdateNeeded( $value ) : false;
+	
+				// value not recognized as hashed password of Portable PHP hashing framework
+				// -> either clear-text one or an updated one created by Portable PHP hashing framework (prefix C||M)
+			if ($updateNeeded && !(strlen($value) == 35 && 0 == substr_compare($value, '$P$', 1, 3))) {
+					// TODO remove following if TCA eval functions are
+					//      properly considered for BE user passwords
+				if(TYPO3_MODE == 'BE'
+						&& preg_match('/[0-9abcdef]{32,32}/', $value)) {
+					$value = 'M' . $objPHPass->getHashedPassword($value);
+				} else {
+						// default
+					$value = $objPHPass->getHashedPassword($value);
+				}
 			}
 		}
 

@@ -179,9 +179,9 @@ class tx_t3secsaltedpw_div  {
 		 * @return  boolean     true, if salted password hashes are used in the
 		 *                      TYPO3_MODE, otherwise false
 		 */
-		public static function isUsageEnabled() {
+		public static function isUsageEnabled($mode = TYPO3_MODE) {
 				// Login Security Level Recognition
-			if (0 == strcmp($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['loginSecurityLevel'], 'normal')) {
+			if (0 == strcmp($GLOBALS['TYPO3_CONF_VARS'][$mode]['loginSecurityLevel'], 'normal')) {
 				return true;
 			}
 			return false;
