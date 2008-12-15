@@ -1,6 +1,7 @@
 2008-12-15  Marcus Krause   <marcus#exp2008@t3sec.info>
 
 	* Bug #2311: ux_felogin_pi1: Send mail with password
+	* Bug #2312: $LANG not available
 
 2008-12-13  Marcus Krause   <marcus#exp2008@t3sec.info>
 

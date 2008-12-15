@@ -36,6 +36,7 @@
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
+require_once t3lib_extMgm::extPath('lang', 'lang.php');
 
 /**
  * Plugin 'Website User Login' for the 'felogin' extension.
@@ -60,6 +61,10 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 	 */
 	protected function getDisplayText($label, $stdWrapArray=array()) {
 		global $LANG;
+		if (!$LANG) {
+			$LANG = t3lib_div::makeInstance('language');
+			$LANG->init($GLOBALS['TSFE']->lang);
+		}
 		//return $this->flexFormValue($label,'s_messages') ? $this->cObj->stdWrap($this->flexFormValue($label,'s_messages'),$stdWrapArray) : $this->cObj->stdWrap($this->pi_getLL('ll_'.$label, '', 1), $stdWrapArray);
 		return $this->flexFormValue($label,'s_messages') ? $this->cObj->stdWrap($this->flexFormValue($label,'s_messages'),$stdWrapArray) : $this->cObj->stdWrap($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_'.$label,1), $stdWrapArray);
 	}
@@ -90,6 +95,10 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 		*/
 	protected function showForgot() {
 		global $LANG;
+		if (!$LANG) {
+			$LANG = t3lib_div::makeInstance('language');
+			$LANG->init($GLOBALS['TSFE']->lang);
+		}
 
 			// Get Template
 		$templateFile = 'EXT:t3sec_saltedpw/res/tmpl/felogin_template.html';
