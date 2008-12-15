@@ -112,7 +112,7 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 					// look for user record
 				$data = $GLOBALS['TYPO3_DB']->fullQuoteStr($this->piVars['forgot_email'], 'fe_users');
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-					'uid, username, password',
+					'uid, username, password, email',
 					'fe_users',
 					'(email=' . $data .' OR username=' . $data . ') AND pid IN ('.$GLOBALS['TYPO3_DB']->cleanIntList($this->spid).') '.$this->cObj->enableFields('fe_users')
 				);
