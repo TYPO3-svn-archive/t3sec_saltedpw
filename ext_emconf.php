@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext: "t3sec_saltedpw"
 #
-# Auto generated 13-12-2008 19:10
+# Auto generated 15-12-2008 20:54
 #
 # Manual updates:
 # Only the data in the array - anything else is removed by next write.
@@ -31,7 +31,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'author_company' => 'TYPO3 Security Team',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
-	'version' => '0.2.0',
+	'version' => '0.2.1',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '4.2.0-0.0.0',
@@ -49,7 +49,7 @@ $EM_CONF[$_EXTKEY] = array(
 			'phpunit' => '',
 		),
 	),
-	'_md5_values_when_last_written' => 'a:22:{s:9:"ChangeLog";s:4:"5422";s:11:"LICENSE.txt";s:4:"6f86";s:20:"class.ext_update.php";s:4:"5831";s:21:"ext_conf_template.txt";s:4:"b755";s:12:"ext_icon.gif";s:4:"4324";s:17:"ext_localconf.php";s:4:"ac15";s:14:"ext_tables.php";s:4:"3398";s:14:"ext_tables.sql";s:4:"de0e";s:28:"ext_typoscript_constants.txt";s:4:"887f";s:24:"ext_typoscript_setup.txt";s:4:"8748";s:48:"tests/class.tx_t3secsaltedpw_phpass_testcase.php";s:4:"7cf7";s:34:"res/ux/class.ux_tx_felogin_pi1.php";s:4:"295f";s:30:"res/ux/class.ux_tx_install.php";s:4:"a4e6";s:25:"res/ux/ux_fe_adminLib.inc";s:4:"5d98";s:41:"res/lib/class.tx_t3secsaltedpw_phpass.php";s:4:"752b";s:31:"res/tmpl/fe_admin_fe_users.tmpl";s:4:"064e";s:30:"res/tmpl/felogin_template.html";s:4:"d3e0";s:44:"res/staticlib/class.tx_t3secsaltedpw_div.php";s:4:"3c69";s:28:"res/LL/felogin_locallang.xml";s:4:"de7b";s:42:"res/eval/class.tx_t3secsaltedpw_salted.php";s:4:"b05d";s:14:"doc/manual.sxw";s:4:"f329";s:34:"sv1/class.tx_t3secsaltedpw_sv1.php";s:4:"95f3";}',
+	'_md5_values_when_last_written' => 'a:22:{s:9:"ChangeLog";s:4:"13e3";s:11:"LICENSE.txt";s:4:"6f86";s:20:"class.ext_update.php";s:4:"c22f";s:21:"ext_conf_template.txt";s:4:"b755";s:12:"ext_icon.gif";s:4:"4324";s:17:"ext_localconf.php";s:4:"ac15";s:14:"ext_tables.php";s:4:"a58f";s:14:"ext_tables.sql";s:4:"de0e";s:28:"ext_typoscript_constants.txt";s:4:"887f";s:24:"ext_typoscript_setup.txt";s:4:"8748";s:48:"tests/class.tx_t3secsaltedpw_phpass_testcase.php";s:4:"7cf7";s:34:"res/ux/class.ux_tx_felogin_pi1.php";s:4:"4a7c";s:30:"res/ux/class.ux_tx_install.php";s:4:"a4e6";s:25:"res/ux/ux_fe_adminLib.inc";s:4:"5d98";s:41:"res/lib/class.tx_t3secsaltedpw_phpass.php";s:4:"752b";s:31:"res/tmpl/fe_admin_fe_users.tmpl";s:4:"064e";s:30:"res/tmpl/felogin_template.html";s:4:"d3e0";s:44:"res/staticlib/class.tx_t3secsaltedpw_div.php";s:4:"0815";s:28:"res/LL/felogin_locallang.xml";s:4:"94dc";s:42:"res/eval/class.tx_t3secsaltedpw_salted.php";s:4:"ec5c";s:14:"doc/manual.sxw";s:4:"4ccc";s:34:"sv1/class.tx_t3secsaltedpw_sv1.php";s:4:"95f3";}',
 	'suggests' => array(
 	),
 );
