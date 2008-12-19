@@ -126,8 +126,7 @@ class ext_update {
 		if ($sumRows) {
 			$passLen = array();
 			$row = $GLOBALS['TYPO3_DB']->sql_fetch_row($res);
-			if ((0 != strncmp($row[0], '$P$', 3))
-					&& 0 != substr_compare($row[0], '$P$', 1, 3)) {
+			if (!$this->isSaltPWHash($row[0])) {
 				switch($table) {
 					case 'be_users':    $result = self::NEED_UPDATE_BE;
 										break;
@@ -233,6 +232,20 @@ class ext_update {
 		$content.= '</fieldset><br><input name="update[]" value="Update" type="submit" style="font-weight: bold;"/>'
 				.  '</form>';
 		return $content;
+	}
+
+	/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $passStr
+	 * @return unknown
+	 */
+	function isSaltPWHash($passStr) {
+		if ((34 == strlen($passStr) && 0 == strncmp($passStr, '$P$', 3))
+				|| (35 == strlen($passStr) && 0 == substr_compare($passStr, '$P$', 1, 3)))
+			return true;
+		else
+			return false;
 	}
 
 	/**
