@@ -1,5 +1,6 @@
 2008-12-16  Marcus Krause   <marcus#exp2008@t3sec.info>
 
+	* Bug #2339: Extension key "t3sec_saltedpw" was NOT loaded
 	* Bug #2351: class.ext_update.php throws warning if current password length < 4
 
 2008-12-16  Marcus Krause   <marcus#exp2008@t3sec.info>
