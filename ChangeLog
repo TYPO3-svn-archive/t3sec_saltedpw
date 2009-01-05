@@ -1,14 +1,18 @@
-2008-12-16  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-12-16  Marcus Krause   <marcus#exp2009@t3sec.info>
+
+	* Task #2410: Adjust mail address of maintainer to reflect new year
+
+2008-12-16  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Bug #2339: Extension key "t3sec_saltedpw" was NOT loaded
 	* Bug #2351: class.ext_update.php throws warning if current password length < 4
 
-2008-12-16  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-12-16  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Task #2324: Improve wording and wording consistency in file ChangeLog
 	* Task #2325: Improve readability of extension manual
 
-2008-12-15  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-12-15  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Bugfix #2241:  Manual does not get rendered on typo3.org
 	* Bugfix #2310:  LL label "ll_enter_your_data" only available in english
@@ -18,54 +22,54 @@
 	* Task #2320:    Comment cleanup in felogin XCLASS
 
 
-2008-12-13  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-12-13  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Bugfix #2241: Manual does not get rendered on typo3.org
 	* Bugfix #2243: Refer to forge instead of bugtracker in regards to extension bugs.
 
 
-2008-12-11  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-12-11  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Feature #2300: Backport improvements introduced by new method in trunk::t3lib_div
 	* Feature #2301: Use randomBytes generator to create passwords
 	* Feature #2302: Use randomBytes generator of t3lib_div for TYPO3 versions >= 4.3
 
 
-2008-12-10  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-12-10  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Bugfix #2242: Extension title too long
 
 
-2008-11-27  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-27  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Limit felogin XCLASS usage to TYPO3 versions below 4.2.4
 	* Bugfix: add bulk processing protection for sysext felogin
 
 
-2008-11-26  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-26  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Feature: extend update functionality to be_users records also
 	* Commenting out XCLASS for sysext felogin
 
 
-2008-11-24  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-24  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Add extension manual
 
 
-2008-11-23  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-23  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Bugfix: Install tool was still creating md5 hashed passwords
 
 
-2008-11-22  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-22  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Centralize loginSecurityLevel check
 	* Bugfix: access method was not returning a boolean for empty tables
 	* Bugfix: ext felogin was always assuming that salted password hashes are used in the FE
 
 
-2008-11-21  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-21  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Add additional default eval und parse functions to TypoScript setup
 	* Bugfix in fe_adminLib.inc(CREATE): Salted password hashes were shown to user
@@ -78,13 +82,13 @@
 	* Bugfix in ->compareUident(): Plaintext passwords were treated as md5
 
 
-2008-11-20  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-20  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Take a user's lockDomain configuration into account
 	* Add service for BE user authentication
 
 
-2008-11-19  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-19  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Set service priority to 60 (> 50 [tx_sv_auth] && < 75 [OpenID])
 
@@ -99,6 +103,6 @@
 	* Changed "new" to t3lib_div::makeInstance()
 
 
-2008-11-14  Marcus Krause   <marcus#exp2008@t3sec.info>
+2008-11-14  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Initial work on this extension

@@ -4,7 +4,7 @@
 *
 *  (c) 2004-2006 Solar Designer (solar at openwall.com)
 *  (c) 2008      Dries Buytaert (dries at buytaert.net)
-*  (c) 2008      Marcus Krause  (marcus#exp2008@t3sec.info)
+*  (c) 2008      Marcus Krause  (marcus#exp2009@t3sec.info)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -39,7 +39,7 @@
  *
  * $Id$
  *
- * @author	Marcus Krause <marcus#exp2008@t3sec.info>
+ * @author	Marcus Krause <marcus#exp2009@t3sec.info>
  */
 
 	// Make sure that we are executed only in TYPO3 context
@@ -52,7 +52,7 @@ require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3s
 /**
  * Class implements Portable PHP password hashing framework.
  *
- * @author  	Marcus Krause <marcus#exp2008@t3sec.info>
+ * @author  	Marcus Krause <marcus#exp2009@t3sec.info>
  *
  * @since   	2008-11-16
  * @package     TYPO3

@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) Marcus Krause (marcus#exp2008@t3sec.info)
+*  (c) Marcus Krause (marcus#exp2009@t3sec.info)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -29,7 +29,7 @@
  *
  * $Id$
  *
- * @author	Marcus Krause <marcus#exp2008@t3sec.info>
+ * @author	Marcus Krause <marcus#exp2009@t3sec.info>
  */
 
 require_once t3lib_extMgm::extPath('phpunit', 'class.tx_phpunit_testcase.php');
@@ -42,7 +42,7 @@ require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3s
  *
  * Intended to be used with unit test extension phpunit.
  *
- * @author      Marcus Krause <marcus#exp2008@t3sec.info>
+ * @author      Marcus Krause <marcus#exp2009@t3sec.info>
  *
  * @since       2008-11-15
  * @package     TYPO3
