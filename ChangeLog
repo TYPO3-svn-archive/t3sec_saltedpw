@@ -3,6 +3,7 @@
 	* Bug #2439: In case of a modifed HASHCOUNT, a non-valid PHPass password would be set
 	* Bug #2438: Missing 2nd argument for method call updatePassword in service class
 	* Bug #2440: In PHPass method isHashUpdateNeeded() current hashcount is accessed by using class constant
+	* Feature #2441: Only require a hash update if hash count has been increased
 
 
 2009-01-06  Marcus Krause   <marcus#exp2009@t3sec.info>

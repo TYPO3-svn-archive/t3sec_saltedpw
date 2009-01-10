@@ -218,7 +218,8 @@ class tx_t3secsaltedpw_phpass {
 	 * Parses the log2 iteration count from a stored hash or setting string.
 	 *
 	 * @access  protected
-	 * @param   string     $setting  hash or to get log2 iteration count from
+	 * @param   string     $setting  complete hash or a hash's setting string or to get log2 iteration count from
+	 * @return  int                  used hashcount for given hash string
 	 */
 	protected function getCountLog2($setting) {
 		$itoa64 = $this->getItoa64();
@@ -347,7 +348,7 @@ class tx_t3secsaltedpw_phpass {
 			return true;
 		}
 			// Check whether the iteration count used differs from the standard number.
-		return ($this->getCountLog2($passString) != $this->getHashCount());
+		return ($this->getCountLog2($passString) < $this->getHashCount());
 	}
 
 	/**
