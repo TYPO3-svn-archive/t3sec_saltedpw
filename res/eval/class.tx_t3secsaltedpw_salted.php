@@ -75,10 +75,10 @@ class tx_t3secsaltedpw_salted {
 	
 				// value not recognized as hashed password of Portable PHP hashing framework
 				// -> either clear-text one or an updated one created by Portable PHP hashing framework (prefix C||M)
-			if ($updateNeeded && !(strlen($value) == 35 && 0 == substr_compare($value, '$P$', 1, 3))) {
+			if ($updateNeeded && !(strlen($value) == 35 && !substr_compare($value, '$P$', 1, 3))) {
 					// TODO remove following if TCA eval functions are
 					//      properly considered for BE user passwords
-				if(TYPO3_MODE == 'BE'
+				if(!strcmp(TYPO3_MODE, 'BE')
 						&& preg_match('/[0-9abcdef]{32,32}/', $value)) {
 					$value = 'M' . $objPHPass->getHashedPassword($value);
 				} else {

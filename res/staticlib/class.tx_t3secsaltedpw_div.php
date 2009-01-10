@@ -100,7 +100,7 @@ class tx_t3secsaltedpw_div  {
 
 				// /dev/urandom is available on many *nix systems and is considered the best
 				// commonly available pseudo-random source.
-			if (TYPO3_OS != 'WIN' && ($fh = @fopen('/dev/urandom', 'rb'))) {
+			if (strcmp(TYPO3_OS, 'WIN') && ($fh = @fopen('/dev/urandom', 'rb'))) {
 				$output = fread($fh, $count);
 				fclose($fh);
 			}
@@ -150,7 +150,7 @@ class tx_t3secsaltedpw_div  {
 			}
 
 				// load defaults if necessary
-			if ( empty($extConf) && 0 == strcmp($extKey, self::EXTKEY)) {
+			if ( empty($extConf) && !strcmp($extKey, self::EXTKEY)) {
 				$extConf = self::returnExtConfDefaults();
 			}
 			return $extConf;
@@ -181,7 +181,7 @@ class tx_t3secsaltedpw_div  {
 		 */
 		public static function isUsageEnabled($mode = TYPO3_MODE) {
 				// Login Security Level Recognition
-			if (0 == strcmp($GLOBALS['TYPO3_CONF_VARS'][$mode]['loginSecurityLevel'], 'normal')) {
+			if (!strcmp($GLOBALS['TYPO3_CONF_VARS'][$mode]['loginSecurityLevel'], 'normal')) {
 				return true;
 			}
 			return false;

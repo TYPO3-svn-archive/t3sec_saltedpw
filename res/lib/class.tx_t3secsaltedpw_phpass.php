@@ -166,7 +166,7 @@ class tx_t3secsaltedpw_phpass {
 	 */
 	public function checkPassword($plainPW, $saltedHashPW) {
 		$hash = $this->cryptPassword($plainPW, $saltedHashPW);
-		return ($hash && $saltedHashPW == $hash);
+		return ($hash && !strcmp($saltedHashPW, $hash));
 	}
 
 	/**
@@ -186,7 +186,7 @@ class tx_t3secsaltedpw_phpass {
 			// The first 12 characters of an existing hash are its setting string.
 		$setting = substr($setting, 0, 12);
 
-		if (0 != strncmp($setting, '$P$', 3)) return FALSE;
+		if (strncmp($setting, '$P$', 3)) return FALSE;
 
 		$count_log2 = self::getCountLog2($setting);
 			// Hashes may be imported from elsewhere, so we allow != HASH_COUNT
@@ -344,7 +344,7 @@ class tx_t3secsaltedpw_phpass {
 	 */
 	public function isHashUpdateNeeded($passString) {
 			// Check whether this was an updated password.
-		if ((0 != strncmp($passString, '$P$', 3)) || (strlen($passString) != 34)) {
+		if ((strncmp($passString, '$P$', 3)) || (strlen($passString) != 34)) {
 			return true;
 		}
 			// Check whether the iteration count used differs from the standard number.

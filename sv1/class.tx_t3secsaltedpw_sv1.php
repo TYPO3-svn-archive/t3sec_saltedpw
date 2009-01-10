@@ -111,43 +111,43 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 		$objPHPass   = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 
 			// could be merged; still here to clarify
-		if (TYPO3_MODE == 'BE') {
+		if (!strcmp(TYPO3_MODE, 'BE')) {
 			$password = $loginData['uident_text'];
-		} else if (TYPO3_MODE == 'FE') {
+		} else if (!strcmp(TYPO3_MODE, 'FE')) {
 			$password = $loginData['uident_text'];
 		}
 
 			// existing record is in format of Portable PHP password hashing framework
-		if (0 == strncmp($user['password'], '$P$', 3)) {
+		if (!strncmp($user['password'], '$P$', 3)) {
 			$validPasswd = $objPHPass->checkPassword($password, $user['password']);
 				// test if password needs hash update due to change of hash count value
 			if ($validPasswd && $objPHPass->isHashUpdateNeeded($user['password'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
 			}
 		} 	// we process also clear-text, md5 and passwords updated by Portable PHP password hashing framework
-		else if (1 != intval($this->extConf['forcePHPasswd'])) {
-			if (0 == strncmp($user['password'], 'M$P$', 4)) {
+		else if (!intval($this->extConf['forcePHPasswd'])) {
+			if (!strncmp($user['password'], 'M$P$', 4)) {
 				$validPasswd = $objPHPass->checkPassword(md5($password), substr($user['password'], 1));
 					// test if password needs to be updated
-				if ($validPasswd && 1 == intval($this->extConf['updatePasswd'])) {
+				if ($validPasswd && intval($this->extConf['updatePasswd'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
 				}
-			} else if (0 == strncmp($user['password'], 'C$P$', 4)) {
+			} else if (!strncmp($user['password'], 'C$P$', 4)) {
 				$validPasswd = $objPHPass->checkPassword($password, substr($user['password'], 1));
 					// test if password needs to be updated
-				if ($validPasswd && 1 == intval($this->extConf['updatePasswd'])) {
+				if ($validPasswd && intval($this->extConf['updatePasswd'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
 				}
 			} else if (preg_match('/[0-9abcdef]{32,32}/', $user['password'])) {
-				$validPasswd = (0 == strcmp(md5($password), $user['password']) ? true : false);
+				$validPasswd = (!strcmp(md5($password), $user['password']) ? true : false);
 					// test if password needs to be updated
-				if ($validPasswd && 1 == intval($this->extConf['updatePasswd'])) {
+				if ($validPasswd && intval($this->extConf['updatePasswd'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
 				}
 			} else {
-				$validPasswd = (0 == strcmp($password, $user['password']) ? true : false);
+				$validPasswd = (!strcmp($password, $user['password']) ? true : false);
 					// test if password needs to be updated
-				if ($validPasswd && 1 == intval($this->extConf['updatePasswd'])) {
+				if ($validPasswd && intval($this->extConf['updatePasswd'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
 				}
 			}
@@ -179,7 +179,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 									$this->login);
 			}
 
-			if (!$validPasswd && 1 == intval($this->extConf['onlyAuthService'])) {
+			if (!$validPasswd && intval($this->extConf['onlyAuthService'])) {
 					// Failed login attempt (wrong password) - no delegation to further services
 				$this->writeLog(TYPO3_MODE . ' Authentication failed - wrong password for username \'%s\'', $this->login['uname']);
 				$OK = 0;
@@ -187,7 +187,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 					// Failed login attempt (wrong password)
 				$this->writeLog("Login-attempt from %s, username '%s', password not accepted!",
 									$this->authInfo['REMOTE_ADDR'], $this->login['uname']);
-			}  else if ($validPasswd && $user['lockToDomain'] && $user['lockToDomain']!=$this->authInfo['HTTP_HOST'])	{
+			}  else if ($validPasswd && $user['lockToDomain'] && strcasecmp($user['lockToDomain'], $this->authInfo['HTTP_HOST']))	{
 					// Lock domain didn't match, so error:
 				$this->writeLog("Login-attempt from %s, username '%s', locked domain '%s' did not match '%s'!",
 									$this->authInfo['REMOTE_ADDR'], $this->login['uname'], $user['lockToDomain'], $this->authInfo['HTTP_HOST']);
@@ -208,7 +208,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 	 * @param   mixed      $updateFields  Field values as key=>value pairs to be updated in database
 	 */
 	protected function updatePassword($uid, $updateFields) {
-		if (TYPO3_MODE == 'BE') {
+		if (!strcmp(TYPO3_MODE, 'BE')) {
 				// BE
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery( 'be_users', sprintf('uid = %u', $uid), $updateFields);
 		} else {
@@ -242,7 +242,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 			array_shift($params);
 			$message = vsprintf($message, $params);
 		}
-		if (TYPO3_MODE == 'BE') {
+		if (!strcmp(TYPO3_MODE, 'BE')) {
 			t3lib_div::sysLog($message, $this->extKey, 1);
 		} else {
 			$GLOBALS['TT']->setTSlogMessage($message);

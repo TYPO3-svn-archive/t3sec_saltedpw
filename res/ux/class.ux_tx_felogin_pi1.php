@@ -114,7 +114,7 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 			$hashData = $GLOBALS["TSFE"]->fe_user->getKey('ses', 'forgot_hash');
 
 
-			if ($postedHash == $hashData['forgot_hash']) {
+			if (!strcmp($postedHash, $hashData['forgot_hash'])) {
 				$row = FALSE;
 
 					// look for user record

@@ -196,11 +196,11 @@ class ext_update {
 						.  '<strong>Please make sure that extension configuration variable '
 						.  '<i>forcePHPasswd</i> is disabled to use the updated passwords.</strong><br>'
 						.  'This variable is <strong>by default '
-						. (intval($extConfDefault['forcePHPasswd']) == 1 ? 'enabled' : 'disabled')
+						. (intval($extConfDefault['forcePHPasswd']) ? 'enabled' : 'disabled')
 						. '</strong>. ';
 
 				$content .= 'This variable is <strong>currently '
-						. (intval($extConf['forcePHPasswd']) == 1 ? 'enabled' : 'disabled')
+						. (intval($extConf['forcePHPasswd']) ? 'enabled' : 'disabled')
 						. '</strong>.</p>';
 			}
 		} else {
@@ -247,8 +247,8 @@ class ext_update {
 	 * @return unknown
 	 */
 	function isSaltPWHash($passStr) {
-		if ((34 == strlen($passStr) && 0 == strncmp($passStr, '$P$', 3))
-				|| (35 == strlen($passStr) && 0 == substr_compare($passStr, '$P$', 1, 3)))
+		if ((34 == strlen($passStr) && !strncmp($passStr, '$P$', 3))
+				|| (35 == strlen($passStr) && !substr_compare($passStr, '$P$', 1, 3)))
 			return true;
 		else
 			return false;
