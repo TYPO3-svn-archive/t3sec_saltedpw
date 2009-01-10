@@ -122,7 +122,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 			$validPasswd = $objPHPass->checkPassword($password, $user['password']);
 				// test if password needs hash update due to change of hash count value
 			if ($validPasswd && $objPHPass->isHashUpdateNeeded($user['password'])) {
-					$this->updatePassword(intval($user['uid']));
+					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
 			}
 		} 	// we process also clear-text, md5 and passwords updated by Portable PHP password hashing framework
 		else if (1 != intval($this->extConf['forcePHPasswd'])) {
@@ -210,12 +210,12 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 	protected function updatePassword($uid, $updateFields) {
 		if (TYPO3_MODE == 'BE') {
 				// BE
-			$GLOBALS['TYPO3_DB']->exec_UPDATEquery( 'be_users', 'uid = ' . $uid, $updateFields);
+			$GLOBALS['TYPO3_DB']->exec_UPDATEquery( 'be_users', sprintf('uid = %u', $uid), $updateFields);
 		} else {
 				// FE
-			$GLOBALS['TYPO3_DB']->exec_UPDATEquery( 'fe_users', 'uid = ' . $uid, $updateFields);
+			$GLOBALS['TYPO3_DB']->exec_UPDATEquery( 'fe_users', sprintf('uid = %u', $uid), $updateFields);
 		}
-		t3lib_div::devLog('Automatic password update for user with uid ' . $user['uid'], $this->extKey, 1);
+		t3lib_div::devLog(sprintf('Automatic password update for %s user with uid %u', TYPO3_MODE, $uid), $this->extKey, 1);
 	}
 
 	/**
