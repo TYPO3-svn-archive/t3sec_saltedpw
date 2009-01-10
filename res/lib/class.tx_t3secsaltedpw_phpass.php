@@ -347,7 +347,7 @@ class tx_t3secsaltedpw_phpass {
 			return true;
 		}
 			// Check whether the iteration count used differs from the standard number.
-		return ($this->getCountLog2($passString) != self::HASH_COUNT);
+		return ($this->getCountLog2($passString) != $this->getHashCount());
 	}
 
 	/**
