@@ -1,16 +1,24 @@
-2008-12-16  Marcus Krause   <marcus#exp2009@t3sec.info>
+2009-01-10  Marcus Krause   <marcus#exp2009@t3sec.info>
+
+	* Bug #2439: In case of a modifed HASHCOUNT, a non-valid PHPass password would be set
+
+
+2009-01-06  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Task #2410: Adjust mail address of maintainer to reflect new year
 
-2008-12-16  Marcus Krause   <marcus#exp2009@t3sec.info>
+
+2008-12-19  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Bug #2339: Extension key "t3sec_saltedpw" was NOT loaded
 	* Bug #2351: class.ext_update.php throws warning if current password length < 4
+
 
 2008-12-16  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Task #2324: Improve wording and wording consistency in file ChangeLog
 	* Task #2325: Improve readability of extension manual
+
 
 2008-12-15  Marcus Krause   <marcus#exp2009@t3sec.info>
 

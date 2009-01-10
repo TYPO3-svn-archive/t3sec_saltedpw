@@ -121,7 +121,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 		if (0 == strncmp($user['password'], '$P$', 3)) {
 			$validPasswd = $objPHPass->checkPassword($password, $user['password']);
 				// test if password needs hash update due to change of hash count value
-			if ($objPHPass->isHashUpdateNeeded($user['password'])) {
+			if ($validPasswd && $objPHPass->isHashUpdateNeeded($user['password'])) {
 					$this->updatePassword(intval($user['uid']));
 			}
 		} 	// we process also clear-text, md5 and passwords updated by Portable PHP password hashing framework
