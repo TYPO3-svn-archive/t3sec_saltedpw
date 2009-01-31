@@ -78,14 +78,17 @@ class tx_t3secsaltedpw_phpass_testcase extends tx_phpunit_testcase {
 		$this->assertTrue($this->objPHPass->isHashUpdateNeeded($this->testPasswd.$this->testPasswd));
 	}
 
-	public function testUpdateNecessity() {
+	public function testIncreasedHashCountUpdateNecessity() {
 		$saltedHash = $this->objPHPass->getHashedPassword($this->testPasswd);
 		$this->assertFalse($this->objPHPass->isHashUpdateNeeded($saltedHash));
 	}
 
-	public function testUpdateNecessityDegraded() {
-		$saltedHash = $this->objPHPass->getHashedPassword($this->testPasswd, 11);
-		$this->assertTrue($this->objPHPass->isHashUpdateNeeded($saltedHash));
+	public function testDecreasedHashCountUpdateNecessity() {
+		$saltedHash = $this->objPHPass->getHashedPassword($this->testPasswd);
+		$stdHashCount = $this->objPHPass->getHashCount();
+		$this->objPHPass->setHashCount = $stdHashCount - 1;
+		$this->assertFalse($this->objPHPass->isHashUpdateNeeded($saltedHash));
+		$this->objPHPass->setHashCount = $stdHashCount;
 	}
 
 	public function testDifferentPHPHashes() {

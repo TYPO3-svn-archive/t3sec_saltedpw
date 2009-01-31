@@ -1,3 +1,8 @@
+2009-01-31  Marcus Krause   <marcus#exp2009@t3sec.info>
+
+	* implement Unit-Test that tests update necessity for decreased standard hash count (follow-up to #2441)
+
+
 2009-01-10  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Bug #2439: In case of a modifed HASHCOUNT, a non-valid PHPass password would be set
