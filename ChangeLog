@@ -1,5 +1,6 @@
 2009-03-07  Marcus Krause   <marcus#exp2009@t3sec.info>
 
+	* Feature #2742: Get template configuration from felogin
 	* Bug #2743: felogin "forgot password" form does not work with t3sec_saltedpw
 	* Bug #2741: BE users cannot change their own passwords - add warning in extension configuration
 
