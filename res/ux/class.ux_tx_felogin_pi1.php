@@ -99,8 +99,14 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 			$LANG->init($GLOBALS['TSFE']->lang);
 		}
 
-			// Get Template
+		$defaultTemplate = 'EXT:felogin/template.html';
 		$templateFile = 'EXT:t3sec_saltedpw/res/tmpl/felogin_template.html';
+
+			// use configured template only if it's not the default felogin one
+		if ($this->conf['templateFile']
+			&& strcasecmp($defaultTemplate, $this->conf['templateFile'])) {
+			$templateFile = $this->conf['templateFile'];
+		}
 		$template = $this->cObj->fileResource($templateFile);
 
 		$subpart = $this->cObj->getSubpart($template, '###TEMPLATE_FORGOT###');
