@@ -10,7 +10,7 @@ $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/install/mod/class.tx_install.php'] =
 
 	// sysext:felogin
 if ((t3lib_div::int_from_ver(TYPO3_version) >= 4002000)
-		&& (t3lib_div::int_from_ver(TYPO3_version) < 4002004)) {
+		&& (t3lib_div::int_from_ver(TYPO3_version) < 4003000)) {
 	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/felogin/pi1/class.tx_felogin_pi1.php'] = t3lib_extMgm::extPath($_EXTKEY, 'res/ux/class.ux_tx_felogin_pi1.php');
 }
 
