@@ -126,14 +126,14 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 					// look for user record
 				$data = $GLOBALS['TYPO3_DB']->fullQuoteStr($this->piVars['forgot_email'], 'fe_users');
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-					'uid, username, password, email',
+					'uid, username, password, email, name',
 					'fe_users',
 					'(email=' . $data .' OR username=' . $data . ') AND pid IN ('.$GLOBALS['TYPO3_DB']->cleanIntList($this->spid).') '.$this->cObj->enableFields('fe_users')
 				);
 
 				if ($GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
 					$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-					$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_password',1), $row['email'], $row['username'], $row['password']);
+					$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_password',1), $row['name'], $row['username'], $row['password']);
 				} else {
 					$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_nopassword',1), $postData['forgot_email']);
 				}
@@ -162,7 +162,7 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 					}
 
 
-					$this->cObj->sendNotifyEmail($msg, $row['email'], '', $this->conf['email_from'], $this->conf['email_fromName'], $this->conf['replyTo']);
+					$this->cObj->sendNotifyEmail(t3lib_div::deHSCentities($msg), $row['email'], '', $this->conf['email_from'], $this->conf['email_fromName'], $this->conf['replyTo']);
 				}
 					// generate message
 				$markerArray['###STATUS_MESSAGE###'] = $this->cObj->stdWrap(sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_message_emailSent',1), '<em>' . htmlspecialchars($postData['forgot_email']) .'</em>'), $this->conf['forgotMessage_stdWrap.']);
