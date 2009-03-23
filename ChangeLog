@@ -1,3 +1,8 @@
+2009-03-23  Marcus Krause   <marcus#exp2009@t3sec.info>
+
+	* Bug #2951: Form evaluation fails for activated salted passwords in one TYPO3 mode only
+
+
 2009-03-07  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Bug #2323: HTML Entities in Plain-Text-Mail

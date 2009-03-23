@@ -2,8 +2,14 @@
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) 	die ("Access denied.");
 
-	//form evaluation functions
+	//form evaluation functions - deprecated
 $TYPO3_CONF_VARS['SC_OPTIONS']['tce']['formevals']['tx_t3secsaltedpw_salted'] = 'EXT:' .  $_EXTKEY . '/res/eval/class.tx_t3secsaltedpw_salted.php';
+
+	//form evaluation function - FE users only
+$TYPO3_CONF_VARS['SC_OPTIONS']['tce']['formevals']['tx_t3secsaltedpw_salted_fe'] = 'EXT:' .  $_EXTKEY . '/res/eval/class.tx_t3secsaltedpw_salted_fe.php';
+
+	//form evaluation function - BE users only
+$TYPO3_CONF_VARS['SC_OPTIONS']['tce']['formevals']['tx_t3secsaltedpw_salted_be'] = 'EXT:' .  $_EXTKEY . '/res/eval/class.tx_t3secsaltedpw_salted_be.php';
 
 	// install module
 $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/install/mod/class.tx_install.php'] = t3lib_extMgm::extPath($_EXTKEY, 'res/ux/class.ux_tx_install.php');

@@ -49,6 +49,15 @@ require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3s
  */
 class tx_t3secsaltedpw_salted {
 
+	/**
+	 * Keeps TYPO3 mode.
+	 * 
+	 * Either 'FE' or 'BE'.
+	 * 
+	 * @var string
+	 */
+	protected $mode = null;
+
 
 	/**
 	 * This function just return the field value as it is. No transforming,
@@ -69,7 +78,9 @@ class tx_t3secsaltedpw_salted {
 	 * @return	The new value of the field
 	 */
 	function evaluateFieldValue($value, $is_in, &$set) {
-		if (tx_t3secsaltedpw_div::isUsageEnabled()) {
+
+		$isEnabled = $this->mode ? tx_t3secsaltedpw_div::isUsageEnabled($this->mode) : tx_t3secsaltedpw_div::isUsageEnabled();
+		if ($isEnabled) {
 			$objPHPass = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
 			$updateNeeded = !empty($value) ? $objPHPass->isHashUpdateNeeded( $value ) : false;
 	

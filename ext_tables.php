@@ -7,12 +7,12 @@ t3lib_div::loadTCA('fe_users');
 $TCA['fe_users']['columns']['password']['config']['max'] = 40;
 
 if (tx_t3secsaltedpw_div::isUsageEnabled('FE')) {
-	$TCA['fe_users']['columns']['password']['config']['eval'] = 'trim,required,tx_t3secsaltedpw_salted,password';
+	$TCA['fe_users']['columns']['password']['config']['eval'] = 'trim,required,tx_t3secsaltedpw_salted_fe,password';
 }
 t3lib_div::loadTCA('be_users');
 $TCA['be_users']['columns']['password']['config']['max'] = 40;
 
 if (tx_t3secsaltedpw_div::isUsageEnabled('BE')) {
-	$TCA['be_users']['columns']['password']['config']['eval'] = 'trim,required,tx_t3secsaltedpw_salted,password';
+	$TCA['be_users']['columns']['password']['config']['eval'] = 'trim,required,tx_t3secsaltedpw_salted_be,password';
 }
 ?>
