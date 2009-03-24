@@ -160,8 +160,8 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 							$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_password',1), $postData['forgot_email'], $row['username'], $newPass);
 						}
 					}
-
-					$this->cObj->sendNotifyEmail(t3lib_div::deHSCentities($msg), $row['email'], '', $this->conf['email_from'], $this->conf['email_fromName'], $this->conf['replyTo']);
+					$msg = html_entity_decode(t3lib_div::deHSCentities($msg));
+					$this->cObj->sendNotifyEmail($msg, $row['email'], '', $this->conf['email_from'], $this->conf['email_fromName'], $this->conf['replyTo']);
 				}
 					// generate message
 				$markerArray['###STATUS_MESSAGE###'] = $this->cObj->stdWrap(sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_message_emailSent',1), '<em>' . htmlspecialchars($postData['forgot_email']) .'</em>'), $this->conf['forgotMessage_stdWrap.']);
