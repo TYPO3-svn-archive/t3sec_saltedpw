@@ -75,13 +75,13 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 	 */
 	protected function getUserFieldMarkers() {
 		$marker = array();
-		// replace markers with fe_user data
+			// replace markers with fe_user data
 		if ($GLOBALS['TSFE']->fe_user->user) {
-			// all fields of fe_user will be replaced, scheme is ###FEUSER_FIELDNAME###
+				// all fields of fe_user will be replaced, scheme is ###FEUSER_FIELDNAME###
 			foreach ($GLOBALS['TSFE']->fe_user->user as $field => $value) {
 				$marker['###FEUSER_' . t3lib_div::strtoupper($field) . '###'] = $this->cObj->stdWrap($value, $this->conf['userfields.'][$field . '.']);
 			}
-			// add ###USER### for compatibility
+				// add ###USER### for compatibility
 			$marker['###USER###'] = $marker['###FEUSER_USERNAME###'];
 		}
 		return $marker;
@@ -161,7 +161,6 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 						}
 					}
 
-
 					$this->cObj->sendNotifyEmail(t3lib_div::deHSCentities($msg), $row['email'], '', $this->conf['email_from'], $this->conf['email_fromName'], $this->conf['replyTo']);
 				}
 					// generate message
@@ -189,15 +188,14 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 		$markerArray['###SEND_PASSWORD###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:send_password',1);
 		$markerArray['###DATA_LABEL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_enter_your_data',1);
 
-
-
 		$markerArray = array_merge($markerArray, $this->getUserFieldMarkers());
 
 			// generate hash
 		$hash = md5($this->generatePassword(3));
 		$markerArray['###FORGOTHASH###'] = $hash;
+
 			// set hash in feuser session
-		$GLOBALS["TSFE"]->fe_user->setKey('ses', 'forgot_hash', array('forgot_hash' => $hash));
+		$GLOBALS['TSFE']->fe_user->setKey('ses', 'forgot_hash', array('forgot_hash' => $hash));
 		$GLOBALS['TSFE']->fe_user->storeSessionData();
 
 		return $this->cObj->substituteMarkerArrayCached($subpart, $markerArray, $subpartArray, $linkpartArray);
