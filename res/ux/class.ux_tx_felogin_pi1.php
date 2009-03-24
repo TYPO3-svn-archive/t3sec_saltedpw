@@ -198,6 +198,7 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 		$markerArray['###FORGOTHASH###'] = $hash;
 			// set hash in feuser session
 		$GLOBALS["TSFE"]->fe_user->setKey('ses', 'forgot_hash', array('forgot_hash' => $hash));
+		$GLOBALS['TSFE']->fe_user->storeSessionData();
 
 		return $this->cObj->substituteMarkerArrayCached($subpart, $markerArray, $subpartArray, $linkpartArray);
 	}

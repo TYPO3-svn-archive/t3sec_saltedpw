@@ -1,3 +1,8 @@
+2009-03-24  Marcus Krause   <marcus#exp2009@t3sec.info>
+
+	* Bug #2956: Forget Password mail not send due to wrong forgothash
+
+
 2009-03-23  Marcus Krause   <marcus#exp2009@t3sec.info>
 
 	* Bug #2951: Form evaluation fails for activated salted passwords in one TYPO3 mode only
