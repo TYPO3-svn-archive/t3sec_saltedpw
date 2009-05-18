@@ -175,7 +175,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 
 			if (!empty($this->login['uident_text'])) {
 				$validPasswd = $this->compareUident(
-									&$user,
+									$user,
 									$this->login);
 			}
 
