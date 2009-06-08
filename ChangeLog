@@ -1,5 +1,10 @@
 2009-05-18  Marcus Krause   <marcus#exp2009@t3sec.info>
 
+	* Bug #3436: Problems with Localization
+
+
+2009-05-18  Marcus Krause   <marcus#exp2009@t3sec.info>
+
 	* Bug #3365: PHP complains about deprecated call-time pass-by-reference
 
 

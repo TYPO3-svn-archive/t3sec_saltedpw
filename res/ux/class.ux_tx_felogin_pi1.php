@@ -60,8 +60,8 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 	 * @return	string		label text
 	 */
 	protected function getDisplayText($label, $stdWrapArray=array()) {
-		global $LANG;
 		if (!$LANG) {
+			global $LANG;
 			$LANG = t3lib_div::makeInstance('language');
 			$LANG->init($GLOBALS['TSFE']->lang);
 		}
