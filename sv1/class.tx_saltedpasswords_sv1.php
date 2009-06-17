@@ -30,6 +30,7 @@ if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
 
+
 /**
  * Class implements salted-password hashes authentication service.
  *
@@ -153,6 +154,22 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	public function authUser($user)	{
 		$OK = 100;
 		$validPasswd = false;
+
+		if ( $this->pObj->security_level == 'rsa' && t3lib_extMgm::isLoaded('rsaauth') ) {
+			require_once(t3lib_extMgm::extPath('rsaauth') . 'sv1/backends/class.tx_rsaauth_backendfactory.php');
+			require_once(t3lib_extMgm::extPath('rsaauth') . 'sv1/storage/class.tx_rsaauth_storagefactory.php');
+
+			$backend = tx_rsaauth_backendfactory::getBackend();
+			$storage = tx_rsaauth_storagefactory::getStorage();
+				// Preprocess the password
+			$password = $this->login['uident'];
+			$key = $storage->get();
+			if ($key != null && substr($password, 0, 4) == 'rsa:' ) {
+				// Decode password and pass to parent
+				$decryptedPassword = $backend->decrypt($key, substr($password, 4));
+				$this->login['uident_text'] = $decryptedPassword;
+			}
+		}																																																																																																						
 
 		if ($this->login['uident'] && $this->login['uname'])	{
 

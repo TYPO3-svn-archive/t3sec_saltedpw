@@ -18,8 +18,8 @@ t3lib_extMgm::addService(
 		'description' => 'Salting of passwords for Frontend and Backend',
 		'subtype' => 'authUserFE,authUserBE',
 		'available' => TRUE,
-		'priority' => 55, // must be higher than tx_sv_auth (50) and lower than OpenID (75) and RsaAuth(60)
-		'quality' => 55,
+		'priority' => 70, // must be higher than tx_sv_auth (50) and rsaauth (60) but lower than OpenID (75)
+		'quality' => 70,
 		'os' => '',
 		'exec' => '',
 		'classFile' => t3lib_extMgm::extPath('saltedpasswords').'sv1/class.tx_saltedpasswords_sv1.php',
