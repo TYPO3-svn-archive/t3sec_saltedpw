@@ -193,7 +193,6 @@ class tx_saltedpasswords_div  {
 		 *	@return	boolean	password correct		 		 		 		 
 		 */		 		 		
 		public static function comparePasswordToHash($plainPassword = string, $saltedHash = string) {
-			echo $plainPassword .' '.$saltedHash;
 			return (crypt($plainPassword,$saltedHash) == $saltedHash);
 		}
 
