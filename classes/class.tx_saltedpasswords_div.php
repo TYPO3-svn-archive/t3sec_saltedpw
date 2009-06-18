@@ -208,7 +208,8 @@ class tx_saltedpasswords_div  {
 		 */
 		public static function isUsageEnabled($mode = TYPO3_MODE) {
 				// Login Security Level Recognition
-			if (t3lib_div::inList('normal,rsa',$GLOBALS['TYPO3_CONF_VARS'][$mode]['loginSecurityLevel'])) {
+				
+			if (t3lib_div::inList( ($mode == 'BE' ? 'rsa' : 'normal,rsa') ,$GLOBALS['TYPO3_CONF_VARS'][$mode]['loginSecurityLevel'])) {
 				return true;
 			}
 			return false;
