@@ -35,7 +35,7 @@ require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpa
  * Class implements salted-password hashes authentication service.
  *
  * @author  	Marcus Krause <marcus#exp2009@t3sec.info>
- * @author		Steffen Ritter <info@rs-websystems.de> 
+ * @author		Steffen Ritter <info@rs-websystems.de>
  *
  * @since   	2009-06-14
  * @package     TYPO3
@@ -102,31 +102,31 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 */
 	function compareUident($user, $loginData, $security_level = 'normal') {
 		$validPasswd = false;
-			
+
 			// could be merged; still here to clarify
 		if (!strcmp(TYPO3_MODE, 'BE')) {
 			$password = $loginData['uident_text'];
 		} else if (!strcmp(TYPO3_MODE, 'FE')) {
 			$password = $loginData['uident_text'];
-		}	
-		
-			// existing record is in format of Salted Hash password 
+		}
+
+			// existing record is in format of Salted Hash password
 		if (t3lib_div::inList('$1$,$2$,$2a',substr($user['password'],0,3))) {
 			$validPasswd = tx_saltedpasswords_div::comparePasswordToHash($password,$user['password']);
-			
+
 		} 	// we process also clear-text, md5 and passwords updated by Portable PHP password hashing framework
 		else if (!intval($this->extConf['forceSalted'])) {
-		
+
 				// stored password is in old format of t3secsaltedpw
 			if ( t3lib_div::inList('M$P$,C$P$',substr($user['password'],0,4)) || strpos('$P$',$user['password']) !== false ) {
 				if($this->extConf['handleOldFormat']) {	//is processing of old format enabled
 					$validPasswd =  tx_saltedpasswords_div::compareOldFormatHash($password,$user['password']);
 				}
-				
+
 				// password is stored as md5
-			} else if (preg_match('/[0-9abcdef]{32,32}/', $user['password'])) {	
+			} else if (preg_match('/[0-9abcdef]{32,32}/', $user['password'])) {
 				$validPasswd = (!strcmp(md5($password), $user['password']) ? true : false);
-				
+
 				// password is stored plain or unrecognized format
 			} else {
 				$validPasswd = (!strcmp($password, $user['password']) ? true : false);
@@ -169,7 +169,7 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 				$decryptedPassword = $backend->decrypt($key, substr($password, 4));
 				$this->login['uident_text'] = $decryptedPassword;
 			}
-		}																																																																																																						
+		}
 
 		if ($this->login['uident'] && $this->login['uname'])	{
 

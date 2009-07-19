@@ -34,7 +34,7 @@ require_once (PATH_t3lib.'class.t3lib_div.php');
  * General library class.
  *
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
- * @author		Steffen Ritter <info@rs-websystems.de> 
+ * @author		Steffen Ritter <info@rs-websystems.de>
  *
  * @since       2009-06-14
  * @package     TYPO3
@@ -164,15 +164,15 @@ class tx_saltedpasswords_div  {
 							'useBlowFish'	=> '0',
 							'handleOldFormat' => 0);
 		}
-	
+
 		/**
 		 *	Returns a newly hashed password
-		 *	
+		 *
 		 * 	@since   2009-06-14
 		 *	@static
 		 *	@access public
-		 *	@return	string	encoded string		 		 		 		 
-		 */		 		 		
+		 *	@return	string	encoded string
+		 */
 		public static function getHashedPassword($value) {
 			$extConf = self::returnExtConf();
 			if( $extConf['useBlowFish'] ) {		//crypt is used with blowfish
@@ -186,12 +186,12 @@ class tx_saltedpasswords_div  {
 
 		/**
 		 *	Checks wether password is correct
-		 *	
+		 *
 		 * 	@since   2009-06-14
 		 *	@static
 		 *	@access public
-		 *	@return	boolean	password correct		 		 		 		 
-		 */		 		 		
+		 *	@return	boolean	password correct
+		 */
 		public static function comparePasswordToHash($plainPassword = string, $saltedHash = string) {
 			return (crypt($plainPassword,$saltedHash) == $saltedHash);
 		}
@@ -208,50 +208,50 @@ class tx_saltedpasswords_div  {
 		 */
 		public static function isUsageEnabled($mode = TYPO3_MODE) {
 				// Login Security Level Recognition
-				
+
 			if (t3lib_div::inList( ($mode == 'BE' ? 'rsa' : 'normal,rsa') ,$GLOBALS['TYPO3_CONF_VARS'][$mode]['loginSecurityLevel'])) {
 				return true;
 			}
 			return false;
 		}
-		
+
 		/**
-		 * Checks wether old-format  
-		 *	
-		 *	@return boolean checks wether password would match in old style		 
-		 */		 		 		
+		 * Checks wether old-format
+		 *
+		 *	@return boolean checks wether password would match in old style
+		 */
 		public static function compareOldFormatHash($plainPassword = string, $saltedHash = string) {
 			$passwdValid = false;
-			
-				// Try to include file from several locations 
+
+				// Try to include file from several locations
 				// t3lib_extmgm::extPath cannot be used since the extension is not loaded anymore!
 				// temporaly set pathes for later use of t3lib_extmgm
 			$libFound = @include_once PATH_site . '/typo3conf/ext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php';
 			if ( $libFound ) {
 				$GLOBALS['TYPO3_LOADED_EXT']['t3sec_saltedpw'] = array('type'=>'L', 'siteRelPath'=>'typo3conf/ext/t3sec_saltedpw/', 'typo3RelPath'=>'../typo3conf/ext/t3sec_saltedpw/');
 			} else {
-				$libFound = @include_once PATH_typo3 . '/ext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php'; 
+				$libFound = @include_once PATH_typo3 . '/ext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php';
 				if ( $libFound  ) {
 					$GLOBALS['TYPO3_LOADED_EXT']['t3sec_saltedpw'] = array('type'=>'G', 'siteRelPath'=>TYPO3_mainDir.'ext/t3sec_saltedpw/', 'typo3RelPath'=>'ext/t3sec_saltedpw/');
 				} else {
 					$libFound = @include_once PATH_typo3 . '/sysext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php';
 					if ($libFound) {
 						$GLOBALS['TYPO3_LOADED_EXT']['t3sec_saltedpw'] = array('type'=>'S', 'siteRelPath'=>TYPO3_mainDir.'sysext/t3sec_saltedpw/', 'typo3RelPath'=>'sysext/t3sec_saltedpw/');
-					} 
+					}
 				}
 			}
 
 			if ( $libFound ) {
 				$objPHPass   = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
-			
+
 				if (!strncmp($saltedHash, '$P$', 3)) {
 					$passwdValid = $objPHPass->checkPassword($plainPassword, $saltedHash);
 				} else if (!strncmp($saltedHash, 'M$P$', 4)) {
 					$passwdValid = $objPHPass->checkPassword(md5($plainPassword), substr($saltedHash, 1));
 				} else if (!strncmp($saltedHash, 'C$P$', 4)) {
 					$passwdValid = $objPHPass->checkPassword($plainPassword, substr($saltedHash, 1));
-				} 
-					// Reset made changes 
+				}
+					// Reset made changes
 				unset($objPHPass);
 				unset($GLOBALS['TYPO3_LOADED_EXT']['t3sec_saltedpw']);
 			}

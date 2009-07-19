@@ -2,3 +2,4 @@
 
 	* Cleanup: Added ChangeLog file
 	* Cleanup: Added short labels for extension configuration template shown in Extension Manager
+	* Cleanup: Removed superfluous whitespace characters

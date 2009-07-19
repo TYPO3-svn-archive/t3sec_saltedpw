@@ -35,7 +35,7 @@ require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpa
  * Class implementing salted evaluation methods.
  *
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
- * @author		Steffen Ritter <info@rs-websystems.de> 
+ * @author		Steffen Ritter <info@rs-websystems.de>
  *
  * @since       2009-06-14
  * @package     TYPO3
@@ -45,9 +45,9 @@ class tx_saltedpasswords_eval {
 
 	/**
 	 * Keeps TYPO3 mode.
-	 * 
+	 *
 	 * Either 'FE' or 'BE'.
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $mode = null;
