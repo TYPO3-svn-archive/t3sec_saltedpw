@@ -1,0 +1,4 @@
+2009-07-19  Oliver Hader  <oliver@typo3.org>
+
+	* Cleanup: Added ChangeLog file
+	* Cleanup: Added short labels for extension configuration template shown in Extension Manager
