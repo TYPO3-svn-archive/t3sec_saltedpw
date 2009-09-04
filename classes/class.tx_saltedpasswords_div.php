@@ -111,6 +111,18 @@ class tx_saltedpasswords_div  {
 		}
 
 		/**
+		 * Hook function for felogin "forgotPassword" functionality
+		 * encrypts the new password before storing in database
+		 *
+		 * @param   mixed	$params	Parameter the hook delivers
+		 * @param   object	$pObj	Parent Object from which the hook is called
+		 *
+		 */
+		public function feloginForgotPasswordHook(&$params,$pObj) {
+			$params['newPassword'] = self::getHashedPassword($params['newPassword']);
+		}
+
+		/**
 		 * Returns default configuration of this extension.
 		 *
 		 * @static
