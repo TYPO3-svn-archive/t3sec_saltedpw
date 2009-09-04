@@ -252,11 +252,7 @@ class tx_t3secsaltedpw_phpass {
 		$output .= $itoa64[min($countLog2, $this->getMaxHashCount())];
 
 			// 6 bytes is the standard salt for a portable phpass hash.
-		if (version_compare(TYPO3_branch, '4.3', '>=')) {
-			$randomBytes = t3lib_div::generateRandomBytes(6);
-		} else {
-			$randomBytes = tx_t3secsaltedpw_div::generateRandomBytes(6);
-		}
+		$randomBytes = t3lib_div::generateRandomBytes(6);
 		$output .= $this->base64Encode($randomBytes, 6);
 		return $output;
 	}
