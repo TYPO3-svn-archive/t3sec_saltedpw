@@ -1,5 +1,6 @@
 2009-09-04  Steffen Ritter <info@rs-websystems.de>
-	* Feautre: Introduced/Registered hook in felogin, for new "forgotPassword" handling (introduced with Core #10017)
+	* Feature: Introduced/Registered hook in felogin, for new "forgotPassword" handling (introduced with Core #10017)
+	* Feature: Configuration Check and UserInformation in Ext-EmConf via Flash-Messages
 
 2009-07-20  Steffen Ritter <info@rs-websystems.de>
 	* Cleanup: Removed TYPO3 4.2 compatibility

@@ -1,3 +1,6 @@
+# cat=basic; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfiguration]; label=
+checkConfiguration=0
+
 # cat=basic; type=boolean; label=Use as only authentication service: If enabled and authentication fails, no further authentication service will be tried.
 onlyAuthService = 0
 

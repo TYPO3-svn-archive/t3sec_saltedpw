@@ -45,9 +45,6 @@ $EM_CONF[$_EXTKEY] = array(
 			't3sec_saltedpw' => '',
 		),
 		'suggests' => array(
-			'felogin' => '',
-			'feuser_admin' => '',
-			'phpunit' => '',
 			'rsaauth' => '',
 		),
 	),
