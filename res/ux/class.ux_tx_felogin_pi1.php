@@ -201,4 +201,9 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 		return $this->cObj->substituteMarkerArrayCached($subpart, $markerArray, $subpartArray, $linkpartArray);
 	}
 }
+
+
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_saltedpw/res/ux/class.ux_tx_felogin_pi1.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/t3sec_saltedpw/res/ux/class.ux_tx_felogin_pi1.php']);
+}
 ?>

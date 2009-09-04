@@ -1,5 +1,6 @@
 2009-09-04  Marcus Krause   <marcus#exp2009@t3sec.info>
 
+	* Bug #4456: Add XCLASS code to felogin xclass (thanks to Jonas Duebi)
 	* Task #4448: Cleanup: Remove randombyte-generator
 	* Feature #4446: Add short labels for extension configuration template
 
