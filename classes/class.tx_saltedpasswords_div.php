@@ -119,7 +119,9 @@ class tx_saltedpasswords_div  {
 		 *
 		 */
 		public function feloginForgotPasswordHook(&$params,$pObj) {
-			$params['newPassword'] = self::getHashedPassword($params['newPassword']);
+			if (self::isUsageEnabled('FE')) {
+				$params['newPassword'] = self::getHashedPassword($params['newPassword']);
+			}
 		}
 
 		/**
