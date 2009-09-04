@@ -5,7 +5,7 @@ checkConfiguration=0
 onlyAuthService = 0
 
 # cat=basic; type=boolean; label=Force salted passwords: Use only salted password. Old MD5 hashed passwords won't work anymore.
-forceSalted = 1
+forceSalted = 0
 
 # cat=basic; type=boolean; label=Update FE/BE user passwords: Update FE/BE user passwords to salted hash ones during authentication. (will not work when forceSalted is activated)
 updatePasswd = 1

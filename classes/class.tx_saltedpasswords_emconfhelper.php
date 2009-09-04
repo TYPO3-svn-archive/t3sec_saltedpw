@@ -51,7 +51,7 @@ class tx_saltedpasswords_emconfhelper  {
 		$header = '';
 		
 			// No configuration at all by now
-		if(!isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords'])) {
+		if(!isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords']) && !is_array($_REQUEST['data']) {
 			$message = 'The Extension has not been configured yet! <br />Please be careful in in configuring the extension since it may have impact on the security of your TYPO3 installation and the usability of the backend.';
 			$header = 'Extension not configured yet...';
 			$this->setErrorLevel('info');
