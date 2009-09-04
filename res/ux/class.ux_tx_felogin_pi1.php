@@ -53,19 +53,45 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 
 
 	/**
-	 * Returns the header / message value from flexform if present, else from locallang.xml
+	 * Loads local-language values by looking for a "locallang.php" file in the plugin class directory ($this->scriptRelPath) and if found includes it.
+	 * Also locallang values set in the TypoScript property "_LOCAL_LANG" are merged onto the values found in the "locallang.php" file.
 	 *
-	 * @param	string		label name
-	 * @param	string		TS stdWrap array
-	 * @return	string		label text
+	 * @return	void
 	 */
-	protected function getDisplayText($label, $stdWrapArray=array()) {
-		if (!$LANG) {
-			global $LANG;
-			$LANG = t3lib_div::makeInstance('language');
-			$LANG->init($GLOBALS['TSFE']->lang);
+	function pi_loadLL()	{
+
+			// configure XCLASS to load this extension's locallang file
+		$uxExtKey = 't3sec_saltedpw';
+		$uxLocallang = 'res/LL/felogin_locallang.xml';
+
+		if (!$this->LOCAL_LANG_loaded && $this->scriptRelPath)	{
+			$basePath = t3lib_extMgm::extPath($uxExtKey).$uxLocallang;
+
+				// Read the strings in the required charset (since TYPO3 4.2)
+			$this->LOCAL_LANG = t3lib_div::readLLfile($basePath,$this->LLkey,$GLOBALS['TSFE']->renderCharset);
+			if ($this->altLLkey)	{
+				$tempLOCAL_LANG = t3lib_div::readLLfile($basePath,$this->altLLkey);
+				$this->LOCAL_LANG = array_merge(is_array($this->LOCAL_LANG) ? $this->LOCAL_LANG : array(),$tempLOCAL_LANG);
+			}
+
+				// Overlaying labels from TypoScript (including fictitious language keys for non-system languages!):
+			if (is_array($this->conf['_LOCAL_LANG.']))	{
+				reset($this->conf['_LOCAL_LANG.']);
+				while(list($k,$lA)=each($this->conf['_LOCAL_LANG.']))	{
+					if (is_array($lA))	{
+						$k = substr($k,0,-1);
+						foreach($lA as $llK => $llV)	{
+							if (!is_array($llV))	{
+								$this->LOCAL_LANG[$k][$llK] = $llV;
+									// For labels coming from the TypoScript (database) the charset is assumed to be "forceCharset" and if that is not set, assumed to be that of the individual system languages
+								$this->LOCAL_LANG_charset[$k][$llK] = $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] ? $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] : $GLOBALS['TSFE']->csConvObj->charSetArray[$k];
+							}
+						}
+					}
+				}
+			}
 		}
-		return $this->flexFormValue($label,'s_messages') ? $this->cObj->stdWrap($this->flexFormValue($label,'s_messages'),$stdWrapArray) : $this->cObj->stdWrap($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_'.$label,1), $stdWrapArray);
+		$this->LOCAL_LANG_loaded = 1;
 	}
 
 	/**
@@ -93,11 +119,6 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 		* @return	string		content
 		*/
 	protected function showForgot() {
-		global $LANG;
-		if (!$LANG) {
-			$LANG = t3lib_div::makeInstance('language');
-			$LANG->init($GLOBALS['TSFE']->lang);
-		}
 
 		$defaultTemplate = 'EXT:felogin/template.html';
 		$templateFile = 'EXT:t3sec_saltedpw/res/tmpl/felogin_template.html';
@@ -133,9 +154,9 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 
 				if ($GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
 					$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-					$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_password',1), $row['name'], $row['username'], $row['password']);
+					$msg = sprintf($this->pi_getLL('ll_forgot_email_password', '', 0), $row['name'], $row['username'], $row['password']);
 				} else {
-					$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_nopassword',1), $postData['forgot_email']);
+					$msg = sprintf($this->pi_getLL('ll_forgot_email_nopassword', '', 0), $postData['forgot_email']);
 				}
 
 				if ($row) {
@@ -157,14 +178,14 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 								'uid=' . $row['uid'],
 								array('password' => $saltedPass)
 							);
-							$msg = sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_email_password',1), $postData['forgot_email'], $row['username'], $newPass);
+							$msg = sprintf($this->pi_getLL('ll_forgot_email_password', '', 0), $postData['forgot_email'], $row['username'], $newPass);
 						}
 					}
 					$msg = html_entity_decode(t3lib_div::deHSCentities($msg));
 					$this->cObj->sendNotifyEmail($msg, $row['email'], '', $this->conf['email_from'], $this->conf['email_fromName'], $this->conf['replyTo']);
 				}
 					// generate message
-				$markerArray['###STATUS_MESSAGE###'] = $this->cObj->stdWrap(sprintf($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_message_emailSent',1), '<em>' . htmlspecialchars($postData['forgot_email']) .'</em>'), $this->conf['forgotMessage_stdWrap.']);
+				$markerArray['###STATUS_MESSAGE###'] = $this->cObj->stdWrap(sprintf($this->pi_getLL('ll_forgot_message_emailSent', '', 1), '<em>' . htmlspecialchars($postData['forgot_email']) .'</em>'), $this->conf['forgotMessage_stdWrap.']);
 				$subpartArray['###FORGOT_FORM###'] = '';
 
 
@@ -178,15 +199,15 @@ class ux_tx_felogin_pi1 extends tx_felogin_pi1	{
 			$markerArray['###BACKLINK_LOGIN###'] = '';
 		}
 
-		$markerArray['###BACKLINK_LOGIN###'] = $this->getPageLink($LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_forgot_header_backToLogin',1), array());
+		$markerArray['###BACKLINK_LOGIN###'] = $this->getPageLink($this->pi_getLL('ll_forgot_header_backToLogin', '', 1), array());
 		$markerArray['###STATUS_HEADER###'] = $this->getDisplayText('forgot_header', $this->conf['forgotHeader_stdWrap.']);
-		$markerArray['###LEGEND###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:send_password',1);
+		$markerArray['###LEGEND###'] = $this->pi_getLL('send_password', '', 1);
 		$markerArray['###ACTION_URI###'] = $this->getPageLink('', array($this->prefixId . '[forgot]'=>1), true);
-		$markerArray['###EMAIL_LABEL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:your_email',1);
-		$markerArray['###FORGOT_PASSWORD_ENTEREMAIL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:forgot_password_enterEmail',1);
+		$markerArray['###EMAIL_LABEL###'] = $this->pi_getLL('your_email', '', 1);
+		$markerArray['###FORGOT_PASSWORD_ENTEREMAIL###'] = $this->pi_getLL('forgot_password_enterEmail', '', 1);
 		$markerArray['###FORGOT_EMAIL###'] = $this->prefixId.'[forgot_email]';
-		$markerArray['###SEND_PASSWORD###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:send_password',1);
-		$markerArray['###DATA_LABEL###'] = $LANG->sL('LLL:EXT:t3sec_saltedpw/res/LL/felogin_locallang.xml:ll_enter_your_data',1);
+		$markerArray['###SEND_PASSWORD###'] = $this->pi_getLL('send_password', '', 1);
+		$markerArray['###DATA_LABEL###'] = $this->pi_getLL('ll_enter_your_data', '', 1);
 
 		$markerArray = array_merge($markerArray, $this->getUserFieldMarkers());
 
