@@ -49,27 +49,27 @@ class tx_saltedpasswords_div  {
 		const EXTKEY = 'saltedpasswords';
 
 		/**
-		 * Keeps pool of possible password characters.
+		 * Keeps pool of possible salt characters.
 		 *
 		 */
-		const PASSWORDCHARS = 'abcdefghkmnopqrstuvwxyz023456789';
+		const SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 
 		/**
-		 * Function creates a password.
+		 * Function creates a salt.
 		 *
-		 * @param   integer  length of password to be created
-		 * @return  string   created password
+		 * @param   integer  length of salt to be created
+		 * @return  string   created salt
 		 */
-		public static function generatePassword($len) {
+		public static function generateSalt($len) {
 
 			$randomBytes = t3lib_div::generateRandomBytes($len);
-			$passwordChars = self::PASSWORDCHARS;
-			$password = '';
+			$allowedChars = self::SALTCHARS;
+			$salt = '';
 			while ($len-- > 0) {
-				$password .= $passwordChars{ord($randomBytes{$len}) & 0x1F};
+				$salt .= $allowedChars{ord($randomBytes{$len}) & 0x1F};
 			}
-			return $password;
+			return $salt;
 		}
 
 
@@ -80,8 +80,8 @@ class tx_saltedpasswords_div  {
 		 * @access  public
 		 * @return  string  password character pool
 		 */
-		public static function getPasswordChars() {
-			return self::PASSWORDCHARS;
+		public static function getSaltChars() {
+			return self::SALTCHARS;
 		}
 
 		/**
@@ -150,9 +150,9 @@ class tx_saltedpasswords_div  {
 		public static function getHashedPassword($value) {
 			$extConf = self::returnExtConf();
 			if( $extConf['useBlowFish'] ) {		//crypt is used with blowfish
-				$salt = '$2$' . self::generatePassword(16);
+				$salt = '$2$' . self::generateSalt(16);
 			} else {	//md5 crypt is used
-				$salt = '$1$' . self::generatePassword(12);
+				$salt = '$1$' . self::generateSalt(12);
 			}
 				// generate salted Password Hash
 			return crypt($value,$salt);
