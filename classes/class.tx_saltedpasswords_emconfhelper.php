@@ -123,6 +123,11 @@ class tx_saltedpasswords_emconfhelper  {
 					$problems[] = 'You configured saltedpasswords to be the only auth-service. This means that other services like ipauth, openid etc. Does not affect "rsauth", which will be implicitely used';
 				}
 			}
+				// Blowfish not available, but configured
+			if ($extConf['useBlowFish'] && ! CRYPT_BLOWFISH) {
+				$this->setErrorLevel('error');
+				$problems[] = 'You configured saltedpasswords to use Blowfish encryption which is not available on your system. MD5 will be used';
+			}
 			
 			
 				// inform the user if securityLevel in FE is superchallenged or blank --> extension won't work
