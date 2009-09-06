@@ -46,6 +46,15 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	public function __construct() {
 		$this->objectInstance = t3lib_div::makeInstance('tx_saltedpasswords_salts_blowfish');
 	}
+
+	protected function getWarningWhenBlowfishUnavailable() {
+		$warningMsg = '';
+		if (!defined(CRYPT_BLOWFISH) || !CRYPT_BLOWFISH) {
+			$warningMsg .= 'Blowfish is not supported on your platform. '
+						.  'Then, some of the blowfish tests will fail.';
+		}
+	}
+	
 	
 	/**
 	 * @test
@@ -68,34 +77,71 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	public function nonZeroSaltLength() {
 		$this->assertTrue($this->objectInstance->getSaltLength() > 0);
 	}
+	
+	/**
+	 * @test
+	 */
+	public function emptyPasswordResultsInNullSaltedPassword() {
+		$password = '';
+		$this->assertNull($this->objectInstance->getHashedPassword($password));
+	}
+
+	/**
+	 * @test
+	 */
+	public function nonEmptyPasswordResultsInNonNullSaltedPassword() {
+		$password = 'a';
+		$this->assertNotNull($this->objectInstance->getHashedPassword($password), $this->getWarningWhenBlowfishUnavailable());
+	}
 
 	/**
 	 * @test
 	 */
 	public function createdSaltedHashOfProperStructure() {
-		$plaintextPassword = 'password';
-		$saltedHash = $this->objectInstance->getSaltedHashedPassword($plaintextPassword);
-		$salt = substr($saltedHash, 0, $this->objectInstance->getSaltLength());
-		$this->assertTrue($this->objectInstance->isValidSalt($salt));
+		$password = 'password';
+		$saltedHash = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->isValidSalt($saltedHash), $this->getWarningWhenBlowfishUnavailable());
 	}
 
 	/**
 	 * @test
 	 */
 	public function authenticationWithValidPassword() {
-		$plaintextPassword = 'password';
-		$saltedHash = $this->objectInstance->getSaltedHashedPassword($plaintextPassword);
-		$this->assertTrue($this->objectInstance->isCorrectPassword($password, $saltedHash), 'Blowfish might not be supported on your platform.');
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->checkPassword($password, $saltedHashPW), $this->getWarningWhenBlowfishUnavailable());
 	}
 
 	/**
 	 * @test
 	 */
 	public function authenticationWithNonValidPassword() {
-		$plaintextPassword = 'password';
-		$plaintextPassword1 = $plaintextPassword . 'INVALID';
-		$saltedHash = $this->objectInstance->getSaltedHashedPassword($plaintextPassword);
-		$this->assertFalse($this->objectInstance->isCorrectPassword($plaintextPassword1, $saltedHash));
+		$password = 'password';
+		$password1 = $password . 'INVALID';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertFalse($this->objectInstance->checkPassword($password1, $saltedHashPW), $this->getWarningWhenBlowfishUnavailable());
+	}
+
+	/**
+	 * @test
+	 */
+	public function passwordVariationsResultInDifferentHashes() {
+		$pad = 'a';
+		$password = '';
+		$criticalPwLength = 0;
+			// We're using a constant salt.
+		$saltedHashPWPrevious = $saltedHashPWCurrent = $salt = $this->objectInstance->getHashedPassword($pad);
+		
+		for ($i = 0; $i <= 128; $i += 8) {
+			$password = str_repeat($pad, max($i, 1));
+			$saltedHashPWPrevious = $saltedHashPWCurrent; 
+			$saltedHashPWCurrent = $this->objectInstance->getHashedPassword($password, $salt);
+			if ($i > 0 && 0 == strcmp($saltedHashPWPrevious, $saltedHashPWCurrent)) {
+				$criticalPwLength = $i;
+				break;
+			}
+		}
+		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), $this->getWarningWhenBlowfishUnavailable() . 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
 	}
 }
 ?>

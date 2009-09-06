@@ -27,17 +27,17 @@ interface tx_saltedpasswords_salts {
 	 * @param   string  $salt  optional custom salt to use
 	 * @return  string  salted hashed password
 	 */
-	public function getSaltedHashedPassword($plaintextPassword, $salt = null);
+	public function getHashedPassword($password, $salt = null);
 
 	/**
 	 * Method checks if a given plaintext password is correct by comparing it with
 	 * a given salted hashed password.
 	 * 
 	 * @access  public
-	 * @param   string   $plaintextPassword
-	 * @param   string   $saltedHash
+	 * @param   string   $plainPW: 
+	 * @param   string   $saltedHashPW 
 	 * @return  boolean  true, if plaintext password is correct, otherwise false
 	 */
-	public function isCorrectPassword($plaintextPassword, $saltedHash);
+	public function checkPassword($plainPW, $saltedHashPW);
 }
 ?>

@@ -12,8 +12,13 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	
 
 	static protected $saltLengthPhpass = 16;
-	
-	static protected $saltPrefixPhpass = '$1$';
+
+	/**
+	 * Setting string to indicate type of hashing method (blowfish).
+	 * 
+	 * @var string
+	 */
+	static protected $settingPhpass = '$P$';
 	
 	static protected $saltSuffix = '$';
 
@@ -31,6 +36,15 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 		return self::ITOA64;
 	}
 
+	/**
+	 * Returns setting string of phpass hashing method.
+	 * 
+	 * @access  protected
+	 * @return  string     setting string of phpass hashing method.
+	 */
+	public function getSetting() {
+		return self::$settingPhpass;
+	}
 
 	/**
 	 * Returns length of required salt.
@@ -68,8 +82,14 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @access  protected
 	 * @return  string  generated salt
 	 */
-	protected function generateSalt() {
+	protected function getGeneratedSalt() {
 		return tx_saltedpasswords_div::generateSalt($this->getSaltLength());
+	}
+
+	protected function applySettingsToSalt($salt) {
+		$saltWithSettings = $this->getSetting() 
+							. $salt;
+		return $saltWithSettings;
 	}
 
 	/**
@@ -95,7 +115,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @param string  $salt  optional custom salt to use
 	 * @return string  salted hashed password
 	 */
-	public function getSaltedHashedPassword($plaintextPassword, $salt = null) {
+	public function getHashedPassword($plaintextPassword, $salt = null) {
 		return 'test';
 	}
 
@@ -108,7 +128,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @param   string   $saltedHash
 	 * @return  boolean  true, if plaintext password is correct, otherwise false
 	 */
-	public function isCorrectPassword($plaintextPassword, $saltedHash) {
+	public function checkPassword($plaintextPassword, $saltedHash) {
 		return true;
 	}
 }

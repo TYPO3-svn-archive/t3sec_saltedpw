@@ -61,7 +61,7 @@ class tx_saltedpasswords_salts_factory {
 		$classNameToUse = '';
 		foreach(explode(',', self::$defaultMethods) as $method) {
 			$objectInstance = t3lib_div::makeInstance($method);
-			$methodFound = $objectInstance->isValidSalt(substr($saltedHash, 0, $objectInstance->getSaltLength()));
+			$methodFound = $objectInstance->isValidSalt($saltedHash);
 			if ($methodFound) {
 				self::$saltingHashingMethodInstance = &$objectInstance;
 				break;

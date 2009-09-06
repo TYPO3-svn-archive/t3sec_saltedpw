@@ -13,28 +13,22 @@ abstract class tx_saltedpasswords_abstract_salts {
 	abstract protected function getItoa64();
 
 	/**
-	 * Returns prefix of salt indicating the type of used method.
+	 * Returns setting string to indicate type of hashing method.
 	 * 
 	 * @access  protected
-	 * @return  string     prefix of resulting has
+	 * @return  string     setting string of hashing method
 	 */
-	abstract protected function getSaltPrefix();
-
-	/**
-	 * Returns suffix salt indicating the type of used method.
-	 * 
-	 * @access  protected
-	 * @return  string     prefix of resulting salt
-	 */
-	abstract protected function getSaltSuffix();
+	abstract protected function getSetting();
 	
 	/**
-	 * Method generates a salt.
+	 * Generates a random base salt settings for the hash.
 	 *
 	 * @access  protected  
-	 * @return  string     generated salt
+	 * @return  string     a string containing settings and a random salt
 	 */
-	abstract protected function generateSalt();
+	abstract protected function getGeneratedSalt();
+
+	abstract protected function applySettingsToSalt($salt);
 
 	/**
 	 * Encodes bytes into printable base 64 using the *nix standard from crypt().
