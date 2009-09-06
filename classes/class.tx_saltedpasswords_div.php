@@ -149,7 +149,7 @@ class tx_saltedpasswords_div  {
 		 */
 		public static function getHashedPassword($value) {
 			$extConf = self::returnExtConf();
-			if( $extConf['useBlowFish'] ) {		//crypt is used with blowfish
+			if( $extConf['useBlowFish'] && CRYPT_BLOWFISH ) {		//crypt is used with blowfish
 				$salt = '$2a$07$' . self::generateSalt(12);
 			} else {	//md5 crypt is used
 				$salt = '$1$' . self::generateSalt(12);
