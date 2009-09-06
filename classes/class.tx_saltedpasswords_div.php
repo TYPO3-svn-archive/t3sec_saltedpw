@@ -52,19 +52,20 @@ class tx_saltedpasswords_div  {
 		 * Keeps pool of possible salt characters.
 		 *
 		 */
-		const SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+		const SALTCHARS = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 
 		/**
 		 * Function creates a salt.
 		 *
 		 * @param   integer  length of salt to be created
+		 * @param   string   (optional) character pool to use
 		 * @return  string   created salt
 		 */
-		public static function generateSalt($len) {
+		public static function generateSalt($len, $charPool = null) {
 
 			$randomBytes = t3lib_div::generateRandomBytes($len);
-			$allowedChars = self::SALTCHARS;
+			$allowedChars = !is_null($charPool) ? $charPool : self::SALTCHARS;
 			$salt = '';
 			while ($len-- > 0) {
 				$salt .= $allowedChars{ord($randomBytes{$len}) & 0x1F};
@@ -137,6 +138,21 @@ class tx_saltedpasswords_div  {
 							'updatePasswd'    => '1',
 							'useBlowFish'	=> '0',
 							'handleOldFormat' => 0);
+		}
+
+		/**
+		 * Method determines the type of salting hashing method to be used
+		 * 
+		 * @return  string  classname of object to be used
+		 */
+		public static function getDefaultSaltingHashingMethod() {
+			
+			$extConf = self::returnExtConf();
+			if( $extConf['useBlowFish'] ) {
+				return 'tx_saltedpasswords_salts_blowfish';
+			} else {
+				return 'tx_saltedpasswords_salts_md5';
+			}
 		}
 
 		/**
