@@ -21,12 +21,21 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+/**
+ * Contains testcases for "tx_saltedpasswords_salts_md5" 
+ * that provides MD5 salted hashing.
+ * 
+ * $Id$
+ */
+
+	// Make sure that we are executed only in TYPO3 context
+if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_md5.php');
 
 
 /**
- * Testcase for class tx_saltedpasswords_salts_md5
+ * Testcases for class tx_saltedpasswords_salts_md5
  *
  * @author  Marcus Krause <marcus#exp2009@t3sec.info>
  * @package  TYPO3
@@ -43,9 +52,28 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	protected $objectInstance = null;
 
 
+	/**
+	 * Class constructor.
+	 *
+	 * @access  public
+	 */
 	public function __construct() {
 		$this->objectInstance = t3lib_div::makeInstance('tx_saltedpasswords_salts_md5');
 	}
+
+	/**
+	 * Prepares a message to be shown when a salted hashing is not supported.
+	 * 
+	 * @access  protected
+	 * @return  string     empty string if salted hashing method is available, otherwise an according warning
+	 */
+	protected function getWarningWhenMethodUnavailable() {
+		$warningMsg = '';
+		if (!defined(CRYPT_MD5) || !CRYPT_MD5) {
+			$warningMsg .= 'MD5 is not supported on your platform. '
+						.  'Then, some of the md5 tests will fail.';
+		}
+	}	
 	
 	/**
 	 * @test
@@ -82,18 +110,18 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	 */
 	public function nonEmptyPasswordResultsInNonNullSaltedPassword() {
 		$password = 'a';
-		$this->assertNotNull($this->objectInstance->getHashedPassword($password));
+		$this->assertNotNull($this->objectInstance->getHashedPassword($password), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
 	 * @test
 	 */
 	public function createdSaltedHashOfProperStructure() {
-		$plaintextPassword = 'password';
-		$saltedHash = $this->objectInstance->getHashedPassword($plaintextPassword);
-		$this->assertTrue($this->objectInstance->isValidSalt($saltedHash));
-		$saltedHash = $this->objectInstance->getHashedPassword($plaintextPassword);
-		$this->assertTrue($this->objectInstance->isValidSalt($saltedHash));
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->isValidSalt($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->isValidSalt($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
@@ -101,8 +129,8 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	 */
 	public function authenticationWithValidPassword() {
 		$password = 'password';
-		$saltedHash = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->checkPassword($password, $saltedHash));
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->checkPassword($password, $saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
@@ -112,7 +140,7 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 		$password = 'password';
 		$password1 = $password . 'INVALID';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertFalse($this->objectInstance->checkPassword($password1, $saltedHashPW));
+		$this->assertFalse($this->objectInstance->checkPassword($password1, $saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
@@ -133,8 +161,7 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 				break;
 			}
 		}
-		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
+		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), $this->getWarningWhenMethodUnavailable() . 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
 	}
 }
 ?>
-}

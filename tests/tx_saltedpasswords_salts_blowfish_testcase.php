@@ -21,12 +21,21 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+/**
+ * Contains class "tx_saltedpasswords_salts_blowfish" 
+ * that provides Blowfish salted hashing.
+ * 
+ * $Id$
+ */
+
+	// Make sure that we are executed only in TYPO3 context
+if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_blowfish.php');
 
 
 /**
- * Testcase for class tx_saltedpasswords_salts_blowfish
+ * Testcases for class tx_saltedpasswords_salts_blowfish
  *
  * @author  Marcus Krause <marcus#exp2009@t3sec.info>
  * @package  TYPO3
@@ -43,18 +52,28 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	protected $objectInstance = null;
 
 
+	/**
+	 * Class constructor.
+	 *
+	 * @access  public
+	 */
 	public function __construct() {
 		$this->objectInstance = t3lib_div::makeInstance('tx_saltedpasswords_salts_blowfish');
 	}
 
-	protected function getWarningWhenBlowfishUnavailable() {
+	/**
+	 * Prepares a message to be shown when a salted hashing is not supported.
+	 * 
+	 * @access  protected
+	 * @return  string     empty string if salted hashing method is available, otherwise an according warning
+	 */
+	protected function getWarningWhenMethodUnavailable() {
 		$warningMsg = '';
 		if (!defined(CRYPT_BLOWFISH) || !CRYPT_BLOWFISH) {
 			$warningMsg .= 'Blowfish is not supported on your platform. '
 						.  'Then, some of the blowfish tests will fail.';
 		}
-	}
-	
+	}	
 	
 	/**
 	 * @test
@@ -91,7 +110,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 */
 	public function nonEmptyPasswordResultsInNonNullSaltedPassword() {
 		$password = 'a';
-		$this->assertNotNull($this->objectInstance->getHashedPassword($password), $this->getWarningWhenBlowfishUnavailable());
+		$this->assertNotNull($this->objectInstance->getHashedPassword($password), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
@@ -99,8 +118,10 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 */
 	public function createdSaltedHashOfProperStructure() {
 		$password = 'password';
-		$saltedHash = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSalt($saltedHash), $this->getWarningWhenBlowfishUnavailable());
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->isValidSalt($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->isValidSalt($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
@@ -109,7 +130,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	public function authenticationWithValidPassword() {
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->checkPassword($password, $saltedHashPW), $this->getWarningWhenBlowfishUnavailable());
+		$this->assertTrue($this->objectInstance->checkPassword($password, $saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
@@ -119,7 +140,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$password = 'password';
 		$password1 = $password . 'INVALID';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertFalse($this->objectInstance->checkPassword($password1, $saltedHashPW), $this->getWarningWhenBlowfishUnavailable());
+		$this->assertFalse($this->objectInstance->checkPassword($password1, $saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
@@ -141,8 +162,75 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 				break;
 			}
 		}
-		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), $this->getWarningWhenBlowfishUnavailable() . 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
+		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), $this->getWarningWhenMethodUnavailable() . 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
+	}
+	
+	/**
+	 * @test
+	 */
+	public function modifiedMinHashCount() {
+		$minHashCount = $this->objectInstance->getMinHashCount();
+		$this->objectInstance->setMinHashCount($minHashCount - 1);
+		$this->assertTrue($this->objectInstance->getMinHashCount() < $minHashCount);
+		$this->objectInstance->setMinHashCount($minHashCount + 1);
+		$this->assertTrue($this->objectInstance->getMinHashCount() > $minHashCount);
+	}
+
+	/**
+	 * @test
+	 */
+	public function modifiedMaxHashCount() {
+		$maxHashCount = $this->objectInstance->getMaxHashCount();
+		$this->objectInstance->setMaxHashCount($maxHashCount + 1);
+		$this->assertTrue($this->objectInstance->getMaxHashCount() > $maxHashCount);
+		$this->objectInstance->setMaxHashCount($maxHashCount - 1);
+		$this->assertTrue($this->objectInstance->getMaxHashCount() < $maxHashCount);
+	}
+
+	/**
+	 * @test
+	 */
+	public function modifiedHashCount() {
+		$hashCount = $this->objectInstance->getHashCount();
+		$this->objectInstance->setMaxHashCount($hashCount + 1);
+		$this->objectInstance->setHashCount($hashCount + 1);
+		$this->assertTrue($this->objectInstance->getHashCount() > $hashCount);
+		$this->objectInstance->setMinHashCount($hashCount - 1);
+		$this->objectInstance->setHashCount($hashCount - 1);
+		$this->assertTrue($this->objectInstance->getHashCount() < $hashCount);
+	}
+
+	/**
+	 * @test
+	 */
+	public function updateNecessityForValidSaltedPassword() {
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+	}
+
+	/**
+	 * @test
+	 */
+	public function updateNecessityForIncreasedHashcount() {
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$increasedHashCount = $this->objectInstance->getHashCount() + 1;
+		$this->objectInstance->setMaxHashCount($increasedHashCount);
+		$this->objectInstance->setHashCount($increasedHashCount);
+		$this->assertTrue($this->objectInstance->isHashUpdateNeeded($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+	}
+
+	/**
+	 * @test
+	 */
+	public function updateNecessityForDecreasedHashcount() {
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$decreasedHashCount = $this->objectInstance->getHashCount() - 1;
+		$this->objectInstance->setMinHashCount($decreasedHashCount);
+		$this->objectInstance->setHashCount($decreasedHashCount);
+		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 }
 ?>
-}
