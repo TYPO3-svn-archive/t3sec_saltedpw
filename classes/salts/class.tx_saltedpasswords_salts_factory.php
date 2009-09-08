@@ -8,16 +8,22 @@ require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpa
 class tx_saltedpasswords_salts_factory {
 
 
+	/**
+	 * Keeps a comma-separated list of class names
+	 * whose objects implement different salted hashing
+	 * methods. 
+	 * 
+	 * @var string
+	 */
 	static protected $defaultMethods = 'tx_saltedpasswords_salts_md5,tx_saltedpasswords_salts_blowfish';
-
 	
 	/**
-	 * An instance of the salting hashing method.
+	 * An instance of the salted hashing method.
 	 * This member is set in the getSaltingInstance() function.
 	 * 
 	 * @var tx_saltedpasswords_abstract_salts
 	 */
-	static protected $saltingHashingMethodInstance = null;
+	static protected $instance = null;
 
 	/**
 	 * Obtains a salting hashing method instance.
@@ -29,26 +35,26 @@ class tx_saltedpasswords_salts_factory {
 	 * @return  tx_saltedpasswords_abstract_salts  an instance of salting hashing method object
 	 */
 	static public function getSaltingInstance($saltedHash = null) {
-		if (is_null(self::$saltingHashingMethodInstance) || !is_null($saltedHash)) {
+		if (!is_object(self::$instance) || !is_null($saltedHash)) {
 			
 				// non existing instance and no salted hash to check
 				// -> use default method
 			if (is_null($saltedHash)) {
 				$classNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
-				self::$saltingHashingMethodInstance = t3lib_div::makeInstance($classNameToUse);
+				self::$instance = t3lib_div::makeInstance($classNameToUse);
 			}  // salted hash to check 
 			else {
 				$result = self::determineSaltingHashingMethod($saltedHash);
 				if(!$result) {
-					self::$saltingHashingMethodInstance = null;
+					self::$instance = null;
 				}
 			}
 		}
-		return self::$saltingHashingMethodInstance;
+		return self::$instance;
 	}
 
 	/**
-	 * Method tries to determine the salting hashing method used for giving salt.
+	 * Method tries to determine the salting hashing method used for given salt.
 	 * 
 	 * Method implicitly sets the instance of the found method object in the class property when found.
 	 * 
@@ -61,9 +67,9 @@ class tx_saltedpasswords_salts_factory {
 		$classNameToUse = '';
 		foreach(explode(',', self::$defaultMethods) as $method) {
 			$objectInstance = t3lib_div::makeInstance($method);
-			$methodFound = $objectInstance->isValidSalt($saltedHash);
+			$methodFound = $objectInstance->isValidSaltedPW($saltedHash);
 			if ($methodFound) {
-				self::$saltingHashingMethodInstance = &$objectInstance;
+				self::$instance = &$objectInstance;
 				break;
 			}
 		}
@@ -78,13 +84,13 @@ class tx_saltedpasswords_salts_factory {
 	 * @return  tx_saltedpasswords_abstract_salts  an instance of salting hashing method object
 	 */
 	static public function setPreferredHashingMethod($resource) {
-		self::$saltingHashingMethodInstance = null;
-		$objectInstance = self::$saltingHashingMethodInstance = t3lib_div::getUserObj($resource);
-		if (!is_null($objectInstance)
+		self::$instance = null;
+		$objectInstance = t3lib_div::getUserObj($resource);
+		if (is_object($objectInstance)
 			&& is_subclass_of($objectInstance, 'tx_saltedpasswords_abstract_salts')) {
-				self::$saltingHashingMethodInstance = &$objectInstance;
+				self::$instance = &$objectInstance;
 		}
-		return self::$saltingHashingMethodInstance;
+		return self::$instance;
 	}
 }
 ?>

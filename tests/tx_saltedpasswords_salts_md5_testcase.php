@@ -119,9 +119,24 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	public function createdSaltedHashOfProperStructure() {
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSalt($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSalt($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createdSaltedHashOfProperStructureForCustomSaltWithoutSetting() {
+		$password = 'password';
+		
+			// custom salt without setting
+		$randomBytes = t3lib_div::generateRandomBytes($this->objectInstance->getSaltLength());
+		$salt = $this->objectInstance->base64Encode($randomBytes, $this->objectInstance->getSaltLength());
+		$this->assertTrue($this->objectInstance->isValidSalt($salt));
+
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password, $salt);
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**

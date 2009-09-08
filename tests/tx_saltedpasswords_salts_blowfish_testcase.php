@@ -119,9 +119,24 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	public function createdSaltedHashOfProperStructure() {
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSalt($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSalt($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createdSaltedHashOfProperStructureForCustomSaltWithoutSetting() {
+		$password = 'password';
+		
+			// custom salt without setting
+		$randomBytes = t3lib_div::generateRandomBytes($this->objectInstance->getSaltLength());
+		$salt = $this->objectInstance->base64Encode($randomBytes, $this->objectInstance->getSaltLength());
+		$this->assertTrue($this->objectInstance->isValidSalt($salt));
+
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password, $salt);
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
@@ -206,7 +221,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	public function updateNecessityForValidSaltedPassword() {
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
 	}
 
 	/**
@@ -218,7 +233,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$increasedHashCount = $this->objectInstance->getHashCount() + 1;
 		$this->objectInstance->setMaxHashCount($increasedHashCount);
 		$this->objectInstance->setHashCount($increasedHashCount);
-		$this->assertTrue($this->objectInstance->isHashUpdateNeeded($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
 	}
 
 	/**
@@ -230,7 +245,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$decreasedHashCount = $this->objectInstance->getHashCount() - 1;
 		$this->objectInstance->setMinHashCount($decreasedHashCount);
 		$this->objectInstance->setHashCount($decreasedHashCount);
-		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
 	}
 }
 ?>

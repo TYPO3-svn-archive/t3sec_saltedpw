@@ -68,6 +68,156 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 	public function nonZeroSaltLength() {
 		$this->assertTrue($this->objectInstance->getSaltLength() > 0);
 	}
+
+	/**
+	 * @test
+	 */
+	public function emptyPasswordResultsInNullSaltedPassword() {
+		$password = '';
+		$this->assertNull($this->objectInstance->getHashedPassword($password));
+	}
+
+	/**
+	 * @test
+	 */
+	public function nonEmptyPasswordResultsInNonNullSaltedPassword() {
+		$password = 'a';
+		$this->assertNotNull($this->objectInstance->getHashedPassword($password));
+	}
+
+	/**
+	 * @test
+	 */
+	public function createdSaltedHashOfProperStructure() {
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
+	}
+
+	/**
+	 * @test
+	 */
+	public function createdSaltedHashOfProperStructureForCustomSaltWithoutSetting() {
+		$password = 'password';
+		
+			// custom salt without setting
+		$randomBytes = t3lib_div::generateRandomBytes($this->objectInstance->getSaltLength());
+		$salt = $this->objectInstance->base64Encode($randomBytes, $this->objectInstance->getSaltLength());
+		$this->assertTrue($this->objectInstance->isValidSalt($salt));
+
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password, $salt);
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
+	}
+
+	/**
+	 * @test
+	 */
+	public function authenticationWithValidPassword() {
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->checkPassword($password, $saltedHashPW));
+	}
+
+	/**
+	 * @test
+	 */
+	public function authenticationWithNonValidPassword() {
+		$password = 'password';
+		$password1 = $password . 'INVALID';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertFalse($this->objectInstance->checkPassword($password1, $saltedHashPW));
+	}
+
+	/**
+	 * @test
+	 */
+	public function passwordVariationsResultInDifferentHashes() {
+		$pad = 'a';
+		$password = '';
+		$criticalPwLength = 0;
+			// We're using a constant salt.
+		$saltedHashPWPrevious = $saltedHashPWCurrent = $salt = $this->objectInstance->getHashedPassword($pad);
+		
+		for ($i = 0; $i <= 128; $i += 8) {
+			$password = str_repeat($pad, max($i, 1));
+			$saltedHashPWPrevious = $saltedHashPWCurrent; 
+			$saltedHashPWCurrent = $this->objectInstance->getHashedPassword($password, $salt);
+			if ($i > 0 && 0 == strcmp($saltedHashPWPrevious, $saltedHashPWCurrent)) {
+				$criticalPwLength = $i;
+				break;
+			}
+		}
+		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
+	}
+	
+	/**
+	 * @test
+	 */
+	public function modifiedMinHashCount() {
+		$minHashCount = $this->objectInstance->getMinHashCount();
+		$this->objectInstance->setMinHashCount($minHashCount - 1);
+		$this->assertTrue($this->objectInstance->getMinHashCount() < $minHashCount);
+		$this->objectInstance->setMinHashCount($minHashCount + 1);
+		$this->assertTrue($this->objectInstance->getMinHashCount() > $minHashCount);
+	}
+
+	/**
+	 * @test
+	 */
+	public function modifiedMaxHashCount() {
+		$maxHashCount = $this->objectInstance->getMaxHashCount();
+		$this->objectInstance->setMaxHashCount($maxHashCount + 1);
+		$this->assertTrue($this->objectInstance->getMaxHashCount() > $maxHashCount);
+		$this->objectInstance->setMaxHashCount($maxHashCount - 1);
+		$this->assertTrue($this->objectInstance->getMaxHashCount() < $maxHashCount);
+	}
+
+	/**
+	 * @test
+	 */
+	public function modifiedHashCount() {
+		$hashCount = $this->objectInstance->getHashCount();
+		$this->objectInstance->setMaxHashCount($hashCount + 1);
+		$this->objectInstance->setHashCount($hashCount + 1);
+		$this->assertTrue($this->objectInstance->getHashCount() > $hashCount);
+		$this->objectInstance->setMinHashCount($hashCount - 1);
+		$this->objectInstance->setHashCount($hashCount - 1);
+		$this->assertTrue($this->objectInstance->getHashCount() < $hashCount);
+	}
+
+	/**
+	 * @test
+	 */
+	public function updateNecessityForValidSaltedPassword() {
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
+	}
+
+	/**
+	 * @test
+	 */
+	public function updateNecessityForIncreasedHashcount() {
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$increasedHashCount = $this->objectInstance->getHashCount() + 1;
+		$this->objectInstance->setMaxHashCount($increasedHashCount);
+		$this->objectInstance->setHashCount($increasedHashCount);
+		$this->assertTrue($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
+	}
+
+	/**
+	 * @test
+	 */
+	public function updateNecessityForDecreasedHashcount() {
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$decreasedHashCount = $this->objectInstance->getHashCount() - 1;
+		$this->objectInstance->setMinHashCount($decreasedHashCount);
+		$this->objectInstance->setHashCount($decreasedHashCount);
+		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
+	}
 }
 ?>
-}

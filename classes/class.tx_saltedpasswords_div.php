@@ -141,7 +141,8 @@ class tx_saltedpasswords_div  {
 		}
 
 		/**
-		 * Method determines the type of salting hashing method to be used
+		 * Method determines the default(=configured) type of 
+		 * salted hashing method to be used.
 		 * 
 		 * @return  string  classname of object to be used
 		 */

@@ -46,21 +46,23 @@ interface tx_saltedpasswords_salts {
 
 
 	/**
+	 * Method checks if a given plaintext password is correct by comparing it with
+	 * a given salted hashed password.
+	 * 
+	 * @access  public
+	 * @param   string   $plainPW:  plain-text password to compare with salted hash
+	 * @param   string   $saltedHashPW:  salted hash to compare plain-text password with
+	 * @return  boolean  true, if plaintext password is correct, otherwise false
+	 */
+	public function checkPassword($plainPW, $saltedHashPW);
+
+	/**
 	 * Returns length of required salt.
 	 * 
 	 * @access  public
 	 * @return  integer  length of required salt 
 	 */
 	public function getSaltLength();
-	
-	/**
-	 * Method determines if a given string is a valid salt
-	 * 
-	 * @access  public
-	 * @param   string   $salt: string to check
-	 * @return  boolean  true if it's valid salt, otherwise false
-	 */
-	public function isValidSalt($salt);
 
 	/**
 	 * Method creates a salted hash for a given plaintext password
@@ -73,15 +75,22 @@ interface tx_saltedpasswords_salts {
 	public function getHashedPassword($password, $salt = null);
 
 	/**
-	 * Method checks if a given plaintext password is correct by comparing it with
-	 * a given salted hashed password.
+	 * Method determines if a given string is a valid salt
 	 * 
 	 * @access  public
-	 * @param   string   $plainPW:  plain-text password to compare with salted hash
-	 * @param   string   $saltedHashPW:  salted hash to compare plain-text password with
-	 * @return  boolean  true, if plaintext password is correct, otherwise false
+	 * @param   string   $salt: string to check
+	 * @return  boolean  true if it's valid salt, otherwise false
 	 */
-	public function checkPassword($plainPW, $saltedHashPW);
+	public function isValidSalt($salt);
+
+	/**
+	 * Method determines if a given string is a valid salted hashed password.
+	 * 
+	 * @access  public
+	 * @param   string   $saltedPW: string to check
+	 * @return  boolean  true if it's valid salted hashed password, otherwise false
+	 */
+	public function isValidSaltedPW($saltedPW);
 }
 
 

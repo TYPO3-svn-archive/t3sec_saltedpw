@@ -87,5 +87,4 @@ class tx_saltedpasswords_div_testcase extends tx_phpunit_testcase {
 	}
 	
 }
-
 ?>

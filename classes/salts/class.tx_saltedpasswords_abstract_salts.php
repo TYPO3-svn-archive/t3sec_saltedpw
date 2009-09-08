@@ -34,7 +34,7 @@
 
 /**
  * Abtract class with methods needed to be extended
- * in a salting hashing class.
+ * in a salted hashing class.
  * 
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
  * 
@@ -84,12 +84,12 @@ abstract class tx_saltedpasswords_abstract_salts {
 	/**
 	 * Encodes bytes into printable base 64 using the *nix standard from crypt().
 	 *
-	 * @access protected
-	 * @param  string   $input: the string containing bytes to encode.
-	 * @param  integer  $count: the number of characters (bytes) to encode.
-	 * @return string   encoded string
+	 * @access  public
+	 * @param   string   $input: the string containing bytes to encode.
+	 * @param   integer  $count: the number of characters (bytes) to encode.
+	 * @return  string   encoded string
 	 */
-	protected function base64Encode($input, $count)  {
+	public function base64Encode($input, $count)  {
 		$output = '';
 		$i = 0;
 		$itoa64 = $this->getItoa64();

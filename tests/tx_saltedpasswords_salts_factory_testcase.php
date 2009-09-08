@@ -47,6 +47,25 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 	/**
 	 * @test
 	 */
+	public function base64EncodeReturnsProperLength() {
+			// 3 Bytes should result in a 6 char length base64 encoded string
+			// used for MD5 and PHPass salted hashing
+		$byteLength = 3;
+		$reqLengthBase64 = intval(ceil(($byteLength * 8) / 6));
+		$randomBytes = t3lib_div::generateRandomBytes($byteLength);
+		$this->assertTrue(strlen($this->objectInstance->base64Encode($randomBytes, $byteLength)) == $reqLengthBase64);
+		
+			// 16 Bytes should result in a 22 char length base64 encoded string
+			// used for Blowfish salted hashing
+		$byteLength = 16;
+		$reqLengthBase64 = intval(ceil(($byteLength * 8) / 6));
+		$randomBytes = t3lib_div::generateRandomBytes($byteLength);
+		$this->assertTrue(strlen($this->objectInstance->base64Encode($randomBytes, $byteLength)) == $reqLengthBase64);
+	}
+
+	/**
+	 * @test
+	 */
 	public function objectInstanceForMD5Salts() {
 		$saltMD5 = '$1$rasmusle$rISCgZzpwk3UhDidwXvin0';
 		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance($saltMD5);
