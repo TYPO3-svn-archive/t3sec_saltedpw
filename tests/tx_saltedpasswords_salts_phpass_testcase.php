@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2009 Ingo Renner <ingo@typo3.org>
+*  (c) 2009 Marcus Krause <marcus#exp2009@t3sec.info>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -13,6 +13,9 @@
 *
 *  The GNU General Public License can be found at
 *  http://www.gnu.org/copyleft/gpl.html.
+*  A copy is found in the textfile GPL.txt and important notices to the license
+*  from the author is found in LICENSE.txt distributed with these scripts.
+*
 *
 *  This script is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,12 +24,21 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+/**
+ * Contains testcases for "tx_saltedpasswords_salts_phpass" 
+ * that provides PHPass salted hashing.
+ * 
+ * $Id$
+ */
+
+	// Make sure that we are executed only in TYPO3 context
+if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_phpass.php');
 
 
 /**
- * Testcase for class tx_saltedpasswords_salts_phpass
+ * Testcases for class tx_saltedpasswords_salts_phpass.
  *
  * @author  Marcus Krause <marcus#exp2009@t3sec.info>
  * @package  TYPO3

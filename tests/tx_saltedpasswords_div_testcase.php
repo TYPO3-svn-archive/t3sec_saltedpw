@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2009 Ingo Renner <ingo@typo3.org>
+*  (c) 2009 Marcus Krause <marcus#exp2009@t3sec.info>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -13,6 +13,9 @@
 *
 *  The GNU General Public License can be found at
 *  http://www.gnu.org/copyleft/gpl.html.
+*  A copy is found in the textfile GPL.txt and important notices to the license
+*  from the author is found in LICENSE.txt distributed with these scripts.
+*
 *
 *  This script is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,12 +24,21 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+/**
+ * Contains testcases for "tx_saltedpasswords_div" 
+ * that provides various helper functions.
+ * 
+ * $Id$
+ */
+
+	// Make sure that we are executed only in TYPO3 context
+if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
 
 
 /**
- * Testcase for class tx_saltedpasswords_div
+ * Testcases for class tx_saltedpasswords_div.
  *
  * @author  Marcus Krause <marcus#exp2009@t3sec.info>
  * @package  TYPO3
@@ -37,54 +49,8 @@ class tx_saltedpasswords_div_testcase extends tx_phpunit_testcase {
 	/**
 	 * @test
 	 */
-	public function generatedSaltMinimumLength() {
-		$len = 1;
-		$salt = tx_saltedpasswords_div::generateSalt($len);
-		$this->assertEquals($len, strlen($salt));
+	public function emptyTest() {
+		$this->assertTrue(true);
 	}
-
-	/**
-	 * @test
-	 */
-	public function generatedSaltDefaultLength() {
-		$len = 12;
-		$salt = tx_saltedpasswords_div::generateSalt($len);
-		$this->assertEquals($len, strlen($salt));
-	}
-
-	/**
-	 * @test
-	 */
-	public function generatedSaltMaximumLength() {
-		$len = 16;
-		$salt = tx_saltedpasswords_div::generateSalt($len);
-		$this->assertEquals($len, strlen($salt));
-	}
-
-	/**
-	 * @test
-	 */
-	public function generatedSaltUsesCharPool() {
-		$len = 16;
-		$salt = tx_saltedpasswords_div::generateSalt($len);
-		$saltPool = tx_saltedpasswords_div::getSaltChars();
-		$found = true;
-		while ($len-- > 0) {
-			$pos = stripos($saltPool,$salt{$len});
-			if ($pos === false) $found = false;
-		}
-		$this->assertTrue($found);
-	}
-
-	/**
-	 * @test
-	 */
-	public function generatedSaltNotConstant() {
-		$len = 12;
-		$salt1 = tx_saltedpasswords_div::generateSalt($len);
-		$salt2 = tx_saltedpasswords_div::generateSalt($len);
-		$this->assertNotEquals($salt1, $salt2);
-	}
-	
 }
 ?>

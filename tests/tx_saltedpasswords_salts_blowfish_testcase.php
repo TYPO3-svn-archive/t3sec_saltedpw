@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2009 Ingo Renner <ingo@typo3.org>
+*  (c) 2009 Marcus Krause <marcus#exp2009@t3sec.info>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -13,6 +13,9 @@
 *
 *  The GNU General Public License can be found at
 *  http://www.gnu.org/copyleft/gpl.html.
+*  A copy is found in the textfile GPL.txt and important notices to the license
+*  from the author is found in LICENSE.txt distributed with these scripts.
+*
 *
 *  This script is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,7 +38,7 @@ require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_sa
 
 
 /**
- * Testcases for class tx_saltedpasswords_salts_blowfish
+ * Testcases for class tx_saltedpasswords_salts_blowfish.
  *
  * @author  Marcus Krause <marcus#exp2009@t3sec.info>
  * @package  TYPO3

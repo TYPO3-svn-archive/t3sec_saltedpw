@@ -25,10 +25,18 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+/**
+ * Contains class "tx_saltedpasswords_div" 
+ * that provides various helper functions.
+ * 
+ * $Id$
+ */
+
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
-require_once (PATH_t3lib.'class.t3lib_div.php');
+require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_factory.php');
+
 
 /**
  * General library class.
@@ -48,42 +56,6 @@ class tx_saltedpasswords_div  {
 		 */
 		const EXTKEY = 'saltedpasswords';
 
-		/**
-		 * Keeps pool of possible salt characters.
-		 *
-		 */
-		const SALTCHARS = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-
-		/**
-		 * Function creates a salt.
-		 *
-		 * @param   integer  length of salt to be created
-		 * @param   string   (optional) character pool to use
-		 * @return  string   created salt
-		 */
-		public static function generateSalt($len, $charPool = null) {
-
-			$randomBytes = t3lib_div::generateRandomBytes($len);
-			$allowedChars = !is_null($charPool) ? $charPool : self::SALTCHARS;
-			$salt = '';
-			while ($len-- > 0) {
-				$salt .= $allowedChars{ord($randomBytes{$len}) & 0x1F};
-			}
-			return $salt;
-		}
-
-
-		/**
-		 * Returns pool of password characters.
-		 *
-		 * @static
-		 * @access  public
-		 * @return  string  password character pool
-		 */
-		public static function getSaltChars() {
-			return self::SALTCHARS;
-		}
 
 		/**
 		 * Returns extension configuration data from $TYPO3_CONF_VARS (configurable in Extension Manager)
@@ -157,37 +129,6 @@ class tx_saltedpasswords_div  {
 		}
 
 		/**
-		 *	Returns a newly hashed password
-		 *
-		 * 	@since   2009-06-14
-		 *	@static
-		 *	@access public
-		 *	@return	string	encoded string
-		 */
-		public static function getHashedPassword($value) {
-			$extConf = self::returnExtConf();
-			if( $extConf['useBlowFish'] ) {		//crypt is used with blowfish
-				$salt = '$2$' . self::generateSalt(16);
-			} else {	//md5 crypt is used
-				$salt = '$1$' . self::generateSalt(12);
-			}
-				// generate salted Password Hash
-			return crypt($value,$salt);
-		}
-
-		/**
-		 *	Checks wether password is correct
-		 *
-		 * 	@since   2009-06-14
-		 *	@static
-		 *	@access public
-		 *	@return	boolean	password correct
-		 */
-		public static function comparePasswordToHash($plainPassword = string, $saltedHash = string) {
-			return (crypt($plainPassword,$saltedHash) == $saltedHash);
-		}
-
-		/**
 		 * Returns information if salted password hashes are
 		 * indeed used in the TYPO3_MODE.
 		 *
@@ -204,49 +145,6 @@ class tx_saltedpasswords_div  {
 				return true;
 			}
 			return false;
-		}
-
-		/**
-		 * Checks wether old-format
-		 *
-		 *	@return boolean checks wether password would match in old style
-		 */
-		public static function compareOldFormatHash($plainPassword = string, $saltedHash = string) {
-			$passwdValid = false;
-
-				// Try to include file from several locations
-				// t3lib_extmgm::extPath cannot be used since the extension is not loaded anymore!
-				// temporaly set pathes for later use of t3lib_extmgm
-			$libFound = @include_once PATH_site . '/typo3conf/ext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php';
-			if ( $libFound ) {
-				$GLOBALS['TYPO3_LOADED_EXT']['t3sec_saltedpw'] = array('type'=>'L', 'siteRelPath'=>'typo3conf/ext/t3sec_saltedpw/', 'typo3RelPath'=>'../typo3conf/ext/t3sec_saltedpw/');
-			} else {
-				$libFound = @include_once PATH_typo3 . '/ext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php';
-				if ( $libFound  ) {
-					$GLOBALS['TYPO3_LOADED_EXT']['t3sec_saltedpw'] = array('type'=>'G', 'siteRelPath'=>TYPO3_mainDir.'ext/t3sec_saltedpw/', 'typo3RelPath'=>'ext/t3sec_saltedpw/');
-				} else {
-					$libFound = @include_once PATH_typo3 . '/sysext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php';
-					if ($libFound) {
-						$GLOBALS['TYPO3_LOADED_EXT']['t3sec_saltedpw'] = array('type'=>'S', 'siteRelPath'=>TYPO3_mainDir.'sysext/t3sec_saltedpw/', 'typo3RelPath'=>'sysext/t3sec_saltedpw/');
-					}
-				}
-			}
-
-			if ( $libFound ) {
-				$objPHPass   = t3lib_div::makeInstance('tx_t3secsaltedpw_phpass');
-
-				if (!strncmp($saltedHash, '$P$', 3)) {
-					$passwdValid = $objPHPass->checkPassword($plainPassword, $saltedHash);
-				} else if (!strncmp($saltedHash, 'M$P$', 4)) {
-					$passwdValid = $objPHPass->checkPassword(md5($plainPassword), substr($saltedHash, 1));
-				} else if (!strncmp($saltedHash, 'C$P$', 4)) {
-					$passwdValid = $objPHPass->checkPassword($plainPassword, substr($saltedHash, 1));
-				}
-					// Reset made changes
-				unset($objPHPass);
-				unset($GLOBALS['TYPO3_LOADED_EXT']['t3sec_saltedpw']);
-			}
-			return $passwdValid;
 		}
 }
 
