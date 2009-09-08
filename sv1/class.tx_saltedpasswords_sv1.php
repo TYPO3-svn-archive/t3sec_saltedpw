@@ -34,6 +34,7 @@
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
+require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_factory.php');
 
 
@@ -126,14 +127,12 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 			
 			// determine method used for given salted hashed password
 		$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance($user['password']);
-		var_dump($this->objInstanceSaltedPW);
 		
 			// existing record is in format of Salted Hash password
 		if (is_object($this->objInstanceSaltedPW)) {
 			$validPasswd = $this->objInstanceSaltedPW->checkPassword($password,$user['password']);
 				
 			$defaultHashingClassName = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
-			var_dump($defaultHashingClassName);
 			$skip = false;
 			
 				// test for wrong salted hashing method
@@ -143,14 +142,12 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 				
 					// instanciate default method class
 				$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(null);
-				var_dump($this->objInstanceSaltedPW);
 				$this->updatePassword(intval($user['uid']), array( 'password' => $this->objInstanceSaltedPW->getHashedPassword($password)));
 			}
 
 			if ($validPasswd && !$skip && $this->objInstanceSaltedPW->isHashUpdateNeeded($user['password'])) {
 				$this->updatePassword(intval($user['uid']), array( 'password' => $this->objInstanceSaltedPW->getHashedPassword($password)));
 			}
-			exit();
 		} 	// we process also clear-text, md5 and passwords updated by Portable PHP password hashing framework
 		else if (!intval($this->extConf['forceSalted'])) {
 
@@ -254,8 +251,6 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 * @param   mixed      $updateFields  Field values as key=>value pairs to be updated in database
 	 */
 	protected function updatePassword($uid, $updateFields) {
-		//echo('there' . $uid);
-		var_dump($updateFields);
 		if (!strcmp(TYPO3_MODE, 'BE')) {
 				// BE
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery( 'be_users', sprintf('uid = %u', $uid), $updateFields);

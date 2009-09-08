@@ -34,6 +34,7 @@
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
+require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_factory.php');
 
 
@@ -133,6 +134,25 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 		$saltPhpass = '$P$CWF13LlG/0UcAQFUjnnS4LOqyRW43c.';
 		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance($saltPhpass);
 		$this->assertTrue((get_class($this->objectInstance) == 'tx_saltedpasswords_salts_phpass') || (is_subclass_of($this->objectInstance, 'tx_saltedpasswords_salts_phpass')) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function resettingFactoryInstanceSucceeds() {
+		$defaultClassNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
+		
+		$saltedPW = '';
+		if ($defaultClassNameToUse == 'tx_saltedpasswords_salts_md5') {
+			$saltedPW = '$P$CWF13LlG/0UcAQFUjnnS4LOqyRW43c.';
+		} else {
+			$saltedPW = '$1$rasmusle$rISCgZzpwk3UhDidwXvin0';
+		}
+		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance($saltedPW);
+		
+			// resetting
+		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance(null);
+		$this->assertTrue((get_class($this->objectInstance) == $defaultClassNameToUse) || (is_subclass_of($this->objectInstance, $defaultClassNameToUse)));
 	}
 }
 ?>

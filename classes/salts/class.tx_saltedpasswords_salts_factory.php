@@ -78,23 +78,27 @@ class tx_saltedpasswords_salts_factory {
 	 * This function will return an instance of a class that implements
 	 * tx_saltedpasswords_abstract_salts.
 	 * 
-	 * @param   string  (optional) salted hashed password to determine the type of used method from
+	 * Use parameter null to reset the factory!
+	 * 
+	 * @param   string  (optional) salted hashed password to determine the type of used method from or null to reset the factory
 	 * @return  tx_saltedpasswords_abstract_salts  an instance of salting hashing method object
 	 */
-	static public function getSaltingInstance($saltedHash = null) {
-		if (!is_object(self::$instance) || !is_null($saltedHash)) {
+	static public function getSaltingInstance($saltedHash = '') {
+			// creating new instance when
+			// * no instance existing
+			// * a salted hash given to determine salted hashing method from
+			// * a null parameter given to reset instance back to default method
+		if (!is_object(self::$instance) || !empty($saltedHash) || is_null($saltedHash)) {
 			
-				// non existing instance and no salted hash to check
-				// -> use default method
-			if (is_null($saltedHash)) {
-				$classNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
-				self::$instance = t3lib_div::makeInstance($classNameToUse);
-			}  // salted hash to check 
-			else {
+				// determine method by checking the given hash
+			if (!empty($saltedHash)) {
 				$result = self::determineSaltingHashingMethod($saltedHash);
 				if(!$result) {
 					self::$instance = null;
 				}
+			} else {
+				$classNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
+				self::$instance = t3lib_div::makeInstance($classNameToUse);
 			}
 		}
 		return self::$instance;
