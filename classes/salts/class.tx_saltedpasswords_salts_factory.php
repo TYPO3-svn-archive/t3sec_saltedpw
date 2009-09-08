@@ -3,6 +3,7 @@
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_abstract_salts.php');
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_md5.php');
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_blowfish.php');
+require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_phpass.php');
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
 
 class tx_saltedpasswords_salts_factory {
@@ -15,7 +16,7 @@ class tx_saltedpasswords_salts_factory {
 	 * 
 	 * @var string
 	 */
-	static protected $defaultMethods = 'tx_saltedpasswords_salts_md5,tx_saltedpasswords_salts_blowfish';
+	static protected $defaultMethods = 'tx_saltedpasswords_salts_md5,tx_saltedpasswords_salts_blowfish,tx_saltedpasswords_salts_phpass';
 	
 	/**
 	 * An instance of the salted hashing method.

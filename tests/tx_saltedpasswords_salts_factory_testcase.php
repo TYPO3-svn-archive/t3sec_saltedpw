@@ -81,5 +81,14 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance($saltBlowfish);
 		$this->assertTrue((get_class($this->objectInstance) == 'tx_saltedpasswords_salts_blowfish') || (is_subclass_of($this->objectInstance, 'tx_saltedpasswords_salts_blowfish')) );
 	}
+
+	/**
+	 * @test
+	 */
+	public function objectInstanceForPhpassSalts() {
+		$saltPhpass = '$P$CWF13LlG/0UcAQFUjnnS4LOqyRW43c.';
+		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance($saltPhpass);
+		$this->assertTrue((get_class($this->objectInstance) == 'tx_saltedpasswords_salts_phpass') || (is_subclass_of($this->objectInstance, 'tx_saltedpasswords_salts_phpass')) );
+	}
 }
 ?>
