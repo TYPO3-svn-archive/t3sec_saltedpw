@@ -106,14 +106,14 @@ class tx_saltedpasswords_div  {
 		 * @return  array   extension configuration data from localconf.php
 		 */
 		public static function returnExtConfDefaults() {
-			return array(   'onlyAuthService' => '0',
-							'forceSalted'   => '1',
-							'updatePasswd'    => '1',
-							'useBlowFish'	=> '0');
+			return array( 'onlyAuthService'       => '0',
+						  'forceSalted'           => '0',
+						  'updatePasswd'          => '1',
+						  'saltedPWHashingMethod' => '0');
 		}
 
 		/**
-		 * Method determines the default(=configured) type of 
+		 * Function determines the default(=configured) type of 
 		 * salted hashing method to be used.
 		 * 
 		 * @return  string  classname of object to be used
@@ -121,11 +121,16 @@ class tx_saltedpasswords_div  {
 		public static function getDefaultSaltingHashingMethod() {
 			
 			$extConf = self::returnExtConf();
-			if( $extConf['useBlowFish'] ) {
-				return 'tx_saltedpasswords_salts_blowfish';
-			} else {
-				return 'tx_saltedpasswords_salts_md5';
+			$classNameToUse = 'tx_saltedpasswords_salts_md5';
+			switch ($extConf['saltedPWHashingMethod']) {
+				case '0': $classNameToUse = 'tx_saltedpasswords_salts_phpass';
+						  break;
+				case '1': $classNameToUse = 'tx_saltedpasswords_salts_md5';
+						  break;
+				case '2': $classNameToUse = 'tx_saltedpasswords_salts_blowfish';
+						  break;
 			}
+			return $classNameToUse;
 		}
 
 		/**

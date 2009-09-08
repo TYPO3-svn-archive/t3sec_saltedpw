@@ -142,7 +142,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 		$saltWithSettings = $salt;
 		
 			// determines required length of base64 characters
-			// (calulates bytes in bits in base64)
+			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
 		
 			// salt without setting
@@ -188,7 +188,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 		$saltedPW = null;
 		
 			// determines required length of base64 characters
-			// (calulates bytes in bits in base64)
+			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
 		
 			// Retrieving settings with salt
@@ -369,7 +369,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 		$isValid = $skip = false;
 			
 			// determines required length of base64 characters
-			// (calulates bytes in bits in base64)
+			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
 		
 		if (strlen($salt) >= $reqLenBase64) {

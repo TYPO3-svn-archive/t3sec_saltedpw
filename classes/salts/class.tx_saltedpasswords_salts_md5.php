@@ -98,7 +98,7 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 		$saltWithSettings = $salt;
 
 			// determines required length of base64 characters
-			// (calulates bytes in bits in base64)
+			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
 		
 			// salt without setting
@@ -233,7 +233,7 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 		$isValid = $skip = false;
 			
 			// determines required length of base64 characters
-			// (calulates bytes in bits in base64)
+			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
 
 		if (strlen($salt) >= $reqLenBase64) {

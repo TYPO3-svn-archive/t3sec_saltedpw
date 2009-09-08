@@ -72,7 +72,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 */
 	protected function getWarningWhenMethodUnavailable() {
 		$warningMsg = '';
-		if (!defined(CRYPT_BLOWFISH) || !CRYPT_BLOWFISH) {
+		if (!CRYPT_BLOWFISH) {
 			$warningMsg .= 'Blowfish is not supported on your platform. '
 						.  'Then, some of the blowfish tests will fail.';
 		}

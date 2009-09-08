@@ -72,7 +72,7 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	 */
 	protected function getWarningWhenMethodUnavailable() {
 		$warningMsg = '';
-		if (!defined(CRYPT_MD5) || !CRYPT_MD5) {
+		if (!CRYPT_MD5) {
 			$warningMsg .= 'MD5 is not supported on your platform. '
 						.  'Then, some of the md5 tests will fail.';
 		}

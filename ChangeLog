@@ -1,3 +1,8 @@
+2009-09-08  Marcus Krause <marcus#exp2009@t3sec.info>
+	* Feature: Added lots of unit tests
+	* Feature: Added phpass salted hashing method
+	* Feature/Cleanup: Refactored extension to use an OOP approach
+
 2009-09-04  Steffen Ritter <info@rs-websystems.de>
 	* Feature: Introduced/Registered hook in felogin, for new "forgotPassword" handling (introduced with Core #10017)
 	* Feature: Configuration Check and UserInformation in Ext-EmConf via Flash-Messages

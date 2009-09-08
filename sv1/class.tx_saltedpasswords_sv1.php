@@ -137,9 +137,6 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 			
 				// test for wrong salted hashing method
 			if ($validPasswd && !(get_class($this->objInstanceSaltedPW) == $defaultHashingClassName) || (is_subclass_of($this->objInstanceSaltedPW, $defaultHashingClassName))) {
-				debug('switching hashing method'); //TODO
-				echo('here');
-				
 					// instanciate default method class
 				$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(null);
 				$this->updatePassword(intval($user['uid']), array( 'password' => $this->objInstanceSaltedPW->getHashedPassword($password)));
