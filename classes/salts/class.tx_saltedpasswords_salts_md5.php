@@ -205,6 +205,24 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 	}
 
 	/**
+	 * Checks whether a user's hashed password needs to be replaced with a new hash.
+	 *
+	 * This is typically called during the login process when the plain text
+	 * password is available.  A new hash is needed when the desired iteration
+	 * count has changed through a change in the variable $hashCount or
+	 * HASH_COUNT or if the user's password hash was generated in an bulk update
+	 * with class ext_update.
+	 *
+	 * @access  public
+	 * @param   string   $passString  salted hash to check if it needs an update
+	 * @return  boolean	              true if salted hash needs an update,
+	 *                                otherwise false
+	 */
+	public function isHashUpdateNeeded($passString) {
+		return false;
+	}
+
+	/**
 	 * Method determines if a given string is a valid salt
 	 * 
 	 * @access  public

@@ -181,5 +181,14 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 		}
 		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), $this->getWarningWhenMethodUnavailable() . 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
 	}
+
+	/**
+	 * @test
+	 */
+	public function noUpdateNecessityForMd5() {
+		$password = 'password';
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
+	}
 }
 ?>
