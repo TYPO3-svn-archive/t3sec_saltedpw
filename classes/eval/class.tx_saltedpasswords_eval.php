@@ -76,12 +76,14 @@ class tx_saltedpasswords_eval {
 
 		if ($isEnabled) {
 			$isMD5 = preg_match('/[0-9abcdef]{32,32}/', $value);
-			$isSaltedHash = t3lib_div::inList('$1$,$2$,$2a',substr($value,0,3));
+			$isSaltedHash = t3lib_div::inList('$1$,$2$,$2a,$P$',substr($value,0,3));
 
-				// if value is not a correct cryp-hash or old md5-hash
-				// encrypt Password
-			if ( !$isMD5 && !$isSaltedHash ) {
-				$value = tx_saltedpasswords_div::getHashedPassword($value);
+			$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance();
+
+			if ($isMD5) {
+				$value = 'M' . $this->objInstanceSaltedPW->getHashedPassword($value);
+			} else if (!$isSaltedHash ) {
+				$value = $this->objInstanceSaltedPW->getHashedPassword($value);
 			}
 		}
 

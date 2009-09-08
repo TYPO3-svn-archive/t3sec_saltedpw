@@ -65,18 +65,7 @@ class tx_saltedpasswords_emconfhelper  {
 			$loadedRSAAuth = t3lib_extMgm::isLoaded('rsaauth');
 				// rsaauth is active for 
 			$activeRSAAuth = ($GLOBALS['TYPO3_CONF_VARS']['BE']['loginSecurityLevel'] == 'rsa' ? true : false);
-				// t3sec_saltedpw is present in filesystem
-			$oldSaltedAvailable = 	( is_file(PATH_site . '/typo3conf/ext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php')
-				  || is_file(PATH_typo3 . '/ext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php')
-				  || is_file(PATH_typo3 . '/sysext/t3sec_saltedpw/res/lib/class.tx_t3secsaltedpw_phpass.php') 
-				)
-				? true : false;
-				
-				// if handleOldFormat is set and old Libs are Not Present throw error
-			if($extConf['handleOldFormat'] && !$oldSaltedAvailable) {
-				$problems[] = 'You configured saltedpasswords to recognize passwords in format of t3sec_saltedpw. <br />If you want to use the feature you\'ll need to have the extension present in the extension folder.<br />Import t3sec_saltedpw via Extension-Manager BUT <b><i>do not</i></b> install ist.';
-				$this->setErrorLevel('error');
-			}
+
 				// saltedpasswords is not active in BE since missing rsaauth
 			if(!$loadedRSAAuth || !$activeRSAAuth) {
 				
@@ -191,4 +180,7 @@ class tx_saltedpasswords_emconfhelper  {
 	}
 }
 
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php']);
+}
 ?>

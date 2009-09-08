@@ -13,9 +13,6 @@ updatePasswd = 1
 # cat=basic; type=boolean; label=Use Blowfish Encryption: Use Blowfish Encryption instead of MD5 Hashing for building the Salted Hashes
 useBlowFish = 0
 
-# cat=basic; type=boolean; label=Allow old t3sec_saltedpws passwords: Try to recognize passwords in old t3sec_saltedpws style (WARRNING: Extension hast to be in filesystem)
-handleOldFormat = 0
-
 
 
 TSConstantEditor.basic {

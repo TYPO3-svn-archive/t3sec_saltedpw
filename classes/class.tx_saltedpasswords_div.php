@@ -93,7 +93,8 @@ class tx_saltedpasswords_div  {
 		 */
 		public function feloginForgotPasswordHook(&$params,$pObj) {
 			if (self::isUsageEnabled('FE')) {
-				$params['newPassword'] = self::getHashedPassword($params['newPassword']);
+				$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance();
+				$params['newPassword'] = $this->objInstanceSaltedPW->getHashedPassword($params['newPassword']);
 			}
 		}
 
@@ -108,8 +109,7 @@ class tx_saltedpasswords_div  {
 			return array(   'onlyAuthService' => '0',
 							'forceSalted'   => '1',
 							'updatePasswd'    => '1',
-							'useBlowFish'	=> '0',
-							'handleOldFormat' => 0);
+							'useBlowFish'	=> '0');
 		}
 
 		/**

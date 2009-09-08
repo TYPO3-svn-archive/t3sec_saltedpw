@@ -199,7 +199,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 			// Hashes may be imported from elsewhere, so we allow != HASH_COUNT
 		if ($count_log2 >= $this->getMinHashCount() && $count_log2 <= $this->getMaxHashCount()) {
 
-			$salt = substr($setting, strlen($this->getSetting() + 1), $reqLenBase64);
+			$salt = substr($setting, strlen($this->getSetting()) + 1, $reqLenBase64);
 	
 				// We must use md5() or sha1() here since they are the only cryptographic
 				// primitives always available in PHP 5. To implement our own low-level

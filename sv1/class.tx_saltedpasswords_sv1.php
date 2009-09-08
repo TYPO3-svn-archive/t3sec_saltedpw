@@ -25,10 +25,16 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+/**
+ * Contains authentication service class for salted hashed passwords.
+ * 
+ * $Id$
+ */
+
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
+require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_factory.php');
 
 
 /**
@@ -72,6 +78,14 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 */
 	protected $extConf;
 
+	/**
+	 * An instance of the salted hashing method.
+	 * This member is set in the getSaltingInstance() function.
+	 * 
+	 * @var tx_saltedpasswords_abstract_salts
+	 */
+	protected $objInstanceSaltedPW = null;
+
 
 	/**
 	 * Checks if service is available. In case of this service we check that
@@ -109,20 +123,50 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 		} else if (!strcmp(TYPO3_MODE, 'FE')) {
 			$password = $loginData['uident_text'];
 		}
-
+			
+			// determine method used for given salted hashed password
+		$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance($user['password']);
+		var_dump($this->objInstanceSaltedPW);
+		
 			// existing record is in format of Salted Hash password
-		if (t3lib_div::inList('$1$,$2$,$2a',substr($user['password'],0,3))) {
-			$validPasswd = tx_saltedpasswords_div::comparePasswordToHash($password,$user['password']);
+		if (is_object($this->objInstanceSaltedPW)) {
+			$validPasswd = $this->objInstanceSaltedPW->checkPassword($password,$user['password']);
+				
+			$defaultHashingClassName = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
+			var_dump($defaultHashingClassName);
+			$skip = false;
+			
+				// test for wrong salted hashing method
+			if ($validPasswd && !(get_class($this->objInstanceSaltedPW) == $defaultHashingClassName) || (is_subclass_of($this->objInstanceSaltedPW, $defaultHashingClassName))) {
+				debug('switching hashing method'); //TODO
+				echo('here');
+				
+					// instanciate default method class
+				$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(null);
+				var_dump($this->objInstanceSaltedPW);
+				$this->updatePassword(intval($user['uid']), array( 'password' => $this->objInstanceSaltedPW->getHashedPassword($password)));
+			}
 
+			if ($validPasswd && !$skip && $this->objInstanceSaltedPW->isHashUpdateNeeded($user['password'])) {
+				$this->updatePassword(intval($user['uid']), array( 'password' => $this->objInstanceSaltedPW->getHashedPassword($password)));
+			}
+			exit();
 		} 	// we process also clear-text, md5 and passwords updated by Portable PHP password hashing framework
 		else if (!intval($this->extConf['forceSalted'])) {
 
-				// stored password is in old format of t3secsaltedpw
-			if ( t3lib_div::inList('M$P$,C$P$',substr($user['password'],0,4)) || strpos('$P$',$user['password']) !== false ) {
-				if($this->extConf['handleOldFormat']) {	//is processing of old format enabled
-					$validPasswd =  tx_saltedpasswords_div::compareOldFormatHash($password,$user['password']);
+				// stored password is in deprecated salted hashing method
+			if ( t3lib_div::inList('C$,M$',substr($user['password'],0,2))) {
+				
+					// instanciate default method class
+				$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(substr($user['password'], 1));
+			
+					// md5
+				if (!strcmp(substr($user['password'], 0, 1), 'M')) {
+					$validPasswd = $this->objInstanceSaltedPW->checkPassword(md5($password), substr($user['password'], 1));
+				} else {
+					$validPasswd = $this->objInstanceSaltedPW->checkPassword(md5($password), substr($user['password'], 1));
 				}
-
+			
 				// password is stored as md5
 			} else if (preg_match('/[0-9abcdef]{32,32}/', $user['password'])) {
 				$validPasswd = (!strcmp(md5($password), $user['password']) ? true : false);
@@ -133,7 +177,9 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 			}
 				// should we store the new format value in DB?
 			if ($validPasswd && intval($this->extConf['updatePasswd'])) {
-				$this->updatePassword(intval($user['uid']), array( 'password' => tx_saltedpasswords_div::getHashedPassword($password)));
+					// instanciate default method class
+				$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(null);
+				$this->updatePassword(intval($user['uid']), array( 'password' => $this->objInstanceSaltedPW->getHashedPassword($password)));
 			}
 		}
 		return $validPasswd;
@@ -208,6 +254,8 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 * @param   mixed      $updateFields  Field values as key=>value pairs to be updated in database
 	 */
 	protected function updatePassword($uid, $updateFields) {
+		//echo('there' . $uid);
+		var_dump($updateFields);
 		if (!strcmp(TYPO3_MODE, 'BE')) {
 				// BE
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery( 'be_users', sprintf('uid = %u', $uid), $updateFields);
