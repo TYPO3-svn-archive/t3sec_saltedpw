@@ -25,9 +25,9 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Contains testcases for "tx_saltedpasswords_salts_md5" 
+ * Contains testcases for "tx_saltedpasswords_salts_md5"
  * that provides MD5 salted hashing.
- * 
+ *
  * $Id$
  */
 
@@ -49,7 +49,7 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 
 	/**
 	 * Keeps instance of object to test.
-	 * 
+	 *
 	 * @var tx_saltedpasswords_salts_md5
 	 */
 	protected $objectInstance = null;
@@ -66,7 +66,7 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 
 	/**
 	 * Prepares a message to be shown when a salted hashing is not supported.
-	 * 
+	 *
 	 * @access  protected
 	 * @return  string     empty string if salted hashing method is available, otherwise an according warning
 	 */
@@ -76,15 +76,15 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 			$warningMsg .= 'MD5 is not supported on your platform. '
 						.  'Then, some of the md5 tests will fail.';
 		}
-	}	
-	
+	}
+
 	/**
 	 * @test
 	 */
 	public function hasCorrectBaseClass() {
-		
+
 		$hasCorrectBaseClass = (0 === strcmp('tx_saltedpasswords_salts_md5', get_class($this->objectInstance))) ? true : false;
-		
+
 			// XCLASS ?
 		if (!$hasCorrectBaseClass && false != get_parent_class($this->objectInstance)) {
 			$hasCorrectBaseClass = is_subclass_of($this->objectInstance, 'tx_saltedpasswords_salts_md5');
@@ -99,7 +99,7 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	public function nonZeroSaltLength() {
 		$this->assertTrue($this->objectInstance->getSaltLength() > 0);
 	}
-	
+
 	/**
 	 * @test
 	 */
@@ -123,8 +123,6 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
 		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
-		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 	}
 
 	/**
@@ -132,11 +130,11 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	 */
 	public function createdSaltedHashOfProperStructureForCustomSaltWithoutSetting() {
 		$password = 'password';
-		
+
 			// custom salt without setting
 		$randomBytes = t3lib_div::generateRandomBytes($this->objectInstance->getSaltLength());
 		$salt = $this->objectInstance->base64Encode($randomBytes, $this->objectInstance->getSaltLength());
-		$this->assertTrue($this->objectInstance->isValidSalt($salt));
+		$this->assertTrue($this->objectInstance->isValidSalt($salt), $this->getWarningWhenMethodUnavailable());
 
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password, $salt);
 		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());

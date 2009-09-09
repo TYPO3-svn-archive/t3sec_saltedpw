@@ -134,7 +134,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 			// custom salt without setting
 		$randomBytes = t3lib_div::generateRandomBytes($this->objectInstance->getSaltLength());
 		$salt = $this->objectInstance->base64Encode($randomBytes, $this->objectInstance->getSaltLength());
-		$this->assertTrue($this->objectInstance->isValidSalt($salt));
+		$this->assertTrue($this->objectInstance->isValidSalt($salt), $this->getWarningWhenMethodUnavailable());
 
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password, $salt);
 		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
@@ -148,7 +148,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$maxHashCount = $this->objectInstance->getMaxHashCount();
 		$this->objectInstance->setHashCount($maxHashCount);
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 			// reset hashcount
 		$this->objectInstance->setHashCount(null);
 	}
@@ -161,7 +161,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$minHashCount = $this->objectInstance->getMinHashCount();
 		$this->objectInstance->setHashCount($minHashCount);
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
 			// reset hashcount
 		$this->objectInstance->setHashCount(null);
 	}
