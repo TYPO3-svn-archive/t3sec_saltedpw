@@ -25,9 +25,9 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Contains class "tx_saltedpasswords_salts_factory" 
+ * Contains class "tx_saltedpasswords_salts_factory"
  * that provides a salted hashing method factory.
- * 
+ *
  * $Id$
  */
 
@@ -40,9 +40,9 @@ require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_sa
 
 /**
  * Testcases for class tx_saltedpasswords_salts_factory.
- * 
+ *
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
- * 
+ *
  * @since   	2009-09-06
  * @package     TYPO3
  * @subpackage  tx_saltedpasswords
@@ -52,7 +52,7 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 
 	/**
 	 * Keeps instance of object to test.
-	 * 
+	 *
 	 * @var tx_saltedpasswords_abstract_salts
 	 */
 	protected $objectInstance = null;
@@ -83,10 +83,12 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 	 * @test
 	 */
 	public function objectInstanceImplementsInterface() {
-		$this->assertTrue(method_exists($this->objectInstance,'getSaltLength'), 'Missing method getSaltLength() from interface tx_saltedpasswords_salts.');
-		$this->assertTrue(method_exists($this->objectInstance,'isValidSalt') , 'Missing method isValidSalt() from interface tx_saltedpasswords_salts.');
-		$this->assertTrue(method_exists($this->objectInstance,'getHashedPassword'), 'Missing method getHashedPassword() from interface tx_saltedpasswords_salts.');
-		$this->assertTrue(method_exists($this->objectInstance,'checkPassword'), 'Missing method checkPassword() from interface tx_saltedpasswords_salts.');
+		$this->assertTrue(method_exists($this->objectInstance, 'checkPassword'), 'Missing method checkPassword() from interface tx_saltedpasswords_salts.');
+		$this->assertTrue(method_exists($this->objectInstance, 'isHashUpdateNeeded'), 'Missing method isHashUpdateNeeded() from interface tx_saltedpasswords_salts.');
+		$this->assertTrue(method_exists($this->objectInstance, 'isValidSalt') , 'Missing method isValidSalt() from interface tx_saltedpasswords_salts.');
+		$this->assertTrue(method_exists($this->objectInstance, 'isValidSaltedPW') , 'Missing method isValidSaltedPW() from interface tx_saltedpasswords_salts.');
+		$this->assertTrue(method_exists($this->objectInstance, 'getHashedPassword'), 'Missing method getHashedPassword() from interface tx_saltedpasswords_salts.');
+		$this->assertTrue(method_exists($this->objectInstance, 'getSaltLength'), 'Missing method getSaltLength() from interface tx_saltedpasswords_salts.');
 	}
 
 	/**
@@ -99,7 +101,7 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 		$reqLengthBase64 = intval(ceil(($byteLength * 8) / 6));
 		$randomBytes = t3lib_div::generateRandomBytes($byteLength);
 		$this->assertTrue(strlen($this->objectInstance->base64Encode($randomBytes, $byteLength)) == $reqLengthBase64);
-		
+
 			// 16 Bytes should result in a 22 char length base64 encoded string
 			// used for Blowfish salted hashing
 		$byteLength = 16;
@@ -114,7 +116,7 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 	public function objectInstanceForMD5Salts() {
 		$saltMD5 = '$1$rasmusle$rISCgZzpwk3UhDidwXvin0';
 		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance($saltMD5);
-		
+
 		$this->assertTrue((get_class($this->objectInstance) == 'tx_saltedpasswords_salts_md5') || (is_subclass_of($this->objectInstance, 'tx_saltedpasswords_salts_md5')) );
 	}
 
@@ -141,7 +143,7 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 	 */
 	public function resettingFactoryInstanceSucceeds() {
 		$defaultClassNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
-		
+
 		$saltedPW = '';
 		if ($defaultClassNameToUse == 'tx_saltedpasswords_salts_md5') {
 			$saltedPW = '$P$CWF13LlG/0UcAQFUjnnS4LOqyRW43c.';
@@ -149,7 +151,7 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 			$saltedPW = '$1$rasmusle$rISCgZzpwk3UhDidwXvin0';
 		}
 		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance($saltedPW);
-		
+
 			// resetting
 		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance(null);
 		$this->assertTrue((get_class($this->objectInstance) == $defaultClassNameToUse) || (is_subclass_of($this->objectInstance, $defaultClassNameToUse)));
