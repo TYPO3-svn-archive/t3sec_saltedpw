@@ -25,9 +25,9 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Contains testcases for "tx_saltedpasswords_salts_phpass" 
+ * Contains testcases for "tx_saltedpasswords_salts_phpass"
  * that provides PHPass salted hashing.
- * 
+ *
  * $Id$
  */
 
@@ -49,7 +49,7 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 
 	/**
 	 * Keeps instance of object to test.
-	 * 
+	 *
 	 * @var tx_saltedpasswords_salts_phpass
 	 */
 	protected $objectInstance = null;
@@ -58,14 +58,14 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 	public function __construct() {
 		$this->objectInstance = t3lib_div::makeInstance('tx_saltedpasswords_salts_phpass');
 	}
-	
+
 	/**
 	 * @test
 	 */
 	public function hasCorrectBaseClass() {
-		
+
 		$hasCorrectBaseClass = (0 === strcmp('tx_saltedpasswords_salts_phpass', get_class($this->objectInstance))) ? true : false;
-		
+
 			// XCLASS ?
 		if (!$hasCorrectBaseClass && false != get_parent_class($this->objectInstance)) {
 			$hasCorrectBaseClass = is_subclass_of($this->objectInstance, 'tx_saltedpasswords_salts_phpass');
@@ -104,8 +104,6 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
 		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
-		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
 	}
 
 	/**
@@ -113,7 +111,7 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 	 */
 	public function createdSaltedHashOfProperStructureForCustomSaltWithoutSetting() {
 		$password = 'password';
-		
+
 			// custom salt without setting
 		$randomBytes = t3lib_div::generateRandomBytes($this->objectInstance->getSaltLength());
 		$salt = $this->objectInstance->base64Encode($randomBytes, $this->objectInstance->getSaltLength());
@@ -121,6 +119,32 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password, $salt);
 		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
+	}
+
+	/**
+	 * @test
+	 */
+	public function createdSaltedHashOfProperStructureForMaximumHashCount() {
+		$password = 'password';
+		$maxHashCount = $this->objectInstance->getMaxHashCount();
+		$this->objectInstance->setHashCount($maxHashCount);
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
+			// reset hashcount
+		$this->objectInstance->setHashCount(null);
+	}
+
+	/**
+	 * @test
+	 */
+	public function createdSaltedHashOfProperStructureForMinimumHashCount() {
+		$password = 'password';
+		$minHashCount = $this->objectInstance->getMinHashCount();
+		$this->objectInstance->setHashCount($minHashCount);
+		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
+			// reset hashcount
+		$this->objectInstance->setHashCount(null);
 	}
 
 	/**
@@ -151,10 +175,10 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 		$criticalPwLength = 0;
 			// We're using a constant salt.
 		$saltedHashPWPrevious = $saltedHashPWCurrent = $salt = $this->objectInstance->getHashedPassword($pad);
-		
+
 		for ($i = 0; $i <= 128; $i += 8) {
 			$password = str_repeat($pad, max($i, 1));
-			$saltedHashPWPrevious = $saltedHashPWCurrent; 
+			$saltedHashPWPrevious = $saltedHashPWCurrent;
 			$saltedHashPWCurrent = $this->objectInstance->getHashedPassword($password, $salt);
 			if ($i > 0 && 0 == strcmp($saltedHashPWPrevious, $saltedHashPWCurrent)) {
 				$criticalPwLength = $i;
@@ -163,7 +187,7 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 		}
 		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
 	}
-	
+
 	/**
 	 * @test
 	 */
@@ -197,6 +221,8 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 		$this->objectInstance->setMinHashCount($hashCount - 1);
 		$this->objectInstance->setHashCount($hashCount - 1);
 		$this->assertTrue($this->objectInstance->getHashCount() < $hashCount);
+			// reset hashcount
+		$this->objectInstance->setHashCount(null);
 	}
 
 	/**
@@ -218,6 +244,8 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 		$this->objectInstance->setMaxHashCount($increasedHashCount);
 		$this->objectInstance->setHashCount($increasedHashCount);
 		$this->assertTrue($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
+			// reset hashcount
+		$this->objectInstance->setHashCount(null);
 	}
 
 	/**
@@ -230,6 +258,8 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 		$this->objectInstance->setMinHashCount($decreasedHashCount);
 		$this->objectInstance->setHashCount($decreasedHashCount);
 		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
+			// reset hashcount
+		$this->objectInstance->setHashCount(null);
 	}
 }
 ?>
