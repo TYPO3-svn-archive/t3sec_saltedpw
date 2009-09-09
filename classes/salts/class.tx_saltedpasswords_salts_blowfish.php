@@ -25,9 +25,9 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Contains class "tx_saltedpasswords_salts_blowfish" 
+ * Contains class "tx_saltedpasswords_salts_blowfish"
  * that provides Blowfish salted hashing.
- * 
+ *
  * $Id$
  */
 
@@ -43,12 +43,12 @@ require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_sa
 /**
  * Class that implements Blowfish salted hashing based on PHP's
  * crypt() function.
- * 
+ *
  * Warning: Blowfish salted hashing with PHP's crypt() is not available
  * on every system.
- * 
+ *
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
- * 
+ *
  * @since   	2009-09-06
  * @package     TYPO3
  * @subpackage  tx_saltedpasswords
@@ -65,14 +65,14 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * The default maximum allowed log2 number of iterations for
 	 * password stretching.
 	 */
-	const MAX_HASH_COUNT = 7;
+	const MAX_HASH_COUNT = 17;
 
 	/**
 	 * The default minimum allowed log2 number of iterations for
 	 * password stretching.
 	 */
-	const MIN_HASH_COUNT = 7;
-	
+	const MIN_HASH_COUNT = 4;
+
 
 	/**
 	 * Keeps log2 number
@@ -103,14 +103,14 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 
 	/**
 	 * Keeps length of a Blowfish salt in bytes.
-	 * 
+	 *
 	 * @var integer
 	 */
 	static protected $saltLengthBlowfish = 16;
-	
+
 	/**
 	 * Setting string to indicate type of hashing method (blowfish).
-	 * 
+	 *
 	 * @var string
 	 */
 	static protected $settingBlowfish = '$2a$';
@@ -118,24 +118,24 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 
 	/**
 	 * Method applies settings (prefix, hash count) to a salt.
-	 * 
+	 *
 	 * Overwrites {@link tx_saltedpasswords_salts_md5::applySettingsToSalt()}
 	 * with Blowfish specifics.
-	 * 
+	 *
 	 * @access  protected
 	 * @param   string     $salt:  a salt to apply setting to
 	 * @return  string     salt with setting
 	 */
 	protected function applySettingsToSalt($salt) {
 		$saltWithSettings = $salt;
-		
+
 			// determines required length of base64 characters
 			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
-		
+
 					// salt without setting
 		if (strlen($salt) == $reqLenBase64) {
-			$saltWithSettings = $this->getSetting() 
+			$saltWithSettings = $this->getSetting()
 								. sprintf('%02u', $this->getHashCount()) . '$'
 								. $salt;
 		}
@@ -202,10 +202,10 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 
 	/**
 	 * Returns length of a Blowfish salt in bytes.
-	 * 
+	 *
 	 * Overwrites {@link tx_saltedpasswords_salts_md5::getSaltLength()}
 	 * with Blowfish specifics.
-	 * 
+	 *
 	 * @access  public
 	 * @return  integer  length of a Blowfish salt in bytes
 	 */
@@ -215,10 +215,10 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 
 	/**
 	 * Returns setting string of Blowfish salted hashes.
-	 * 
+	 *
 	 * Overwrites {@link tx_saltedpasswords_salts_md5::getSetting()}
 	 * with Blowfish specifics.
-	 * 
+	 *
 	 * @access  public
 	 * @return  string     setting string of Blowfish salted hashes
 	 */
@@ -251,21 +251,21 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 
 	/**
 	 * Method determines if a given string is a valid salt.
-	 * 
+	 *
 	 * Overwrites {@link tx_saltedpasswords_salts_md5::isValidSalt()} with
 	 * Blowfish specifics.
-	 * 
+	 *
 	 * @access  public
 	 * @param   string   $salt:  string to check
 	 * @return  boolean  true if it's valid salt, otherwise false
 	 */
 	public function isValidSalt($salt) {
 		$isValid = $skip = false;
-			
+
 			// determines required length of base64 characters
 			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
-		
+
 		if (strlen($salt) >= $reqLenBase64) {
 				// salt with prefixed setting
 			if (!strncmp('$', $salt, 1)) {
@@ -276,7 +276,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 					$skip = true;
 				}
 			}
-				
+
 				// checking base64 characters
 			if (!$skip && (strlen($salt) >= $reqLenBase64)) {
 				if (preg_match('/^[' . preg_quote($this->getItoa64(),'/') . ']{' . $reqLenBase64 . ',' . $reqLenBase64 . '}$/', substr($salt, 0, $reqLenBase64))) {
@@ -289,14 +289,14 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 
 	/**
 	 * Method determines if a given string is a valid salted hashed password.
-	 * 
+	 *
 	 * @access  public
 	 * @param   string   $saltedPW: string to check
 	 * @return  boolean  true if it's valid salted hashed password, otherwise false
 	 */
 	public function isValidSaltedPW($saltedPW) {
 		$isValid = false;
-		
+
 		$isValid = (!strncmp($this->getSetting(), $saltedPW, strlen($this->getSetting()))) ? true : false;
 		if ($isValid) {
 			$isValid = $this->isValidSalt($saltedPW);

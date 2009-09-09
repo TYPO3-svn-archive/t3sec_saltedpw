@@ -25,9 +25,9 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Contains class "tx_saltedpasswords_salts_phpass" 
+ * Contains class "tx_saltedpasswords_salts_phpass"
  * that provides PHPass salted hashing.
- * 
+ *
  * Derived from Drupal CMS
  * original license: GNU General Public License (GPL)
  * @see http://drupal.org/node/29706/
@@ -35,7 +35,7 @@
  * Based on the Portable PHP password hashing framework
  * original license: Public Domain
  * @see http://www.openwall.com/phpass/
- * 
+ *
  * $Id$
  */
 
@@ -50,24 +50,24 @@ require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/interfaces/
 /**
  * Class that implements PHPass salted hashing based on Drupal's
  * modified Openwall implementation.
- * 
+ *
  * PHPass should work on every system.
- * 
+ *
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
- * 
+ *
  * @since   	2009-09-06
  * @package     TYPO3
  * @subpackage  tx_saltedpasswords
  */
 class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts implements tx_saltedpasswords_salts {
-	
+
 
 	/**
 	 * Keeps a string for mapping an int to the corresponding
 	 * base 64 character.
 	 */
 	const ITOA64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-	
+
 	/**
 	 * The default log2 number of iterations for password stretching.
 	 */
@@ -77,14 +77,14 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * The default maximum allowed log2 number of iterations for
 	 * password stretching.
 	 */
-	const MAX_HASH_COUNT = 30;
+	const MAX_HASH_COUNT = 24;
 
 	/**
 	 * The default minimum allowed log2 number of iterations for
 	 * password stretching.
 	 */
 	const MIN_HASH_COUNT = 7;
-	
+
 
 	/**
 	 * Keeps log2 number
@@ -115,14 +115,14 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 
 	/**
 	 * Keeps length of a PHPass salt in bytes.
-	 * 
+	 *
 	 * @var integer
 	 */
 	static protected $saltLengthPhpass = 6;
-	
+
 	/**
 	 * Setting string to indicate type of hashing method (PHPass).
-	 * 
+	 *
 	 * @var string
 	 */
 	static protected $settingPhpass = '$P$';
@@ -130,27 +130,27 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 
 	/**
 	 * Method applies settings (prefix, hash count) to a salt.
-	 * 
+	 *
 	 * Overwrites {@link tx_saltedpasswords_salts_md5::applySettingsToSalt()}
 	 * with Blowfish specifics.
-	 * 
+	 *
 	 * @access  protected
 	 * @param   string     $salt:  a salt to apply setting to
 	 * @return  string     salt with setting
 	 */
 	protected function applySettingsToSalt($salt) {
 		$saltWithSettings = $salt;
-		
+
 			// determines required length of base64 characters
 			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
-		
+
 			// salt without setting
 		if (strlen($salt) == $reqLenBase64) {
 				// We encode the final log2 iteration count in base 64.
 			$itoa64 = $this->getItoa64();
 			$saltWithSettings = $this->getSetting() . $itoa64[$this->getHashCount()];
-			
+
 			$saltWithSettings .= $salt;
 		}
 		return $saltWithSettings;
@@ -159,11 +159,11 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	/**
 	 * Method checks if a given plaintext password is correct by comparing it with
 	 * a given salted hashed password.
-	 * 
+	 *
 	 * @access  public
 	 * @param   string   $plainPW: plain-text password to compare with salted hash
 	 * @param   string   $saltedHashPW: salted hash to compare plain-text password with
-	 * @return  boolean  true, if plain-text password matches the salted hash, 
+	 * @return  boolean  true, if plain-text password matches the salted hash,
 	 *                   otherwise false
 	 */
 	public function checkPassword($plainPW, $saltedHashPW) {
@@ -186,33 +186,33 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 */
 	protected function cryptPassword($password, $setting)  {
 		$saltedPW = null;
-		
+
 			// determines required length of base64 characters
 			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
-		
+
 			// Retrieving settings with salt
 		$setting = substr($setting, 0, strlen($this->getSetting()) + 1 + $reqLenBase64);
-		
+
 		$count_log2 = $this->getCountLog2($setting);
 
 			// Hashes may be imported from elsewhere, so we allow != HASH_COUNT
 		if ($count_log2 >= $this->getMinHashCount() && $count_log2 <= $this->getMaxHashCount()) {
 
 			$salt = substr($setting, strlen($this->getSetting()) + 1, $reqLenBase64);
-	
+
 				// We must use md5() or sha1() here since they are the only cryptographic
 				// primitives always available in PHP 5. To implement our own low-level
 				// cryptographic function in PHP would result in much worse performance and
 				// consequently in lower iteration counts and hashes that are quicker to crack
 				// (by non-PHP code).
 			$count = 1 << $count_log2;
-	
+
 			$hash = md5($salt . $password, TRUE);
 			do {
 				$hash = md5($hash . $password, TRUE);
 			} while (--$count);
-	
+
 			$saltedPW =  $setting . $this->base64Encode($hash, 16);
 				// base64Encode() of a 16 byte MD5 will always be 22 characters.
 			return (strlen($saltedPW) == 34) ? $saltedPW : FALSE;
@@ -263,7 +263,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 
 	/**
 	 * Method creates a salted hash for a given plaintext password
-	 * 
+	 *
 	 * @access  public
 	 * @param   string  $password:  plaintext password to create a salted hash from
 	 * @param   string  $salt:  optional custom salt with setting to use
@@ -317,7 +317,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 
 	/**
 	 * Returns length of a Blowfish salt in bytes.
-	 * 
+	 *
 	 * @access  public
 	 * @return  integer  length of a Blowfish salt in bytes
 	 */
@@ -327,7 +327,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 
 	/**
 	 * Returns setting string of PHPass salted hashes.
-	 * 
+	 *
 	 * @access  public
 	 * @return  string     setting string of PHPass salted hashes
 	 */
@@ -360,18 +360,18 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 
 	/**
 	 * Method determines if a given string is a valid salt.
-	 * 
+	 *
 	 * @access  public
 	 * @param   string   $salt:  string to check
 	 * @return  boolean  true if it's valid salt, otherwise false
 	 */
 	public function isValidSalt($salt) {
 		$isValid = $skip = false;
-			
+
 			// determines required length of base64 characters
 			// (calculates bytes in bits in base64)
 		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
-		
+
 		if (strlen($salt) >= $reqLenBase64) {
 				// salt with prefixed setting
 			if (!strncmp('$', $salt, 1)) {
@@ -382,7 +382,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 					$skip = true;
 				}
 			}
-				
+
 				// checking base64 characters
 			if (!$skip && (strlen($salt) >= $reqLenBase64)) {
 				if (preg_match('/^[' . preg_quote($this->getItoa64(),'/') . ']{' . $reqLenBase64 . ',' . $reqLenBase64 . '}$/', substr($salt, 0, $reqLenBase64))) {
@@ -395,14 +395,14 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 
 	/**
 	 * Method determines if a given string is a valid salted hashed password.
-	 * 
+	 *
 	 * @access  public
 	 * @param   string   $saltedPW: string to check
 	 * @return  boolean  true if it's valid salted hashed password, otherwise false
 	 */
 	public function isValidSaltedPW($saltedPW) {
 		$isValid = false;
-		
+
 		$isValid = (!strncmp($this->getSetting(), $saltedPW, strlen($this->getSetting()))) ? true : false;
 		if ($isValid) {
 			$isValid = $this->isValidSalt($saltedPW);
