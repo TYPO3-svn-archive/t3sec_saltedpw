@@ -1,3 +1,6 @@
+2009-09-09  Marcus Krause <marcus#exp2009@t3sec.info>
+	* Refactoring: Extracted method getLengthBase64FromBytes()
+
 2009-09-08  Marcus Krause <marcus#exp2009@t3sec.info>
 	* Feature: Added lots of unit tests
 	* Feature: Added phpass salted hashing method

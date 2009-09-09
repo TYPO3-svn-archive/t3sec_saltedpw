@@ -25,9 +25,9 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Contains abstract class "tx_saltedpasswords_abstract_salts" 
+ * Contains abstract class "tx_saltedpasswords_abstract_salts"
  * to be used in classes that provide salted hashing.
- * 
+ *
  * $Id$
  */
 
@@ -35,9 +35,9 @@
 /**
  * Abtract class with methods needed to be extended
  * in a salted hashing class.
- * 
+ *
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
- * 
+ *
  * @abstract
  * @since   	2009-09-06
  * @package     TYPO3
@@ -49,7 +49,7 @@ abstract class tx_saltedpasswords_abstract_salts {
 	/**
 	 * Method applies settings (prefix, optional hash count, optional suffix)
 	 * to a salt.
-	 * 
+	 *
 	 * @access  protected
 	 * @param   string     $salt:  a salt to apply setting to
 	 * @return  string     salt with setting
@@ -59,7 +59,7 @@ abstract class tx_saltedpasswords_abstract_salts {
 	/**
 	 * Generates a random base salt settings for the hash.
 	 *
-	 * @access  protected  
+	 * @access  protected
 	 * @return  string     a string containing settings and a random salt
 	 */
 	abstract protected function getGeneratedSalt();
@@ -75,7 +75,7 @@ abstract class tx_saltedpasswords_abstract_salts {
 
 	/**
 	 * Returns setting string to indicate type of hashing method.
-	 * 
+	 *
 	 * @access  protected
 	 * @return  string     setting string of hashing method
 	 */
@@ -113,6 +113,19 @@ abstract class tx_saltedpasswords_abstract_salts {
 			$output .= $itoa64[($value >> 18) & 0x3f];
 		} while ($i < $count);
 		return $output;
+	}
+
+	/**
+	 * Method determines required length of base64 characters for a given
+	 * length of a byte string.
+	 *
+	 * @access  protected
+	 * @param   integer    $byteLength: length of bytes to calculate in base64 chars
+	 * @return  integer    required length of base64 characters
+	 */
+	protected function getLengthBase64FromBytes($byteLength) {
+			// calculates bytes in bits in base64
+		return intval(ceil(($byteLength * 8) / 6));
 	}
 }
 

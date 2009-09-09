@@ -141,9 +141,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	protected function applySettingsToSalt($salt) {
 		$saltWithSettings = $salt;
 
-			// determines required length of base64 characters
-			// (calculates bytes in bits in base64)
-		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
+		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
 
 			// salt without setting
 		if (strlen($salt) == $reqLenBase64) {
@@ -187,9 +185,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	protected function cryptPassword($password, $setting)  {
 		$saltedPW = null;
 
-			// determines required length of base64 characters
-			// (calculates bytes in bits in base64)
-		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
+		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
 
 			// Retrieving settings with salt
 		$setting = substr($setting, 0, strlen($this->getSetting()) + 1 + $reqLenBase64);
@@ -368,9 +364,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	public function isValidSalt($salt) {
 		$isValid = $skip = false;
 
-			// determines required length of base64 characters
-			// (calculates bytes in bits in base64)
-		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
+		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
 
 		if (strlen($salt) >= $reqLenBase64) {
 				// salt with prefixed setting

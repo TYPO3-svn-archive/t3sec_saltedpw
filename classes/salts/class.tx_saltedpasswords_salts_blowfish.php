@@ -129,9 +129,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	protected function applySettingsToSalt($salt) {
 		$saltWithSettings = $salt;
 
-			// determines required length of base64 characters
-			// (calculates bytes in bits in base64)
-		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
+		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
 
 					// salt without setting
 		if (strlen($salt) == $reqLenBase64) {
@@ -262,9 +260,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	public function isValidSalt($salt) {
 		$isValid = $skip = false;
 
-			// determines required length of base64 characters
-			// (calculates bytes in bits in base64)
-		$reqLenBase64 = intval(ceil(($this->getSaltLength() * 8) / 6));
+		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
 
 		if (strlen($salt) >= $reqLenBase64) {
 				// salt with prefixed setting
