@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'Salted user password hashes',
-	'description' => 'Uses password hashing framework for storing passwords. Integrates into system extension "felogin" and extension "feuser_admin". Use SSL or rsaautch to secure datatransfer! PLEASE READ MANUAL FIRST!',
+	'description' => 'Uses password hashing framework for storing passwords. Integrates into system extension "felogin". Use SSL or rsaauth to secure datatransfer! PLEASE READ MANUAL FIRST!',
 	'category' => 'services',
 	'shy' => 0,
 	'dependencies' => 'cms',
