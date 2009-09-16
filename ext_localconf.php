@@ -11,6 +11,13 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['tx_saltedpassword
 	//hook for processing "forgotPassword" in felogin
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['felogin']['password_changed'][] = 'EXT:saltedpasswords/classes/class.tx_saltedpasswords_div.php:tx_saltedpasswords_div->feloginForgotPasswordHook';
 
+	// registering all available hashes to factory
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods'] = array(
+	'crypt_md5'			=> 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_md5.php:tx_saltedpasswords_salts_md5',
+	'crypt_blowfish'	=> 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php:tx_saltedpasswords_salts_blowfish',
+	'phpass'			=> 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_phpass.php:tx_saltedpasswords_salts_phpass'
+);
+
 t3lib_extMgm::addService(
 	'saltedpasswords',
 	'auth',

@@ -33,13 +33,13 @@
 
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
-
+/*
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_abstract_salts.php');
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_md5.php');
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_blowfish.php');
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_phpass.php');
 require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
-
+*/
 
 /**
  * Class that implements Blowfish salted hashing based on PHP's
@@ -54,15 +54,6 @@ require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpa
 class tx_saltedpasswords_salts_factory {
 
 
-	/**
-	 * Keeps a comma-separated list of class names
-	 * whose objects implement different salted hashing
-	 * methods. 
-	 * 
-	 * @var string
-	 */
-	static protected $defaultMethods = 'tx_saltedpasswords_salts_md5,tx_saltedpasswords_salts_blowfish,tx_saltedpasswords_salts_phpass';
-	
 	/**
 	 * An instance of the salted hashing method.
 	 * This member is set in the getSaltingInstance() function.
@@ -116,12 +107,15 @@ class tx_saltedpasswords_salts_factory {
 	static protected function determineSaltingHashingMethod($saltedHash) {
 		$methodFound = false;
 		$classNameToUse = '';
-		foreach(explode(',', self::$defaultMethods) as $method) {
+		$defaultMethods = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods'];
+		foreach($defaultMethods as $method) {
 			$objectInstance = t3lib_div::makeInstance($method);
-			$methodFound = $objectInstance->isValidSaltedPW($saltedHash);
-			if ($methodFound) {
-				self::$instance = &$objectInstance;
-				break;
+			if($objectInstance instanceof tx_saltedpasswords_salts) {
+				$methodFound = $objectInstance->isValidSaltedPW($saltedHash);
+				if ($methodFound) {
+					self::$instance = &$objectInstance;
+					break;
+				}
 			}
 		}
 		return $methodFound;
