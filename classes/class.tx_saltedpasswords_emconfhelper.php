@@ -139,7 +139,6 @@ class tx_saltedpasswords_emconfhelper  {
 				$message = 'Please have a look at the following list and take care:<br />&nbsp;<ul><li>' . implode('<br />&nbsp;</li><li>',$problems) . '</li></ul><br />Note, that a wrong configuration might have impact on the security of your TYPO3 installation and the usability of the backend.';
 			}
 		}
-
 		if (empty($message))  $this->setErrorLevel('ok');
 		
 		$message = $this->preText . $message;

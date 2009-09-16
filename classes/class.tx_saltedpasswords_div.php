@@ -67,15 +67,17 @@ class tx_saltedpasswords_div  {
 		 * @access  public
 		 * @param   string      extension key of the extension to get its configuration (optional);
 		 * 						if obmitted, the configuration of this extension is returned
+		 * @param	string		TYPO3_MODE, wether Configuration for Frontend or Backend should be delivered		 
 		 * @return  array       extension configuration data
 		 */
-		public static function returnExtConf( $extKey = self::EXTKEY ) {
+		public static function returnExtConf( $extKey = self::EXTKEY, $mode = TYPO3_MODE ) {
 			$extConf = array();
 
 			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extKey])) {
 				$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extKey]);
 			}
-
+			$extConf = $extConf[$mode .'.'];
+			
 				// load defaults if necessary
 			if ( empty($extConf) && !strcmp($extKey, self::EXTKEY)) {
 				$extConf = self::returnExtConfDefaults();
@@ -118,9 +120,9 @@ class tx_saltedpasswords_div  {
 		 * 
 		 * @return  string  classname of object to be used
 		 */
-		public static function getDefaultSaltingHashingMethod() {
+		public static function getDefaultSaltingHashingMethod($mode = TYPO3_MODE) {
 			
-			$extConf = self::returnExtConf();
+			$extConf = self::returnExtConf($mode);
 			$classNameToUse = 'tx_saltedpasswords_salts_md5';
 			switch ($extConf['saltedPWHashingMethod']) {
 				case '0': $classNameToUse = 'tx_saltedpasswords_salts_phpass';

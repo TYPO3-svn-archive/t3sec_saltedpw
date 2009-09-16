@@ -33,13 +33,6 @@
 
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
-/*
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_abstract_salts.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_md5.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_blowfish.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_phpass.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
-*/
 
 /**
  * Class that implements Blowfish salted hashing based on PHP's
@@ -74,7 +67,7 @@ class tx_saltedpasswords_salts_factory {
 	 * @param   string  (optional) salted hashed password to determine the type of used method from or null to reset the factory
 	 * @return  tx_saltedpasswords_abstract_salts  an instance of salting hashing method object
 	 */
-	static public function getSaltingInstance($saltedHash = '') {
+	static public function getSaltingInstance($saltedHash = '', $mode = TYPO3_MODE) {
 			// creating new instance when
 			// * no instance existing
 			// * a salted hash given to determine salted hashing method from
@@ -88,7 +81,7 @@ class tx_saltedpasswords_salts_factory {
 					self::$instance = null;
 				}
 			} else {
-				$classNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
+				$classNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod($mode);
 				$availableClasses = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods'];
 				self::$instance = t3lib_div::getUserObj($availableClasses[$classNameToUse],'tx_');
 			}

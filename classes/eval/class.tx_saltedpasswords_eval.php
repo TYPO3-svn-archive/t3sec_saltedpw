@@ -78,7 +78,7 @@ class tx_saltedpasswords_eval {
 			$isMD5 = preg_match('/[0-9abcdef]{32,32}/', $value);
 			$isSaltedHash = t3lib_div::inList('$1$,$2$,$2a,$P$',substr($value,0,3));
 
-			$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance();
+			$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(NULL,$this->mode);
 
 			if ($isMD5) {
 				$value = 'M' . $this->objInstanceSaltedPW->getHashedPassword($value);

@@ -99,10 +99,10 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	public function init() {
 		$available = false;
 
-	//	if (tx_saltedpasswords_div::isUsageEnabled()) {
+		if (tx_saltedpasswords_div::isUsageEnabled()) {
 			$available = true;
 			$this->extConf = tx_saltedpasswords_div::returnExtConf();
-	//	}
+		}
 
 		return $available ? parent::init() : false;
 	}
