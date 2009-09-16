@@ -61,7 +61,7 @@ class tx_saltedpasswords_emconfhelper  {
 		} else {
 			$problems = array();
 			
-			$extConf = array_merge(unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords']),(array)$_REQUEST['data']);
+			$extConf = array_merge((array)unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords']),(array)$_REQUEST['data']);
 				// the backend is called over SSL
 			$beSSL = ($_SERVER['HTTPS'] ? true : false);
 				// rsaAuth is loaded
