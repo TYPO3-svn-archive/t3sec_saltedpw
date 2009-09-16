@@ -99,11 +99,10 @@ class tx_saltedpasswords_emconfhelper  {
 	
 	private function init() {
 		$requestSetup = $this->processPostData((array)$_REQUEST['data']);
-		$extConf = array_merge((array)unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords']),$requestSetup);
-		$this->extConf['BE'] = $extConf['BE.']; 
-		$this->extConf['FE'] = $extConf['FE.']; 
+		$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords']);
+		$this->extConf['BE'] = array_merge((array)$extConf['BE.'],(array)$requestSetup['BE.']); 
+		$this->extConf['FE'] = array_merge((array)$extConf['FE.'],(array)$requestSetup['FE.']); 
 		$GLOBALS['LANG']->includeLLFile('EXT:saltedpasswords/locallang.xml');
-
 	}
 	
 	public function checkConfigurationBackend(&$params,$pObj) {
@@ -179,16 +178,16 @@ class tx_saltedpasswords_emconfhelper  {
 				$this->setErrorLevel('info');
 				$problems[] = 'saltedpasswords is not activated for frontend-logins. use the Install-Tool to set the Security-Level for Frontend to "rsa" or "normal" ($TYPO3_CONF_VARS][FE][loginSecurityLevel]). Make sure, that it is not blank or superchallenged.';
 			}
-			// only saltedpasswords as authsservice
+				// only saltedpasswords as authsservice
 			if($extConf['onlyAuthService']) {
-					// warn user taht the combination with "forceSalted" may lock him out from Backend
+					// warn user taht the combination with "forceSalted" may lock him out from frontend
 				if($extConf['forceSalted']) {
 					$this->setErrorLevel('warning');
-					$problems[] = 'You\' configured saltedpasswords to be the only authentication service for the backend and forced salted-passwords. The result ist that there won\'t be any chance to login with users not having a salted password hash. Are you sure you wanna do this? This might lock you out from backend!';
+					$problems[] = 'You configured saltedpasswords to be the only authentication service for the frontend and forced salted-passwords. The result ist that there won\'t be any chance to login with users not having a salted password hash (f.e. existing users).';
 				} else {
 						//inform the user that things like openid won't work anymore
 					$this->setErrorLevel('info');
-					$problems[] = 'You\' configured saltedpasswords to be the only authentication service for the backend. This means that other services like ipauth, openid etc will tried if authentication fails. Does not affect "rsauth", which will be implicitely used.';
+					$problems[] = 'You configured saltedpasswords to be the only authentication service for the frontend-logins. This means that other services like ipauth, openid etc will be tried if authentication fails.';
 				}
 			}	
 				// forceSalted is set
@@ -245,7 +244,7 @@ class tx_saltedpasswords_emconfhelper  {
 			if(count($parts)==2) {
 				$postArray[$parts[0].'.'] = array_merge((array)$postArray[$parts[0].'.'],$this->processPostData(array($parts[1] => $value)));
 			} else {
-				$postArray[$key] = $value;			
+				$postArray[$parts[0]] = $value;			
 			} 
 		}
 		return $postArray;

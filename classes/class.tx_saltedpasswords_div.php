@@ -65,19 +65,17 @@ class tx_saltedpasswords_div  {
 		 *
 		 * @static
 		 * @access  public
-		 * @param   string      extension key of the extension to get its configuration (optional);
-		 * 						if obmitted, the configuration of this extension is returned
 		 * @param	string		TYPO3_MODE, wether Configuration for Frontend or Backend should be delivered		 
 		 * @return  array       extension configuration data
 		 */
-		public static function returnExtConf( $extKey = self::EXTKEY, $mode = TYPO3_MODE ) {
+		public static function returnExtConf( $mode = TYPO3_MODE ) {
 			$extConf = array();
 
-			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extKey])) {
-				$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extKey]);
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords'])) {
+				$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords']);
 			}
 			$extConf = $extConf[$mode .'.'];
-			
+		
 				// load defaults if necessary
 			if ( empty($extConf) && !strcmp($extKey, self::EXTKEY)) {
 				$extConf = self::returnExtConfDefaults();
