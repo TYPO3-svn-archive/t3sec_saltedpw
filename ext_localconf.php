@@ -13,9 +13,9 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['felogin']['password_changed'][] = 'EXT:s
 
 	// registering all available hashes to factory
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods'] = array(
-	'crypt_md5'			=> 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_md5.php:tx_saltedpasswords_salts_md5',
-	'crypt_blowfish'	=> 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php:tx_saltedpasswords_salts_blowfish',
-	'phpass'			=> 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_phpass.php:tx_saltedpasswords_salts_phpass'
+	'tx_saltedpasswords_salts_md5'		=> 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_md5.php:tx_saltedpasswords_salts_md5',
+	'tx_saltedpasswords_salts_blowfish'	=> 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php:tx_saltedpasswords_salts_blowfish',
+	'tx_saltedpasswords_salts_phpass'	=> 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_phpass.php:tx_saltedpasswords_salts_phpass'
 );
 
 t3lib_extMgm::addService(

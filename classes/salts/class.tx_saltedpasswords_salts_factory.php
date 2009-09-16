@@ -89,7 +89,8 @@ class tx_saltedpasswords_salts_factory {
 				}
 			} else {
 				$classNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
-				self::$instance = t3lib_div::makeInstance($classNameToUse);
+				$availableClasses = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods'];
+				self::$instance = t3lib_div::getUserObj($availableClasses[$classNameToUse],'tx_');
 			}
 		}
 		return self::$instance;
@@ -106,10 +107,9 @@ class tx_saltedpasswords_salts_factory {
 	 */
 	static protected function determineSaltingHashingMethod($saltedHash) {
 		$methodFound = false;
-		$classNameToUse = '';
 		$defaultMethods = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods'];
 		foreach($defaultMethods as $method) {
-			$objectInstance = t3lib_div::makeInstance($method);
+			$objectInstance = t3lib_div::getUserObj($method,'tx_');
 			if($objectInstance instanceof tx_saltedpasswords_salts) {
 				$methodFound = $objectInstance->isValidSaltedPW($saltedHash);
 				if ($methodFound) {
