@@ -55,7 +55,7 @@ class tx_saltedpasswords_emconfhelper  {
 		
 			// No configuration at all by now
 		if(!isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords']) && !is_array($_REQUEST['data'])) {
-			$message = 'The Extension has not been configured yet! <br />Please be careful in in configuring the extension since it may have impact on the security of your TYPO3 installation and the usability of the backend.';
+			$message = 'The Extension has not yet been configured! <br />Please be careful with the configuration of the extension since it may have impact on the security of your TYPO3 installation and the usability of the backend.';
 			$header = 'Extension not configured yet...';
 			$this->setErrorLevel('info');
 		} else {
@@ -72,47 +72,47 @@ class tx_saltedpasswords_emconfhelper  {
 				// saltedpasswords is not active in BE since missing rsaauth
 			if(!$loadedRSAAuth || !$activeRSAAuth) {
 				
-				$tempMsg = '<b>IMPORTANT:</b><br/>saltedpasswords is not activatid for backend users, even if saltedpasswords ist installed.<br>To make use of saltedpasswords in the backend make sure you follow the following steps:<br />';
+				$tempMsg = '<b>IMPORTANT:</b><br/>saltedpasswords is not activated for backend users, even if saltedpasswords is installed.<br>To make use of saltedpasswords in the backend, make sure you follow these steps:<br />';
 				if (!$loadedRSAAuth) {
-					$tempMsg .= '&nbsp;-&nbsp;use the Extension-Manager to install the sysext &quot;rsaauth&quot;<br />';
+					$tempMsg .= '&nbsp;-&nbsp;Use the Extension-Manager to install the sysext &quot;rsaauth&quot;.<br />';
 				}
 				if (!$activeRSAAuth) {
-					$tempMsg .= '&nbsp;-&nbsp;use the Install-Tool to set the Security-Level for Backend to "rsa" (\$TYPO3_CONF_VARS][BE][loginSecurityLevel])<br />';
+					$tempMsg .= '&nbsp;-&nbsp;Use the Install-Tool to set the Security-Level for the Backend to "rsa" ([$TYPO3_CONF_VARS][BE][loginSecurityLevel]).<br />';
 				}
-				$tempMsg .= 'After following this step(s) saltedpasswords will automatically be activated for your backend.';
+				$tempMsg .= 'After following these instructions, saltedpasswords will automatically be activated for the backend.';
 				$problems[] = $tempMsg;
 				$this->setErrorLevel('warning');
 			}
 				// forceSalted is set
 			if($extConf['forceSalted']) {
 				$this->setErrorLevel('warning');
-				$problems[] = 'You set forceSalted to 1.<br>This means that only passwords in the format of this extensions will suceed for login.<br /><b><i>The result will be, that there is no possibility to create new Backend-User via the Install tool!</i></b>';
+				$problems[] = 'You set forceSalted to 1.<br>This means that only passwords in the format of this extension will succeed for login.<br /><b><i>The result will be, that there is no possibility to create new Backend Users via the Install Tool!</i></b>';
 			}
 
 				// updatePasswd
 			if($extConf['updatePasswd']) {
-					// updatePasswd wont work with "forceSalted"
+					// updatePasswd will not work with "forceSalted"
 				if($extConf['forceSalted']) {
 					$this->setErrorLevel('error');
-					$problems[] = 'The Extension is misconfigured and won\'t work as expected. You set "updatePasswd" and "forceSalted". Since "forceSalted" prevents any other password-formats from beeing recognized, they cannot be converted either.';
+					$problems[] = 'The Extension is misconfigured and will not work as expected. The reason is that you set "updatePasswd" and "forceSalted". Using "forceSalted" prevents any other password formats from being recognized. Therefore old passwords cannot be converted.';
 					
-					// inform the user how passwords are updated an that there is an convert script for fe_users
+					// inform the user how passwords are updated and that there is a convert script for fe_users
 				} else {
 					$this->setErrorLevel('info');
-					$problems[] = 'You\'ve enabled option "updatePasswd". Passwords will be converted during authentication to the chosen salted hashing method if necessary. For FE-User there is a cli-script available, converting ALL fe-user passwords immediately.';
+					$problems[] = 'You have enabled the option "updatePasswd". The passwords will be converted to the chosen salted hashing method during authentication if necessary. For FE-Users there is a cli-script available, converting ALL FE user passwords immediately.';
 				}
 			}
 			
 				// only saltedpasswords as authsservice
 			if($extConf['onlyAuthService']) {
-					// warn user taht the combination with "forceSalted" may lock him out from Backend
+					// warn user that the combination of "onlyAuthService" and "forceSalted" may lock him out of the Backend
 				if($extConf['forceSalted']) {
 					$this->setErrorLevel('warning');
-					$problems[] = 'You\' configured saltedpasswords to be the only authentication service AND forced salted-passwords. The result ist that there won\'t be any chance to login with users not having a salted password hash. Are you sure you wanna do this? This might lock you out from backend!';
+					$problems[] = 'You configured saltedpasswords to be the only authentication service AND to force salted-passwords. The result is that users not having a salted password hash will not be able to login. Are you sure you want to keep these settings? This might lock you out of the backend!';
 					//inform the user that things like openid won't work anymore
 				} else {
 					$this->setErrorLevel('info');
-					$problems[] = 'You\' configured saltedpasswords to be the only authentication service. This means that other services like ipauth, openid etc will tried if authentication fails. Does not affect "rsauth", which will be implicitely used.';
+					$problems[] = 'You configured saltedpasswords to be the only authentication service. This means that other services like ipauth, openid etc will not work anymore. This does not affect "rsaauth", which will be used implicitly.';
 				}
 			}
 			
@@ -125,13 +125,13 @@ class tx_saltedpasswords_emconfhelper  {
 				// Blowfish not available, but configured
 			if ($extConf['saltedPWHashingMethod'] == '2' && !CRYPT_BLOWFISH) {
 				$this->setErrorLevel('error');
-				$problems[] = 'You\' configured saltedpasswords to use Blowfish encryption which is not available on your system. Please use another method!';
+				$problems[] = 'You configured saltedpasswords to use Blowfish encryption which is not available on your system. Please use another encryption method!';
 			}
 			
 				// inform the user if securityLevel in FE is superchallenged or blank --> extension won't work
 			if(!t3lib_div::inList('normal,rsa', $GLOBALS['TYPO3_CONF_VARS']['FE']['loginSecurityLevel'])) {
 				$this->setErrorLevel('info');
-				$problems[] = 'saltedpasswords is not activated for frontend-logins. use the Install-Tool to set the Security-Level for Frontend to "rsa" or "normal" ($TYPO3_CONF_VARS][FE][loginSecurityLevel]). Make sure, that it is not blank or superchallenged.';
+				$problems[] = 'Salted passwords are not activated for frontend logins. Use the Install-Tool to set the Security Level for the Frontend to "rsa" or "normal" ([$TYPO3_CONF_VARS][FE][loginSecurityLevel]). Make sure, that it is not blank or superchallenged.';
 			}
 			
 				// if there are problems, render them into an unordered list
@@ -157,13 +157,13 @@ class tx_saltedpasswords_emconfhelper  {
 			case 'error' :
 				$this->errorType = t3lib_FlashMessage::ERROR;
 				$this->header = 'Errors in your configuration of saltedpasswords have been found...';
-				$this->preText = 'The extension will not work correct in this configuration.<br />';
+				$this->preText = 'The extension will not work correctly with this configuration.<br />';
 				break;
 			case 'warning':
 				if ($this->errorType != t3lib_FlashMessage::ERROR) {
 					$this->errorType = t3lib_FlashMessage::WARNING;
 					$this->header = 'There are warnings regarding your configuration.';
-					$this->preText = 'The extension might behave different from your expectations.<br />';
+					$this->preText = 'The extension might behave other than expected.<br />';
 				}
 				break;
 			case 'info' : 
@@ -176,8 +176,8 @@ class tx_saltedpasswords_emconfhelper  {
 			case 'ok' :
 				if ($this->errorType != t3lib_FlashMessage::ERROR && $this->errorType != t3lib_FlashMessage::WARNING && $this->errorType != t3lib_FlashMessage::INFO) {
 					$this->errorType = t3lib_FlashMessage::OK;
-					$this->header = 'No errors found...';
-					$this->preText = 'As far as automatic checks can do, your saltedpasswords seems to be configured correct, and should work as expected.<br />';
+					$this->header = 'Everything is fine.';
+					$this->preText = 'As far as automatic checks can do, your salted passwords seem to be configured correctly and should work as expected.<br />';
 				}
 				break;
 		}

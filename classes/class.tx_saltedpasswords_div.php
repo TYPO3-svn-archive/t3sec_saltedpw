@@ -111,7 +111,8 @@ class tx_saltedpasswords_div  {
 			return array( 'onlyAuthService'       => '0',
 						  'forceSalted'           => '0',
 						  'updatePasswd'          => '1',
-						  'saltedPWHashingMethod' => '0');
+						  'saltedPWHashingMethod' => '1',
+						  'enabled' 			  => '1');
 		}
 
 		/**
@@ -147,9 +148,12 @@ class tx_saltedpasswords_div  {
 		 */
 		public static function isUsageEnabled($mode = TYPO3_MODE) {
 				// Login Security Level Recognition
-
-			if (t3lib_div::inList( ($mode == 'BE' ? 'rsa' : 'normal,rsa') ,$GLOBALS['TYPO3_CONF_VARS'][$mode]['loginSecurityLevel'])) {
-				return true;
+			$extConf = self::returnExtConf($mode);
+			$securityLevel = $GLOBALS['TYPO3_CONF_VARS'][$mode]['loginSecurityLevel'];
+			if ($mode == 'BE' && $extConf['enabled']) {
+				return (($securityLevel =='normal' && $GLOBALS['TYPO3_CONF_VARS']['BE']['lockSSL'] > 0) || $securityLevel == 'rsa');
+			} else if ($mode =='FE' && $extConf['enabled']) {
+				return t3lib_div::inList('normal,rsa',$securityLevel);
 			}
 			return false;
 		}

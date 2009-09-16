@@ -7,11 +7,22 @@ BE.checkConfigurationAdvanced=0
 # cat=advanced Backend; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfiguration]; label=
 BE.checkConfigurationAdvanced=0
 
-# cat=basic/enable; type=options[Portable PHP password hashing (phpass)=0,MD5 salted hashing (secure)=1,Blowfish salted hashing (advanced)=2]; label=Salted password hashing method for Frontend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress)! Choose "MD5 salted hashing" to reuse TYPO3 password for OS level authentication (other servers could use TYPO3 passwords)! Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (blowfish might not be supported on your system)!
-FE.saltedPWHashingMethod = 0
 
-# cat=basic/enable; type=options[Portable PHP password hashing (phpass)=0,MD5 salted hashing (secure)=1,Blowfish salted hashing (advanced)=2]; label=Salted password hashing method for Backend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress)! Choose "MD5 salted hashing" to reuse TYPO3 password for OS level authentication (other servers could use TYPO3 passwords)! Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (blowfish might not be supported on your system)!
-BE.saltedPWHashingMethod = 0
+# cat=basic/enable; type=boolean; label=Enable FE-Usage of SaltedPassword: Wether saltedpasswords should be used in Frontend
+FE.enabled = 1
+
+# cat=basic/enable; type=options[Portable PHP password hashing (phpass)=0,MD5 salted hashing (secure)=1,Blowfish salted hashing (advanced)=2]; label=hashing method for Frontend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress)! Choose "MD5 salted hashing" to reuse TYPO3 password for OS level authentication (other servers could use TYPO3 passwords)! Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (blowfish might not be supported on your system)!
+FE.saltedPWHashingMethod = 1
+
+# cat=basic/enable; type=boolean; label=Enable BE-Usage of SaltedPassword: Wether saltedpasswords should be used in Backend
+BE.enabled = 1
+
+# cat=basic/enable; type=options[Portable PHP password hashing (phpass)=0,MD5 salted hashing (secure)=1,Blowfish salted hashing (advanced)=2]; label=hashing method for Backend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress)! Choose "MD5 salted hashing" to reuse TYPO3 password for OS level authentication (other servers could use TYPO3 passwords)! Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (blowfish might not be supported on your system)!
+BE.saltedPWHashingMethod = 1
+
+
+
+
 
 # cat=advanced Frontend/enable; type=boolean; label=Force salted passwords: Use only salted password. Old MD5 hashed passwords won't work anymore.
 FE.forceSalted = 0
@@ -21,6 +32,9 @@ FE.onlyAuthService = 0
 
 # cat=advanced Frontend/enable; type=boolean; label=Update FE/BE user passwords: Update FE/BE user passwords to salted hash ones during authentication. (will not work when forceSalted is activated)
 FE.updatePasswd = 1
+
+
+
 
 # cat=advanced Backend/enable; type=boolean; label=Force salted passwords: Use only salted password. Old MD5 hashed passwords won't work anymore.
 BE.forceSalted = 0
