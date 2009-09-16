@@ -1,50 +1,44 @@
-# cat=basic; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfiguration]; label=
-checkConfigurationBasic=0
+# cat=basic/enable; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfigurationFrontend]; label=Configuration Check Frontend
+checkConfigurationFE=0
 
-# cat=advanced Frontend; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfiguration]; label=
-BE.checkConfigurationAdvanced=0
-
-# cat=advanced Backend; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfiguration]; label=
-BE.checkConfigurationAdvanced=0
-
+# cat=basic/enable; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfigurationBackend]; label=Configuration Check Backend
+checkConfigurationBE=0
 
 # cat=basic/enable; type=boolean; label=Enable FE-Usage of SaltedPassword: Wether saltedpasswords should be used in Frontend
 FE.enabled = 1
 
-# cat=basic/enable; type=options[Portable PHP password hashing (phpass)=0,MD5 salted hashing (secure)=1,Blowfish salted hashing (advanced)=2]; label=hashing method for Frontend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress)! Choose "MD5 salted hashing" to reuse TYPO3 password for OS level authentication (other servers could use TYPO3 passwords)! Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (blowfish might not be supported on your system)!
+# cat=basic/enable; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->buildHashMethodSelectorFE]; label=hashing method for Frontend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress)! Choose "MD5 salted hashing" to reuse TYPO3 password for OS level authentication (other servers could use TYPO3 passwords)! Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (blowfish might not be supported on your system)!
 FE.saltedPWHashingMethod = 1
 
 # cat=basic/enable; type=boolean; label=Enable BE-Usage of SaltedPassword: Wether saltedpasswords should be used in Backend
 BE.enabled = 1
 
-# cat=basic/enable; type=options[Portable PHP password hashing (phpass)=0,MD5 salted hashing (secure)=1,Blowfish salted hashing (advanced)=2]; label=hashing method for Backend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress)! Choose "MD5 salted hashing" to reuse TYPO3 password for OS level authentication (other servers could use TYPO3 passwords)! Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (blowfish might not be supported on your system)!
+# cat=basic/enable; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->buildHashMethodSelectorBE]; label=hashing method for Backend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress)! Choose "MD5 salted hashing" to reuse TYPO3 password for OS level authentication (other servers could use TYPO3 passwords)! Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (blowfish might not be supported on your system)!
 BE.saltedPWHashingMethod = 1
 
+# cat=advanced Frontend; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfigurationFrontend]; label=Configuration Check Frontend
+checkConfigurationFE2=0
 
-
-
-
-# cat=advanced Frontend/enable; type=boolean; label=Force salted passwords: Use only salted password. Old MD5 hashed passwords won't work anymore.
+# cat=advanced Frontend; type=boolean; label=Force salted passwords: Use only salted password. Old MD5 hashed passwords won't work anymore.
 FE.forceSalted = 0
 
-# cat=advanced Frontend/enable; type=boolean; label=Use as only authentication service: If enabled and authentication fails, no further authentication service will be tried.
+# cat=advanced Frontend; type=boolean; label=Use as only authentication service: If enabled and authentication fails, no further authentication service will be tried.
 FE.onlyAuthService = 0
 
-# cat=advanced Frontend/enable; type=boolean; label=Update FE/BE user passwords: Update FE/BE user passwords to salted hash ones during authentication. (will not work when forceSalted is activated)
+# cat=advanced Frontend; type=boolean; label=Update FE/BE user passwords: Update FE/BE user passwords to salted hash ones during authentication. (will not work when forceSalted is activated)
 FE.updatePasswd = 1
 
+# cat=advanced Backend; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfigurationBackend]; label=Configuration Check Backend
+checkConfigurationBE2=0
 
-
-
-# cat=advanced Backend/enable; type=boolean; label=Force salted passwords: Use only salted password. Old MD5 hashed passwords won't work anymore.
+# cat=advanced Backend; type=boolean; label=Force salted passwords: Use only salted password. Old MD5 hashed passwords won't work anymore.
 BE.forceSalted = 0
 
-# cat=advanced Backend/enable; type=boolean; label=Use as only authentication service: If enabled and authentication fails, no further authentication service will be tried.
+# cat=advanced Backend; type=boolean; label=Use as only authentication service: If enabled and authentication fails, no further authentication service will be tried.
 BE.onlyAuthService = 0
 
-# cat=advanced Backend/enable; type=boolean; label=Update FE/BE user passwords: Update FE/BE user passwords to salted hash ones during authentication. (will not work when forceSalted is activated)
+# cat=advanced Backend; type=boolean; label=Update FE/BE user passwords: Update FE/BE user passwords to salted hash ones during authentication. (will not work when forceSalted is activated)
 BE.updatePasswd = 1
-
 
 TSConstantEditor.advanced {
   description = <span style="background:red; padding:1px 2px; color:#fff; font-weight:bold;">1</span> Install tool has hardcoded md5 hashing, enabling this setting will prevent use of a install-tool-created BE user.<br />Currently same is for changin password with user setup module unless you use pending patch!

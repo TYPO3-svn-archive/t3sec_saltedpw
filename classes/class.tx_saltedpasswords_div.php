@@ -111,7 +111,7 @@ class tx_saltedpasswords_div  {
 			return array( 'onlyAuthService'       => '0',
 						  'forceSalted'           => '0',
 						  'updatePasswd'          => '1',
-						  'saltedPWHashingMethod' => '1',
+						  'saltedPWHashingMethod' => 'tx_saltedpasswords_salts_md5',
 						  'enabled' 			  => '1');
 		}
 
@@ -125,13 +125,8 @@ class tx_saltedpasswords_div  {
 			
 			$extConf = self::returnExtConf($mode);
 			$classNameToUse = 'tx_saltedpasswords_salts_md5';
-			switch ($extConf['saltedPWHashingMethod']) {
-				case '0': $classNameToUse = 'tx_saltedpasswords_salts_phpass';
-						  break;
-				case '1': $classNameToUse = 'tx_saltedpasswords_salts_md5';
-						  break;
-				case '2': $classNameToUse = 'tx_saltedpasswords_salts_blowfish';
-						  break;
+			if(in_array($extConf['saltedPWHashingMethod'], array_keys($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods']))) {
+				$classNameToUse = $extConf['saltedPWHashingMethod'];
 			}
 			return $classNameToUse;
 		}
