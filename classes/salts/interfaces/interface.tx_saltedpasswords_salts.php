@@ -3,6 +3,7 @@
 *  Copyright notice
 *
 *  (c) 2009 Marcus Krause <marcus#exp2009@t3sec.info>
+*  (c) 2009 Steffen Ritter <info@rs-websystems.de>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -37,6 +38,7 @@
  * in a salting hashing class.
  * 
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
+ * @author      Steffen Ritter <info@rs-websystems.de>
  * 
  * @since   	2009-09-06
  * @package     TYPO3
@@ -63,6 +65,15 @@ interface tx_saltedpasswords_salts {
 	 * @return  integer  length of required salt 
 	 */
 	public function getSaltLength();
+
+	/**
+	 * Returns wether all perequesites for the hashing methods are matched
+	 * 
+	 * @access  public
+	 * @return  boolean  method available
+	 */
+	public function isAvailable();
+
 
 	/**
 	 * Method creates a salted hash for a given plaintext password

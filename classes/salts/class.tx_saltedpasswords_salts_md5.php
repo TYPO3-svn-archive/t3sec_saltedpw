@@ -171,6 +171,16 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 	protected function getItoa64() {
 		return self::ITOA64;
 	}
+	
+	/**
+	 * Returns wether all perequesites for the hashing methods are matched
+	 * 
+	 * @access  public
+	 * @return  boolean  method available
+	 */
+	public function isAvailable() {
+		return CRYPT_MD5;	
+	}
 
 	/**
 	 * Returns length of a MD5 salt in bytes.

@@ -168,6 +168,18 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 		$hash = $this->cryptPassword($plainPW, $saltedHashPW);
 		return ($hash && !strcmp($saltedHashPW, $hash));
 	}
+	
+	/**
+	 * Returns wether all perequesites for the hashing methods are matched
+	 * 
+	 * @access  public
+	 * @return  boolean  method available
+	 */
+	public function isAvailable() {
+		return true;
+	}
+
+	
 
 	/**
 	 * Hashes a password using a secure stretched hash.

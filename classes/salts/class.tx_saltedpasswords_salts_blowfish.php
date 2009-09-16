@@ -185,7 +185,15 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	public function getMaxHashCount() {
 		return isset(self::$maxHashCount) ? self::$maxHashCount : self::MAX_HASH_COUNT;
 	}
-
+	/**
+	 * Returns wether all perequesites for the hashing methods are matched
+	 * 
+	 * @access  public
+	 * @return  boolean  method available
+	 */
+	public function isAvailable() {
+		return CRYPT_BLOWFISH;	
+	}
 	/**
 	 * Method returns minimum allowed log2 number of iterations for password stretching.
 	 *
