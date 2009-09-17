@@ -17,7 +17,7 @@ if (tx_saltedpasswords_div::isUsageEnabled('BE')) {
 }
 
 
-$GLOBALS['TYPO3_USER_SETTINGS']['columns']['password']['eval'] = "tx_saltedpasswords_eval_be->evaluateFieldValue";
+$GLOBALS['TYPO3_USER_SETTINGS']['columns']['password']['eval'] = 'tx_saltedpasswords_eval_be';
 $GLOBALS['TYPO3_USER_SETTINGS']['columns']['password2']['eval'] = '';
 
 ?>
