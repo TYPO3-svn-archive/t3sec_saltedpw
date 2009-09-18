@@ -74,12 +74,8 @@ class tx_saltedpasswords_div  {
 			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords'])) {
 				$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords']);
 			}
-			$extConf = $extConf[$mode .'.'];
-		
-				// load defaults if necessary
-			if ( empty($extConf) && !strcmp($extKey, self::EXTKEY)) {
-				$extConf = self::returnExtConfDefaults();
-			}
+			
+			$extConf = array_merge(self::returnExtConfDefaults(),$extConf[$mode .'.']);
 			return $extConf;
 		}
 
