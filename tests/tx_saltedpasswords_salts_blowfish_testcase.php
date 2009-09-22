@@ -68,16 +68,13 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	}
 
 	/**
-	 * Prepares a message to be shown when a salted hashing is not supported.
+	 * Marks tests as skipped if the blowfish method is not available.
 	 *
-	 * @access  protected
-	 * @return  string     empty string if salted hashing method is available, otherwise an according warning
+	 * @return	void
 	 */
-	protected function getWarningWhenMethodUnavailable() {
-		$warningMsg = '';
+	protected function skipTestIfBlowfishIsNotAvailable() {
 		if (!CRYPT_BLOWFISH) {
-			$warningMsg .= 'Blowfish is not supported on your platform. '
-						.  'Then, some of the blowfish tests will fail.';
+			$this->markTestSkipped('Blowfish is not supported on your platform.');
 		}
 	}
 
@@ -115,43 +112,51 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 * @test
 	 */
 	public function nonEmptyPasswordResultsInNonNullSaltedPassword() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$password = 'a';
-		$this->assertNotNull($this->objectInstance->getHashedPassword($password), $this->getWarningWhenMethodUnavailable());
+		$this->assertNotNull($this->objectInstance->getHashedPassword($password));
 	}
 
 	/**
 	 * @test
 	 */
 	public function createdSaltedHashOfProperStructure() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
 	}
 
 	/**
 	 * @test
 	 */
 	public function createdSaltedHashOfProperStructureForCustomSaltWithoutSetting() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$password = 'password';
 
 			// custom salt without setting
 		$randomBytes = t3lib_div::generateRandomBytes($this->objectInstance->getSaltLength());
 		$salt = $this->objectInstance->base64Encode($randomBytes, $this->objectInstance->getSaltLength());
-		$this->assertTrue($this->objectInstance->isValidSalt($salt), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isValidSalt($salt));
 
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password, $salt);
-		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
 	}
 
 	/**
 	 * @test
 	 */
 	public function createdSaltedHashOfProperStructureForMaximumHashCount() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$password = 'password';
 		$maxHashCount = $this->objectInstance->getMaxHashCount();
 		$this->objectInstance->setHashCount($maxHashCount);
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
 			// reset hashcount
 		$this->objectInstance->setHashCount(null);
 	}
@@ -160,11 +165,13 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 * @test
 	 */
 	public function createdSaltedHashOfProperStructureForMinimumHashCount() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$password = 'password';
 		$minHashCount = $this->objectInstance->getMinHashCount();
 		$this->objectInstance->setHashCount($minHashCount);
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
 			// reset hashcount
 		$this->objectInstance->setHashCount(null);
 	}
@@ -173,25 +180,31 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 * @test
 	 */
 	public function authenticationWithValidPassword() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertTrue($this->objectInstance->checkPassword($password, $saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertTrue($this->objectInstance->checkPassword($password, $saltedHashPW));
 	}
 
 	/**
 	 * @test
 	 */
 	public function authenticationWithNonValidPassword() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$password = 'password';
 		$password1 = $password . 'INVALID';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
-		$this->assertFalse($this->objectInstance->checkPassword($password1, $saltedHashPW), $this->getWarningWhenMethodUnavailable());
+		$this->assertFalse($this->objectInstance->checkPassword($password1, $saltedHashPW));
 	}
 
 	/**
 	 * @test
 	 */
 	public function passwordVariationsResultInDifferentHashes() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$pad = 'a';
 		$password = '';
 		$criticalPwLength = 0;
@@ -207,7 +220,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 				break;
 			}
 		}
-		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), $this->getWarningWhenMethodUnavailable() . 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
+		$this->assertTrue(($criticalPwLength == 0) || ($criticalPwLength > 32), 'Duplicates of hashed passwords with plaintext password of length ' . $criticalPwLength . '+.');
 	}
 
 	/**
@@ -251,6 +264,8 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 * @test
 	 */
 	public function updateNecessityForValidSaltedPassword() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
 		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
@@ -274,6 +289,8 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 * @test
 	 */
 	public function updateNecessityForDecreasedHashcount() {
+		$this->skipTestIfBlowfishIsNotAvailable();
+
 		$password = 'password';
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
 		$decreasedHashCount = $this->objectInstance->getHashCount() - 1;

@@ -7,6 +7,7 @@
 	* Fixed bug: PHP warning occurs when extension is configured the first time in EM
 	* Cleanup: Removed require_once() calls and TYPO3_MODE checks from unit tests
 	* Fixed bug: Use proper setUp() and tearDown() methods in unit tests
+	* Fixed bug: Mark unit tests as skipped if blowfish is not installed
 
 2009-09-09  Marcus Krause  <marcus#exp2009@t3sec.info>
 
