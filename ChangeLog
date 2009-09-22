@@ -1,21 +1,29 @@
+2009-09-22  Michael Stucki  <michael@typo3.org>
+
+	* Cleanup: Various code cleanup before reviewing the code...
+
 2009-09-22  Oliver Hader  <oliver@typo3.org>
 
 	* Fixed bug: PHP warning occurs when extension is configured the first time in EM
 	* Cleanup: Removed require_once() calls and TYPO3_MODE checks from unit tests
 
-2009-09-09  Marcus Krause <marcus#exp2009@t3sec.info>
+2009-09-09  Marcus Krause  <marcus#exp2009@t3sec.info>
+
 	* Refactoring: Extracted method getLengthBase64FromBytes()
 
-2009-09-08  Marcus Krause <marcus#exp2009@t3sec.info>
+2009-09-08  Marcus Krause  <marcus#exp2009@t3sec.info>
+
 	* Feature: Added lots of unit tests
 	* Feature: Added phpass salted hashing method
 	* Feature/Cleanup: Refactored extension to use an OOP approach
 
-2009-09-04  Steffen Ritter <info@rs-websystems.de>
+2009-09-04  Steffen Ritter  <info@rs-websystems.de>
+
 	* Feature: Introduced/Registered hook in felogin, for new "forgotPassword" handling (introduced with Core #10017)
 	* Feature: Configuration Check and UserInformation in Ext-EmConf via Flash-Messages
 
-2009-07-20  Steffen Ritter <info@rs-websystems.de>
+2009-07-20  Steffen Ritter  <info@rs-websystems.de>
+
 	* Cleanup: Removed TYPO3 4.2 compatibility
 
 2009-07-19  Oliver Hader  <oliver@typo3.org>

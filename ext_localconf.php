@@ -2,13 +2,13 @@
 	// Make sure that we are executed only in TYPO3 context
 if (!defined ("TYPO3_MODE")) 	die ("Access denied.");
 
-	//form evaluation function - FE users only
+	// form evaluation function - FE users only
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['tx_saltedpasswords_eval_fe'] = 'EXT:saltedpasswords/classes/eval/class.tx_saltedpasswords_eval_fe.php';
 
-	//form evaluation function - BE users only
+	// form evaluation function - BE users only
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['tx_saltedpasswords_eval_be'] = 'EXT:saltedpasswords/classes/eval/class.tx_saltedpasswords_eval_be.php';
 	
-	//hook for processing "forgotPassword" in felogin
+	// hook for processing "forgotPassword" in felogin
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['felogin']['password_changed'][] = 'EXT:saltedpasswords/classes/class.tx_saltedpasswords_div.php:tx_saltedpasswords_div->feloginForgotPasswordHook';
 
 	// registering all available hashes to factory

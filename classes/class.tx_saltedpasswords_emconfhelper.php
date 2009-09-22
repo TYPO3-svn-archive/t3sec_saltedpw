@@ -138,7 +138,7 @@ class tx_saltedpasswords_emconfhelper  {
 					$this->setErrorLevel('warning');
 					$problems[] = 'You\' configured saltedpasswords to be the only authentication service for the backend and forced salted-passwords. The result ist that there won\'t be any chance to login with users not having a salted password hash. Are you sure you wanna do this? This might lock you out from backend!';
 				} else {
-						//inform the user that things like openid won't work anymore
+						// inform the user that things like openid won't work anymore
 					$this->setErrorLevel('info');
 					$problems[] = 'You\' configured saltedpasswords to be the only authentication service for the backend. This means that other services like ipauth, openid etc will tried if authentication fails. Does not affect "rsauth", which will be implicitely used.';
 				}
@@ -185,7 +185,7 @@ class tx_saltedpasswords_emconfhelper  {
 					$this->setErrorLevel('warning');
 					$problems[] = 'You configured saltedpasswords to be the only authentication service for the frontend and forced salted-passwords. The result ist that there won\'t be any chance to login with users not having a salted password hash (f.e. existing users).';
 				} else {
-						//inform the user that things like openid won't work anymore
+						// inform the user that things like openid won't work anymore
 					$this->setErrorLevel('info');
 					$problems[] = 'You configured saltedpasswords to be the only authentication service for the frontend-logins. This means that other services like ipauth, openid etc will be tried if authentication fails.';
 				}
