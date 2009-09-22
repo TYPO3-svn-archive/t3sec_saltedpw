@@ -50,12 +50,22 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 	 */
 	protected $objectInstance = null;
 
+	/**
+	 * Sets up the fixtures for this testcase.
+	 *
+	 * @return	void
+	 */
 	protected function setUp() {
 		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance();
 	}
 
-	protected function tearDown() {
-		$this->objectInstance = null;
+	/**
+	 * Tears down objects and settings created in this testcase.
+	 *
+	 * @return	void
+	 */
+	public function tearDown() {
+		unset($this->objectInstance);
 	}
 
 	/**

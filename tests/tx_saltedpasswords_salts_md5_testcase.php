@@ -50,12 +50,21 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 
 
 	/**
-	 * Class constructor.
+	 * Sets up the fixtures for this testcase.
 	 *
-	 * @access  public
+	 * @return	void
 	 */
-	public function __construct() {
+	public function setUp() {
 		$this->objectInstance = t3lib_div::makeInstance('tx_saltedpasswords_salts_md5');
+	}
+
+	/**
+	 * Tears down objects and settings created in this testcase.
+	 *
+	 * @return	void
+	 */
+	public function tearDown() {
+		unset($this->objectInstance);
 	}
 
 	/**

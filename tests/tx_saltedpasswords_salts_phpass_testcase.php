@@ -49,8 +49,22 @@ class tx_saltedpasswords_salts_phpass_testcase extends tx_phpunit_testcase {
 	protected $objectInstance = null;
 
 
-	public function __construct() {
+	/**
+	 * Sets up the fixtures for this testcase.
+	 *
+	 * @return	void
+	 */
+	public function setUp() {
 		$this->objectInstance = t3lib_div::makeInstance('tx_saltedpasswords_salts_phpass');
+	}
+
+	/**
+	 * Tears down objects and settings created in this testcase.
+	 *
+	 * @return	void
+	 */
+	public function tearDown() {
+		unset($this->objectInstance);
 	}
 
 	/**
