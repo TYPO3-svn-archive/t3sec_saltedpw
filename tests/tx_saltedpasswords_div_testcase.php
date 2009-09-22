@@ -31,12 +31,6 @@
  * $Id$
  */
 
-	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) die ("Access denied.");
-
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
-
-
 /**
  * Testcases for class tx_saltedpasswords_div.
  *
@@ -45,12 +39,40 @@ require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpa
  * @subpackage  tx_saltedpasswords
  */
 class tx_saltedpasswords_div_testcase extends tx_phpunit_testcase {
-	
+	protected $backupGlobals = TRUE;
+
+	public function setUp() {
+
+	}
+
+	public function tearDown() {
+
+	}
+
 	/**
 	 * @test
 	 */
-	public function emptyTest() {
-		$this->assertTrue(true);
+	public function doesReturnExtConfReturnDefaultSettingsIfNoExtensionConfigurationIsFound() {
+		$this->assertEquals(
+			tx_saltedpasswords_div::returnExtConfDefaults(),
+			tx_saltedpasswords_div::returnExtConf('TEST_MODE')
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function doesReturnExtConfReturnMergedSettingsIfExtensionConfigurationIsFound() {
+		$setting = array('setting' => 1);
+
+		$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['saltedpasswords'] = serialize(
+			array('TEST_MODE.' => $setting)
+		);
+
+		$this->assertEquals(
+			array_merge(tx_saltedpasswords_div::returnExtConfDefaults(), $setting),
+			tx_saltedpasswords_div::returnExtConf('TEST_MODE')
+		);
 	}
 }
 ?>
