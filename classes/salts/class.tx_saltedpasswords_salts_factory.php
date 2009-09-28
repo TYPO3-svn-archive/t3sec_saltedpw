@@ -31,8 +31,6 @@
  * $Id$
  */
 
-	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 /**
  * Class that implements Blowfish salted hashing based on PHP's
@@ -122,13 +120,15 @@ class tx_saltedpasswords_salts_factory {
 	 * @return  tx_saltedpasswords_abstract_salts  an instance of salting hashing method object
 	 */
 	static public function setPreferredHashingMethod($resource) {
-		self::$instance = null;
+		self::$instance = NULL;
 		$objectInstance = t3lib_div::getUserObj($resource);
 		if (is_object($objectInstance)
 			&& is_subclass_of($objectInstance, 'tx_saltedpasswords_abstract_salts')) {
 				self::$instance = &$objectInstance;
 		}
+
 		return self::$instance;
 	}
 }
+
 ?>

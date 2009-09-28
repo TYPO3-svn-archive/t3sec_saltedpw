@@ -26,20 +26,15 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) die ("Access denied.");
-
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
-
 /**
  * Class implementing salted evaluation methods.
  *
- * @author      Marcus Krause <marcus#exp2009@t3sec.info>
- * @author		Steffen Ritter <info@rs-websystems.de>
+ * @author	Marcus Krause <marcus#exp2009@t3sec.info>
+ * @author	Steffen Ritter <info@rs-websystems.de>
  *
- * @since       2009-06-14
- * @package     TYPO3
- * @subpackage  tx_saltedpasswords
+ * @since	2009-06-14
+ * @package	TYPO3
+ * @subpackage	tx_saltedpasswords
  */
 class tx_saltedpasswords_eval {
 
@@ -50,7 +45,7 @@ class tx_saltedpasswords_eval {
 	 *
 	 * @var string
 	 */
-	protected $mode = null;
+	protected $mode = NULL;
 
 
 	/**
@@ -90,7 +85,6 @@ class tx_saltedpasswords_eval {
 		return $value;
 	}
 }
-
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/eval/class.tx_saltedpasswords_eval.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/eval/class.tx_saltedpasswords_eval.php']);

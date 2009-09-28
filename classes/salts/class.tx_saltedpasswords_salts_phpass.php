@@ -39,13 +39,6 @@
  * $Id$
  */
 
-	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) die ("Access denied.");
-
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_abstract_salts.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/interfaces/interface.tx_saltedpasswords_salts.php');
-
 
 /**
  * Class that implements PHPass salted hashing based on Drupal's
@@ -151,6 +144,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 
 			$saltWithSettings .= $salt;
 		}
+
 		return $saltWithSettings;
 	}
 
@@ -161,16 +155,16 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @access  public
 	 * @param   string   $plainPW: plain-text password to compare with salted hash
 	 * @param   string   $saltedHashPW: salted hash to compare plain-text password with
-	 * @return  boolean  true, if plain-text password matches the salted hash,
-	 *                   otherwise false
+	 * @return  boolean  true, if plain-text password matches the salted hash, otherwise false
 	 */
 	public function checkPassword($plainPW, $saltedHashPW) {
 		$hash = $this->cryptPassword($plainPW, $saltedHashPW);
-		return ($hash && !strcmp($saltedHashPW, $hash));
+
+		return ($hash && $saltedHashPW === $hash);
 	}
 	
 	/**
-	 * Returns wether all perequesites for the hashing methods are matched
+	 * Returns wether all prequesites for the hashing methods are matched
 	 * 
 	 * @access  public
 	 * @return  boolean  method available
@@ -178,8 +172,6 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	public function isAvailable() {
 		return true;
 	}
-
-	
 
 	/**
 	 * Hashes a password using a secure stretched hash.
@@ -195,7 +187,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 *                             or boolean FALSE on failure.
 	 */
 	protected function cryptPassword($password, $setting)  {
-		$saltedPW = null;
+		$saltedPW = NULL;
 
 		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
 
@@ -222,9 +214,11 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 			} while (--$count);
 
 			$saltedPW =  $setting . $this->base64Encode($hash, 16);
+
 				// base64Encode() of a 16 byte MD5 will always be 22 characters.
 			return (strlen($saltedPW) == 34) ? $saltedPW : FALSE;
 		}
+
 		return $saltedPW;
 	}
 
@@ -253,6 +247,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 */
 	protected function getGeneratedSalt() {
 		$randomBytes = t3lib_div::generateRandomBytes($this->getSaltLength());
+
 		return $this->base64Encode($randomBytes, $this->getSaltLength());
 	}
 
@@ -279,12 +274,14 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 */
 	public function getHashedPassword($password, $salt = null) {
 		$saltedPW = null;
+
 		if (!empty($password)) {
 			if (empty($salt) || !$this->isValidSalt($salt)) {
 				$salt = $this->getGeneratedSalt();
 			}
 			$saltedPW = $this->cryptPassword($password, $this->applySettingsToSalt($salt));
 		}
+
 		return $saltedPW;
 	}
 
@@ -396,6 +393,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 				}
 			}
 		}
+
 		return $isValid;
 	}
 
@@ -413,6 +411,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 		if ($isValid) {
 			$isValid = $this->isValidSalt($saltedPW);
 		}
+
 		return $isValid;
 	}
 
@@ -455,7 +454,9 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	}
 }
 
+
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_phpass.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_phpass.php']);
 }
+
 ?>

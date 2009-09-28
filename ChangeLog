@@ -1,3 +1,7 @@
+2009-09-28  Oliver Hader  <oliver@typo3.org>
+
+	* Cleanup: Removed require_once() calls and TYPO3_MODE checks, fixed descriptions (thanks to Michael Stucki)
+
 2009-09-22  Michael Stucki  <michael@typo3.org>
 
 	* Cleanup: Various code cleanup before reviewing the code...

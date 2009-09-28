@@ -31,22 +31,16 @@
  * $Id$
  */
 
-	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) die ("Access denied.");
-
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_factory.php');
-
 
 /**
  * Class implements salted-password hashes authentication service.
  *
- * @author  	Marcus Krause <marcus#exp2009@t3sec.info>
- * @author		Steffen Ritter <info@rs-websystems.de>
+ * @author	Marcus Krause <marcus#exp2009@t3sec.info>
+ * @author	Steffen Ritter <info@rs-websystems.de>
  *
- * @since   	2009-06-14
- * @package     TYPO3
- * @subpackage  tx_saltedpasswords
+ * @since	2009-06-14
+ * @package	TYPO3
+ * @subpackage	tx_saltedpasswords
  */
 class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 
@@ -56,7 +50,7 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 *
 	 * @var string
 	 */
-	public $prefixId =      'tx_saltedpasswords_sv1';
+	public $prefixId = 'tx_saltedpasswords_sv1';
 
 	/**
 	 * Keeps path to this script relative to the extension directory.
@@ -70,12 +64,12 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 *
 	 * @var string
 	 */
-	public $extKey =        'saltedpasswords';
+	public $extKey = 'saltedpasswords';
 
 	/**
 	 * Keeps extension configuration.
 	 *
-	 * @var  mixed
+	 * @var mixed
 	 */
 	protected $extConf;
 
@@ -85,7 +79,7 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 * 
 	 * @var tx_saltedpasswords_abstract_salts
 	 */
-	protected $objInstanceSaltedPW = null;
+	protected $objInstanceSaltedPW = NULL;
 
 
 	/**
@@ -93,8 +87,8 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 * following prerequesties are fulfilled:
 	 * - loginSecurityLevel of according TYPO3_MODE is set to normal
 	 *
-	 * @access  public
-	 * @return	boolean		true if service is available
+	 * @access public
+	 * @return boolean		true if service is available
 	 */
 	public function init() {
 		$available = false;
@@ -248,13 +242,12 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 * @param   mixed      $updateFields  Field values as key=>value pairs to be updated in database
 	 */
 	protected function updatePassword($uid, $updateFields) {
-		if (!strcmp(TYPO3_MODE, 'BE')) {
-				// BE
+		if (TYPO3_MODE === 'BE') {
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery( 'be_users', sprintf('uid = %u', $uid), $updateFields);
 		} else {
-				// FE
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery( 'fe_users', sprintf('uid = %u', $uid), $updateFields);
 		}
+
 		t3lib_div::devLog(sprintf('Automatic password update for %s user with uid %u', TYPO3_MODE, $uid), $this->extKey, 1);
 	}
 
@@ -282,12 +275,14 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 			array_shift($params);
 			$message = vsprintf($message, $params);
 		}
-		if (!strcmp(TYPO3_MODE, 'BE')) {
+
+		if (TYPO3_MODE === 'BE') {
 			t3lib_div::sysLog($message, $this->extKey, 1);
 		} else {
 			$GLOBALS['TT']->setTSlogMessage($message);
 		}
-		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['enable_DLOG']) {
+
+		if (TYPO3_DLOG) {
 			t3lib_div::devLog($message, $this->extKey, 1);
 		}
 	}
@@ -297,4 +292,5 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/sv1/class.tx_saltedpasswords_sv1.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/sv1/class.tx_saltedpasswords_sv1.php']);
 }
+
 ?>

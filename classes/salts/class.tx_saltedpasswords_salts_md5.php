@@ -31,13 +31,6 @@
  * $Id$
  */
 
-	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) die ("Access denied.");
-
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_abstract_salts.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/interfaces/interface.tx_saltedpasswords_salts.php');
-
 
 /**
  * Class that implements MD5 salted hashing based on PHP's
@@ -104,6 +97,7 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 			$saltWithSettings = $this->getSetting() . $salt . $this->getSaltSuffix();
 
 		}
+
 		return $saltWithSettings;
 	}
 
@@ -119,9 +113,11 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 	 */
 	public function checkPassword($plainPW, $saltedHashPW) {
 		$isCorrect = false;
+
 		if ($this->isValidSalt($saltedHashPW)) {
 			$isCorrect = (crypt($plainPW,$saltedHashPW) == $saltedHashPW);
 		}
+
 		return $isCorrect;
 	}
 
@@ -139,6 +135,7 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 	 */
 	protected function getGeneratedSalt() {
 		$randomBytes = t3lib_div::generateRandomBytes($this->getSaltLength());
+
 		return $this->base64Encode($randomBytes, $this->getSaltLength());
 	}
 
@@ -158,6 +155,7 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 			}
 			$saltedPW = crypt($password, $this->applySettingsToSalt($salt));
 		}
+
 		return $saltedPW;
 	}
 
@@ -173,13 +171,13 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 	}
 	
 	/**
-	 * Returns wether all perequesites for the hashing methods are matched
+	 * Returns wether all prequesites for the hashing methods are matched
 	 * 
 	 * @access  public
 	 * @return  boolean  method available
 	 */
 	public function isAvailable() {
-		return CRYPT_MD5;	
+		return CRYPT_MD5;
 	}
 
 	/**
@@ -260,6 +258,7 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 				}
 			}
 		}
+
 		return $isValid;
 	}
 
@@ -277,6 +276,7 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 		if ($isValid) {
 			$isValid = $this->isValidSalt($saltedPW);
 		}
+
 		return $isValid;
 	}
 }
@@ -285,4 +285,5 @@ class tx_saltedpasswords_salts_md5 extends tx_saltedpasswords_abstract_salts imp
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_md5.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_md5.php']);
 }
+
 ?>

@@ -1,11 +1,11 @@
 <?php
 	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) 	die ("Access denied.");
+if (!defined ('TYPO3_MODE'))	die ('Access denied.');
 
-	// form evaluation function - FE users only
+	// form evaluation function for fe_users
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['tx_saltedpasswords_eval_fe'] = 'EXT:saltedpasswords/classes/eval/class.tx_saltedpasswords_eval_fe.php';
 
-	// form evaluation function - BE users only
+	// form evaluation function for be_users
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['tx_saltedpasswords_eval_be'] = 'EXT:saltedpasswords/classes/eval/class.tx_saltedpasswords_eval_be.php';
 	
 	// hook for processing "forgotPassword" in felogin
@@ -35,4 +35,5 @@ t3lib_extMgm::addService(
 		'className' => 'tx_saltedpasswords_sv1',
 	)
 );
+
 ?>

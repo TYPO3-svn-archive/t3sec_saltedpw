@@ -31,14 +31,6 @@
  * $Id$
  */
 
-	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) die ("Access denied.");
-
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_abstract_salts.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/interfaces/interface.tx_saltedpasswords_salts.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/salts/class.tx_saltedpasswords_salts_md5.php');
-
 
 /**
  * Class that implements Blowfish salted hashing based on PHP's
@@ -137,6 +129,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 								. sprintf('%02u', $this->getHashCount()) . '$'
 								. $salt;
 		}
+
 		return $saltWithSettings;
 	}
 
@@ -185,8 +178,9 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	public function getMaxHashCount() {
 		return isset(self::$maxHashCount) ? self::$maxHashCount : self::MAX_HASH_COUNT;
 	}
+
 	/**
-	 * Returns wether all perequesites for the hashing methods are matched
+	 * Returns wether all prequesites for the hashing methods are matched
 	 * 
 	 * @access  public
 	 * @return  boolean  method available
@@ -194,6 +188,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	public function isAvailable() {
 		return CRYPT_BLOWFISH;	
 	}
+
 	/**
 	 * Method returns minimum allowed log2 number of iterations for password stretching.
 	 *
@@ -252,6 +247,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 		}
 			// Check whether the iteration count used differs from the standard number.
 		$countLog2 = $this->getCountLog2($saltedPW);
+
 		return (!is_null($countLog2) && ($countLog2 < $this->getHashCount()));
 	}
 
@@ -288,6 +284,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 				}
 			}
 		}
+
 		return $isValid;
 	}
 
@@ -302,9 +299,11 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 		$isValid = false;
 
 		$isValid = (!strncmp($this->getSetting(), $saltedPW, strlen($this->getSetting()))) ? true : false;
+
 		if ($isValid) {
 			$isValid = $this->isValidSalt($saltedPW);
 		}
+
 		return $isValid;
 	}
 
@@ -351,4 +350,5 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php']);
 }
+
 ?>

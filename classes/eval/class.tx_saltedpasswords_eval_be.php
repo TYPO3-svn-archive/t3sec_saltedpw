@@ -26,21 +26,15 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-	// Make sure that we are executed only in TYPO3 context
-if (!defined ("TYPO3_MODE")) die ("Access denied.");
-
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/eval/class.tx_saltedpasswords_eval.php');
-require_once t3lib_extMgm::extPath('saltedpasswords', 'classes/class.tx_saltedpasswords_div.php');
-
 /**
  * Class implementing salted evaluation methods for BE users.
  *
- * @author      Marcus Krause <marcus#exp2009@t3sec.info>
- * @author		Steffen Ritter <info@rs-websystems.de>
+ * @author	Marcus Krause <marcus#exp2009@t3sec.info>
+ * @author	Steffen Ritter <info@rs-websystems.de>
  *
- * @since       2009-06-14
- * @package     TYPO3
- * @subpackage  tx_saltedpasswords
+ * @since	2009-06-14
+ * @package	TYPO3
+ * @subpackage	tx_saltedpasswords
  */
 class tx_saltedpasswords_eval_be extends tx_saltedpasswords_eval {
 

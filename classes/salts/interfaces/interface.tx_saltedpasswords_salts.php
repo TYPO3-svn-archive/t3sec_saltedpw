@@ -67,7 +67,7 @@ interface tx_saltedpasswords_salts {
 	public function getSaltLength();
 
 	/**
-	 * Returns wether all perequesites for the hashing methods are matched
+	 * Returns wether all prequesites for the hashing methods are matched
 	 * 
 	 * @access  public
 	 * @return  boolean  method available
@@ -124,4 +124,5 @@ interface tx_saltedpasswords_salts {
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/interfaces/interface.tx_saltedpasswords_salts.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/interfaces/interface.tx_saltedpasswords_salts.php']);
 }
+
 ?>
