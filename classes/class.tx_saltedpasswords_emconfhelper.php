@@ -38,17 +38,17 @@ if (!defined ('TYPO3_MODE')) die ('Access denied.');
  * @subpackage	tx_saltedpasswords
  */
 class tx_saltedpasswords_emconfhelper {
-	
+
 	protected $errorType = t3lib_FlashMessage::OK;
 	protected $header;
-	protected $preText;	
+	protected $preText;
 	protected $problems = array();
 
 
 	/**
 	 * Set the error level if no higher level
 	 * is set already
-	 * 
+	 *
 	 * @param	string	$level, one of: error,ok,warning,info
 	 */
 	private function setErrorLevel($level) {
@@ -66,7 +66,7 @@ class tx_saltedpasswords_emconfhelper {
 					$this->preText = 'SaltedPasswords might behave different than expectated:<br />';
 				}
 			break;
-			case 'info': 
+			case 'info':
 				if ($this->errorType < t3lib_FlashMessage::WARNING) {
 					$this->errorType = t3lib_FlashMessage::INFO;
 					$this->header = 'Additional information';
@@ -112,7 +112,7 @@ EOT;
 		if (empty($message)) {
 			$this->setErrorLevel('ok');
 		}
-		
+
 		$message = $this->preText . $message;
 		$flashMessage = t3lib_div::makeInstance('t3lib_FlashMessage', $message, $this->header, $this->errorType);
 
@@ -142,7 +142,7 @@ EOT;
 	public function checkConfigurationBackend(array $params, t3lib_tsStyleConfig $pObj) {
 		$this->init();
 		$extConf = $this->extConf['BE'];
-		
+
 			// the backend is called over SSL
 		$SSL = (($GLOBALS['TYPO3_CONF_VARS']['BE']['lockSSL'] > 0 ? true : false) && ($GLOBALS['TYPO3_CONF_VARS']['BE']['loginSecurityLevel'] != 'superchallenged'));
 			// rsaAuth is loaded/active
@@ -179,7 +179,7 @@ It is also possible to use "lockSSL" and "rsa" Login Security Level at the same
 time.
 EOT;
 			}
-				
+
 				// only saltedpasswords as authsservice
 			if ($extConf['onlyAuthService']) {
 					// warn user taht the combination with "forceSalted" may lock him out from Backend
@@ -201,7 +201,7 @@ the backend. This means that other services like "ipauth", "openid", etc. will
 be ignored (except "rsauth", which is implicitely used).
 EOT;
 				}
-			}	
+			}
 				// forceSalted is set
 			if ($extConf['forceSalted'] && !$extConf['onlyAuthService']) {
 				$this->setErrorLevel('warning');
@@ -213,7 +213,7 @@ login.<br />
 <b><i>IMPORTANT:</i></b> This has the effect that passwords that are set from
 the Install Tool will not work!
 EOT;
-			} 
+			}
 				// updatePasswd wont work with "forceSalted"
 			if ($extConf['updatePasswd'] && $extConf['forceSalted']) {
 				$this->setErrorLevel('error');
@@ -237,7 +237,7 @@ EOT;
 			$this->setErrorLevel('info');
 			$problems[] = 'SaltedPasswords has been disabled for backend users.';
 		}
-		
+
 		$this->problems = $problems;
 
 		return $this->renderFlashMessage();
@@ -253,7 +253,7 @@ EOT;
 	public function checkConfigurationFrontend(array $params, t3lib_tsStyleConfig $pObj) {
 		$this->init();
 		$extConf = $this->extConf['FE'];
-		
+
 		if ($extConf['enabled']) {
 				// inform the user if securityLevel in FE is superchallenged or blank --> extension won't work
 			if (!t3lib_div::inList('normal,rsa', $GLOBALS['TYPO3_CONF_VARS']['FE']['loginSecurityLevel'])) {
@@ -298,7 +298,7 @@ frontend logins. This means that other services like "ipauth", "openid", etc.
 will be ignored.
 EOT;
 				}
-			}	
+			}
 				// forceSalted is set
 			if ($extConf['forceSalted'] && !$extConf['onlyAuthService']) {
 				$this->setErrorLevel('warning');
@@ -311,7 +311,7 @@ login.<br />
 before SaltedPasswords was used will not work (in fact, they need to be
 redefined).
 EOT;
-			} 
+			}
 				// updatePasswd wont work with "forceSalted"
 			if ($extConf['updatePasswd'] && $extConf['forceSalted']) {
 				$this->setErrorLevel('error');
@@ -362,7 +362,7 @@ EOT;
 
 		return $p_field;
 	}
-	
+
 	/**
 	 * Renders a selector element that allows to select the hash method to be used (frontend disposal).
 	 *
@@ -387,7 +387,7 @@ EOT;
 
 	/**
 	 * Processes the information submitted by the user using a POST request and
-	 * transforms it to a TypoScript node notation. 
+	 * transforms it to a TypoScript node notation.
 	 *
 	 * @param	array		$postArray: Incoming POST information
 	 * @return	array		Processed and transformed POST information
@@ -404,12 +404,12 @@ EOT;
 			} else {
 				// TODO: Explain
 				$postArray[$parts[0]] = $value;
-			} 
+			}
 		}
 
 		return $postArray;
 	}
-	
+
 }
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php']) {

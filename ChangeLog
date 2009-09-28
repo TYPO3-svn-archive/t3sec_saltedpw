@@ -2,6 +2,7 @@
 
 	* Cleanup: Removed require_once() calls and TYPO3_MODE checks, fixed descriptions (thanks to Michael Stucki)
 	* Cleanup: Fixed strucural flaws in tx_saltedpasswords_emconfhelper and changed descriptions (thanks to Michael Stucki)
+	* Cleanup: Removed superfluous whitespaces
 
 2009-09-22  Michael Stucki  <michael@typo3.org>
 

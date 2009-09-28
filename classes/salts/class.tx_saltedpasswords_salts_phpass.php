@@ -162,10 +162,10 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 
 		return ($hash && $saltedHashPW === $hash);
 	}
-	
+
 	/**
 	 * Returns wether all prequesites for the hashing methods are matched
-	 * 
+	 *
 	 * @access  public
 	 * @return  boolean  method available
 	 */

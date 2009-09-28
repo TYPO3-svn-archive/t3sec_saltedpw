@@ -26,9 +26,9 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Contains class "tx_saltedpasswords_div" 
+ * Contains class "tx_saltedpasswords_div"
  * that provides various helper functions.
- * 
+ *
  * $Id$
  */
 
@@ -59,7 +59,7 @@ class tx_saltedpasswords_div  {
 		 *
 		 * @static
 		 * @access  public
-		 * @param	string		TYPO3_MODE, wether Configuration for Frontend or Backend should be delivered		 
+		 * @param	string		TYPO3_MODE, wether Configuration for Frontend or Backend should be delivered
 		 * @return  array       extension configuration data
 		 */
 		public static function returnExtConf($mode = TYPO3_MODE) {
@@ -111,13 +111,13 @@ class tx_saltedpasswords_div  {
 		}
 
 		/**
-		 * Function determines the default(=configured) type of 
+		 * Function determines the default(=configured) type of
 		 * salted hashing method to be used.
-		 * 
+		 *
 		 * @return  string  classname of object to be used
 		 */
 		public static function getDefaultSaltingHashingMethod($mode = TYPO3_MODE) {
-			
+
 			$extConf = self::returnExtConf($mode);
 			$classNameToUse = 'tx_saltedpasswords_salts_md5';
 			if(in_array($extConf['saltedPWHashingMethod'], array_keys($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods']))) {

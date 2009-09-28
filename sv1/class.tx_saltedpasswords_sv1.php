@@ -27,7 +27,7 @@
 ***************************************************************/
 /**
  * Contains authentication service class for salted hashed passwords.
- * 
+ *
  * $Id$
  */
 
@@ -76,7 +76,7 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	/**
 	 * An instance of the salted hashing method.
 	 * This member is set in the getSaltingInstance() function.
-	 * 
+	 *
 	 * @var tx_saltedpasswords_abstract_salts
 	 */
 	protected $objInstanceSaltedPW = NULL;
@@ -118,17 +118,17 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 		} else if (!strcmp(TYPO3_MODE, 'FE')) {
 			$password = $loginData['uident_text'];
 		}
-			
+
 			// determine method used for given salted hashed password
 		$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance($user['password']);
-		
+
 			// existing record is in format of Salted Hash password
 		if (is_object($this->objInstanceSaltedPW)) {
 			$validPasswd = $this->objInstanceSaltedPW->checkPassword($password,$user['password']);
-				
+
 			$defaultHashingClassName = tx_saltedpasswords_div::getDefaultSaltingHashingMethod();
 			$skip = false;
-			
+
 				// test for wrong salted hashing method
 			if ($validPasswd && !(get_class($this->objInstanceSaltedPW) == $defaultHashingClassName) || (is_subclass_of($this->objInstanceSaltedPW, $defaultHashingClassName))) {
 					// instanciate default method class
@@ -144,17 +144,17 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 
 				// stored password is in deprecated salted hashing method
 			if ( t3lib_div::inList('C$,M$',substr($user['password'],0,2))) {
-				
+
 					// instanciate default method class
 				$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(substr($user['password'], 1));
-			
+
 					// md5
 				if (!strcmp(substr($user['password'], 0, 1), 'M')) {
 					$validPasswd = $this->objInstanceSaltedPW->checkPassword(md5($password), substr($user['password'], 1));
 				} else {
 					$validPasswd = $this->objInstanceSaltedPW->checkPassword(md5($password), substr($user['password'], 1));
 				}
-			
+
 				// password is stored as md5
 			} else if (preg_match('/[0-9abcdef]{32,32}/', $user['password'])) {
 				$validPasswd = (!strcmp(md5($password), $user['password']) ? true : false);

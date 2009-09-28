@@ -28,7 +28,7 @@
 /**
  * Contains interface "tx_saltedpasswords_salts" to be used in
  * classes that provide salted hashing.
- * 
+ *
  * $Id$
  */
 
@@ -36,10 +36,10 @@
 /**
  * Interface with public methods needed to be implemented
  * in a salting hashing class.
- * 
+ *
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
  * @author      Steffen Ritter <info@rs-websystems.de>
- * 
+ *
  * @since   	2009-09-06
  * @package     TYPO3
  * @subpackage  tx_saltedpasswords
@@ -50,7 +50,7 @@ interface tx_saltedpasswords_salts {
 	/**
 	 * Method checks if a given plaintext password is correct by comparing it with
 	 * a given salted hashed password.
-	 * 
+	 *
 	 * @access  public
 	 * @param   string   $plainPW:  plain-text password to compare with salted hash
 	 * @param   string   $saltedHashPW:  salted hash to compare plain-text password with
@@ -60,15 +60,15 @@ interface tx_saltedpasswords_salts {
 
 	/**
 	 * Returns length of required salt.
-	 * 
+	 *
 	 * @access  public
-	 * @return  integer  length of required salt 
+	 * @return  integer  length of required salt
 	 */
 	public function getSaltLength();
 
 	/**
 	 * Returns wether all prequesites for the hashing methods are matched
-	 * 
+	 *
 	 * @access  public
 	 * @return  boolean  method available
 	 */
@@ -77,7 +77,7 @@ interface tx_saltedpasswords_salts {
 
 	/**
 	 * Method creates a salted hash for a given plaintext password
-	 * 
+	 *
 	 * @access  public
 	 * @param   string  $password:  plaintext password to create a salted hash from
 	 * @param   string  $salt:  optional custom salt to use
@@ -100,10 +100,10 @@ interface tx_saltedpasswords_salts {
 	 *                                otherwise false
 	 */
 	public function isHashUpdateNeeded($passString);
-	
+
 	/**
 	 * Method determines if a given string is a valid salt
-	 * 
+	 *
 	 * @access  public
 	 * @param   string   $salt: string to check
 	 * @return  boolean  true if it's valid salt, otherwise false
@@ -112,7 +112,7 @@ interface tx_saltedpasswords_salts {
 
 	/**
 	 * Method determines if a given string is a valid salted hashed password.
-	 * 
+	 *
 	 * @access  public
 	 * @param   string   $saltedPW: string to check
 	 * @return  boolean  true if it's valid salted hashed password, otherwise false

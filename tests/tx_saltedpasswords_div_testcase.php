@@ -25,9 +25,9 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Contains testcases for "tx_saltedpasswords_div" 
+ * Contains testcases for "tx_saltedpasswords_div"
  * that provides various helper functions.
- * 
+ *
  * $Id$
  */
 

@@ -25,9 +25,9 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Contains class "tx_saltedpasswords_salts_factory" 
+ * Contains class "tx_saltedpasswords_salts_factory"
  * that provides a salted hashing method factory.
- * 
+ *
  * $Id$
  */
 
@@ -35,9 +35,9 @@
 /**
  * Class that implements Blowfish salted hashing based on PHP's
  * crypt() function.
- * 
+ *
  * @author      Marcus Krause <marcus#exp2009@t3sec.info>
- * 
+ *
  * @since   	2009-09-06
  * @package     TYPO3
  * @subpackage  tx_saltedpasswords
@@ -48,7 +48,7 @@ class tx_saltedpasswords_salts_factory {
 	/**
 	 * An instance of the salted hashing method.
 	 * This member is set in the getSaltingInstance() function.
-	 * 
+	 *
 	 * @var tx_saltedpasswords_abstract_salts
 	 */
 	static protected $instance = null;
@@ -56,12 +56,12 @@ class tx_saltedpasswords_salts_factory {
 
 	/**
 	 * Obtains a salting hashing method instance.
-	 * 
+	 *
 	 * This function will return an instance of a class that implements
 	 * tx_saltedpasswords_abstract_salts.
-	 * 
+	 *
 	 * Use parameter null to reset the factory!
-	 * 
+	 *
 	 * @param   string  (optional) salted hashed password to determine the type of used method from or null to reset the factory
 	 * @return  tx_saltedpasswords_abstract_salts  an instance of salting hashing method object
 	 */
@@ -71,7 +71,7 @@ class tx_saltedpasswords_salts_factory {
 			// * a salted hash given to determine salted hashing method from
 			// * a null parameter given to reset instance back to default method
 		if (!is_object(self::$instance) || !empty($saltedHash) || is_null($saltedHash)) {
-			
+
 				// determine method by checking the given hash
 			if (!empty($saltedHash)) {
 				$result = self::determineSaltingHashingMethod($saltedHash);
@@ -89,9 +89,9 @@ class tx_saltedpasswords_salts_factory {
 
 	/**
 	 * Method tries to determine the salting hashing method used for given salt.
-	 * 
+	 *
 	 * Method implicitly sets the instance of the found method object in the class property when found.
-	 * 
+	 *
 	 * @access  protected
 	 * @param   string    $saltedHash
 	 * @return  boolean   true, if salting hashing method has been found, otherwise false
@@ -114,7 +114,7 @@ class tx_saltedpasswords_salts_factory {
 
 	/**
 	 * Method sets a custom salting hashing method class.
-	 * 
+	 *
 	 * @access  public
 	 * @param   string  $resource  object resource to use (e.g. 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php:tx_saltedpasswords_salts_blowfish')
 	 * @return  tx_saltedpasswords_abstract_salts  an instance of salting hashing method object

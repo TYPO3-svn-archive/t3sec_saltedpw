@@ -181,12 +181,12 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 
 	/**
 	 * Returns wether all prequesites for the hashing methods are matched
-	 * 
+	 *
 	 * @access  public
 	 * @return  boolean  method available
 	 */
 	public function isAvailable() {
-		return CRYPT_BLOWFISH;	
+		return CRYPT_BLOWFISH;
 	}
 
 	/**
