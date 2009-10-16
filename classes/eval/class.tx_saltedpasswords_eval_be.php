@@ -40,8 +40,7 @@ class tx_saltedpasswords_eval_be extends tx_saltedpasswords_eval {
 	/**
 	 * Class constructor.
 	 *
-	 * @access  public
-	 * @return  tx_saltedpasswords_eval_fe  instance of object
+	 * @return	tx_saltedpasswords_eval_fe	instance of object
 	 */
 	public function __construct() {
 		$this->mode = 'BE';

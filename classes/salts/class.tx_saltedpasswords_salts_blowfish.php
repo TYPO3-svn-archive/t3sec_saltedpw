@@ -46,8 +46,6 @@
  * @subpackage  tx_saltedpasswords
  */
 class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
-
-
 	/**
 	 * The default log2 number of iterations for password stretching.
 	 */
@@ -70,8 +68,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * Keeps log2 number
 	 * of iterations for password stretching.
 	 *
-	 * @access protected
-	 * @var    integer
+	 * @var	integer
 	 */
 	static protected $hashCount;
 
@@ -79,8 +76,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * Keeps maximum allowed log2 number
 	 * of iterations for password stretching.
 	 *
-	 * @access protected
-	 * @var    integer
+	 * @var	integer
 	 */
 	static protected $maxHashCount;
 
@@ -88,22 +84,21 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * Keeps minimum allowed log2 number
 	 * of iterations for password stretching.
 	 *
-	 * @access protected
-	 * @var    integer
+	 * @var	integer
 	 */
 	static protected $minHashCount;
 
 	/**
 	 * Keeps length of a Blowfish salt in bytes.
 	 *
-	 * @var integer
+	 * @var	integer
 	 */
 	static protected $saltLengthBlowfish = 16;
 
 	/**
 	 * Setting string to indicate type of hashing method (blowfish).
 	 *
-	 * @var string
+	 * @var	string
 	 */
 	static protected $settingBlowfish = '$2a$';
 
@@ -114,9 +109,8 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * Overwrites {@link tx_saltedpasswords_salts_md5::applySettingsToSalt()}
 	 * with Blowfish specifics.
 	 *
-	 * @access  protected
-	 * @param   string     $salt:  a salt to apply setting to
-	 * @return  string     salt with setting
+	 * @param	string		$salt:  a salt to apply setting to
+	 * @return	string		salt with setting
 	 */
 	protected function applySettingsToSalt($salt) {
 		$saltWithSettings = $salt;
@@ -126,8 +120,8 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 					// salt without setting
 		if (strlen($salt) == $reqLenBase64) {
 			$saltWithSettings = $this->getSetting()
-								. sprintf('%02u', $this->getHashCount()) . '$'
-								. $salt;
+				. sprintf('%02u', $this->getHashCount()) . '$'
+				. $salt;
 		}
 
 		return $saltWithSettings;
@@ -136,9 +130,8 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	/**
 	 * Parses the log2 iteration count from a stored hash or setting string.
 	 *
-	 * @access  protected
-	 * @param   string     $setting  complete hash or a hash's setting string or to get log2 iteration count from
-	 * @return  int                  used hashcount for given hash string
+	 * @param	string		$setting: complete hash or a hash's setting string or to get log2 iteration count from
+	 * @return	integer		used hashcount for given hash string
 	 */
 	protected function getCountLog2($setting) {
 		$countLog2 = null;
@@ -157,11 +150,10 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	/**
 	 * Method returns log2 number of iterations for password stretching.
 	 *
-	 * @access  protected
-	 * @return  integer    log2 number of iterations for password stretching
-	 * @see                HASH_COUNT
-	 * @see                $hashCount
-	 * @see                setHashCount()
+	 * @return	integer		log2 number of iterations for password stretching
+	 * @see		HASH_COUNT
+	 * @see		$hashCount
+	 * @see		setHashCount()
 	 */
 	public function getHashCount() {
 		return isset(self::$hashCount) ? self::$hashCount : self::HASH_COUNT;
@@ -170,10 +162,10 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	/**
 	 * Method returns maximum allowed log2 number of iterations for password stretching.
 	 *
-	 * @return  integer  maximum allowed log2 number of iterations for password stretching
-	 * @see              MAX_HASH_COUNT
-	 * @see              $maxHashCount
-	 * @see              setMaxHashCount()
+	 * @return	integer		maximum allowed log2 number of iterations for password stretching
+	 * @see		MAX_HASH_COUNT
+	 * @see		$maxHashCount
+	 * @see		setMaxHashCount()
 	 */
 	public function getMaxHashCount() {
 		return isset(self::$maxHashCount) ? self::$maxHashCount : self::MAX_HASH_COUNT;
@@ -182,8 +174,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	/**
 	 * Returns wether all prequesites for the hashing methods are matched
 	 *
-	 * @access  public
-	 * @return  boolean  method available
+	 * @return	boolean		method available
 	 */
 	public function isAvailable() {
 		return CRYPT_BLOWFISH;
@@ -192,10 +183,10 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	/**
 	 * Method returns minimum allowed log2 number of iterations for password stretching.
 	 *
-	 * @return  integer  minimum allowed log2 number of iterations for password stretching
-	 * @see              MIN_HASH_COUNT
-	 * @see              $minHashCount
-	 * @see              setMinHashCount()
+	 * @return	integer		minimum allowed log2 number of iterations for password stretching
+	 * @see		MIN_HASH_COUNT
+	 * @see		$minHashCount
+	 * @see		setMinHashCount()
 	 */
 	public function getMinHashCount() {
 		return isset(self::$minHashCount) ? self::$minHashCount : self::MIN_HASH_COUNT;
@@ -207,8 +198,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * Overwrites {@link tx_saltedpasswords_salts_md5::getSaltLength()}
 	 * with Blowfish specifics.
 	 *
-	 * @access  public
-	 * @return  integer  length of a Blowfish salt in bytes
+	 * @return	integer		length of a Blowfish salt in bytes
 	 */
 	public function getSaltLength() {
 		return self::$saltLengthBlowfish;
@@ -220,8 +210,7 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * Overwrites {@link tx_saltedpasswords_salts_md5::getSetting()}
 	 * with Blowfish specifics.
 	 *
-	 * @access  public
-	 * @return  string     setting string of Blowfish salted hashes
+	 * @return	string		setting string of Blowfish salted hashes
 	 */
 	public function getSetting() {
 		return self::$settingBlowfish;
@@ -235,10 +224,8 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * count has changed through a change in the variable $hashCount or
 	 * HASH_COUNT.
 	 *
-	 * @access  public
-	 * @param   string   $saltedPW  salted hash to check if it needs an update
-	 * @return  boolean	            true if salted hash needs an update,
-	 *                              otherwise false
+	 * @param	string		$saltedPW: salted hash to check if it needs an update
+	 * @return	boolean		true if salted hash needs an update, otherwise false
 	 */
 	public function isHashUpdateNeeded($saltedPW) {
 			// Check whether this was an updated password.
@@ -257,9 +244,8 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * Overwrites {@link tx_saltedpasswords_salts_md5::isValidSalt()} with
 	 * Blowfish specifics.
 	 *
-	 * @access  public
-	 * @param   string   $salt:  string to check
-	 * @return  boolean  true if it's valid salt, otherwise false
+	 * @param	string		$salt: string to check
+	 * @return	boolean		true if it's valid salt, otherwise false
 	 */
 	public function isValidSalt($salt) {
 		$isValid = $skip = false;
@@ -291,9 +277,8 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	/**
 	 * Method determines if a given string is a valid salted hashed password.
 	 *
-	 * @access  public
-	 * @param   string   $saltedPW: string to check
-	 * @return  boolean  true if it's valid salted hashed password, otherwise false
+	 * @param	string		$saltedPW: string to check
+	 * @return	boolean		true if it's valid salted hashed password, otherwise false
 	 */
 	public function isValidSaltedPW($saltedPW) {
 		$isValid = false;
@@ -310,10 +295,10 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	/**
 	 * Method sets log2 number of iterations for password stretching.
 	 *
-	 * @param  integer  $hashCount  log2 number of iterations for password stretching to set
-	 * @see                         HASH_COUNT
-	 * @see                         $hashCount
-	 * @see                         getHashCount()
+	 * @param	integer		$hashCount: log2 number of iterations for password stretching to set
+	 * @see		HASH_COUNT
+	 * @see		$hashCount
+	 * @see		getHashCount()
 	 */
 	public function setHashCount($hashCount = null) {
 		self::$hashCount = !is_null($hashCount) && is_int($hashCount) && $hashCount >= $this->getMinHashCount() && $hashCount <= $this->getMaxHashCount() ? $hashCount : self::HASH_COUNT;
@@ -322,11 +307,10 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	/**
 	 * Method sets maximum allowed log2 number of iterations for password stretching.
 	 *
-	 * @param  integer  $maxHashCount  maximum allowed log2 number of iterations
-	 *                                 for password stretching to set
-	 * @see                            MAX_HASH_COUNT
-	 * @see                            $maxHashCount
-	 * @see                            getMaxHashCount()
+	 * @param	integer		$maxHashCount: maximum allowed log2 number of iterations for password stretching to set
+	 * @see		MAX_HASH_COUNT
+	 * @see		$maxHashCount
+	 * @see		getMaxHashCount()
 	 */
 	public function setMaxHashCount($maxHashCount = null) {
 		self::$maxHashCount = !is_null($maxHashCount) && is_int($maxHashCount) ? $maxHashCount : self::MAX_HASH_COUNT;
@@ -335,11 +319,10 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	/**
 	 * Method sets minimum allowed log2 number of iterations for password stretching.
 	 *
-	 * @param  integer  $minHashCount  minimum allowed log2 number of iterations
-	 *                                 for password stretching to set
-	 * @see                            MIN_HASH_COUNT
-	 * @see                            $minHashCount
-	 * @see                            getMinHashCount()
+	 * @param	integer		$minHashCount: minimum allowed log2 number of iterations for password stretching to set
+	 * @see		MIN_HASH_COUNT
+	 * @see		$minHashCount
+	 * @see		getMinHashCount()
 	 */
 	public function setMinHashCount($minHashCount = null) {
 		self::$minHashCount = !is_null($minHashCount) && is_int($minHashCount) ? $minHashCount : self::MIN_HASH_COUNT;
@@ -350,5 +333,4 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php']);
 }
-
 ?>

@@ -178,7 +178,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @return	mixed		a string containing the hashed password (and salt)
 	 *						or boolean FALSE on failure.
 	 */
-	protected function cryptPassword($password, $setting)  {
+	protected function cryptPassword($password, $setting) {
 		$saltedPW = NULL;
 
 		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());

@@ -42,7 +42,7 @@
  * @package     TYPO3
  * @subpackage  tx_saltedpasswords
  */
-class tx_saltedpasswords_div  {
+class tx_saltedpasswords_div {
 		/**
 		 * Keeps this extension's key.
 		 */

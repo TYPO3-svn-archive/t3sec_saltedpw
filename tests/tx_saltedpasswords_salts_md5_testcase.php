@@ -70,7 +70,6 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	/**
 	 * Prepares a message to be shown when a salted hashing is not supported.
 	 *
-	 * @access  protected
 	 * @return  string     empty string if salted hashing method is available, otherwise an according warning
 	 */
 	protected function getWarningWhenMethodUnavailable() {
