@@ -70,14 +70,17 @@ class tx_saltedpasswords_eval {
 		$isEnabled = $this->mode ? tx_saltedpasswords_div::isUsageEnabled($this->mode) : tx_saltedpasswords_div::isUsageEnabled();
 
 		if ($isEnabled) {
+			$set = FALSE;
 			$isMD5 = preg_match('/[0-9abcdef]{32,32}/', $value);
 			$isSaltedHash = t3lib_div::inList('$1$,$2$,$2a,$P$',substr($value,0,3));
 
 			$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(NULL,$this->mode);
 
 			if ($isMD5) {
+				$set = TRUE;
 				$value = 'M' . $this->objInstanceSaltedPW->getHashedPassword($value);
 			} else if (!$isSaltedHash ) {
+				$set = TRUE;
 				$value = $this->objInstanceSaltedPW->getHashedPassword($value);
 			}
 		}
