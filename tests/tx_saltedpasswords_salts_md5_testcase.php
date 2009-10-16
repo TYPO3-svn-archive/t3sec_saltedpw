@@ -46,7 +46,7 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	 *
 	 * @var tx_saltedpasswords_salts_md5
 	 */
-	protected $objectInstance = null;
+	protected $objectInstance = NULL;
 
 
 	/**
@@ -85,10 +85,10 @@ class tx_saltedpasswords_salts_md5_testcase extends tx_phpunit_testcase {
 	 */
 	public function hasCorrectBaseClass() {
 
-		$hasCorrectBaseClass = (0 === strcmp('tx_saltedpasswords_salts_md5', get_class($this->objectInstance))) ? true : false;
+		$hasCorrectBaseClass = (0 === strcmp('tx_saltedpasswords_salts_md5', get_class($this->objectInstance))) ? TRUE : FALSE;
 
 			// XCLASS ?
-		if (!$hasCorrectBaseClass && false != get_parent_class($this->objectInstance)) {
+		if (!$hasCorrectBaseClass && FALSE != get_parent_class($this->objectInstance)) {
 			$hasCorrectBaseClass = is_subclass_of($this->objectInstance, 'tx_saltedpasswords_salts_md5');
 		}
 

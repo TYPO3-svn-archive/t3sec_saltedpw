@@ -158,7 +158,7 @@ EOT;
 		$extConf = $this->extConf['BE'];
 
 			// the backend is called over SSL
-		$SSL = (($GLOBALS['TYPO3_CONF_VARS']['BE']['lockSSL'] > 0 ? true : false) && ($GLOBALS['TYPO3_CONF_VARS']['BE']['loginSecurityLevel'] != 'superchallenged'));
+		$SSL = (($GLOBALS['TYPO3_CONF_VARS']['BE']['lockSSL'] > 0 ? TRUE : FALSE) && ($GLOBALS['TYPO3_CONF_VARS']['BE']['loginSecurityLevel'] != 'superchallenged'));
 			// rsaAuth is loaded/active
 		$RSAauth = (t3lib_extMgm::isLoaded('rsaauth') && ($GLOBALS['TYPO3_CONF_VARS']['BE']['loginSecurityLevel'] == 'rsa'));
 

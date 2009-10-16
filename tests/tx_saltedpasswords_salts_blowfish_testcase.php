@@ -46,7 +46,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 *
 	 * @var tx_saltedpasswords_salts_blowfish
 	 */
-	protected $objectInstance = null;
+	protected $objectInstance = NULL;
 
 
 	/**
@@ -83,10 +83,10 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 	 */
 	public function hasCorrectBaseClass() {
 
-		$hasCorrectBaseClass = (0 === strcmp('tx_saltedpasswords_salts_blowfish', get_class($this->objectInstance))) ? true : false;
+		$hasCorrectBaseClass = (0 === strcmp('tx_saltedpasswords_salts_blowfish', get_class($this->objectInstance))) ? TRUE : FALSE;
 
 			// XCLASS ?
-		if (!$hasCorrectBaseClass && false != get_parent_class($this->objectInstance)) {
+		if (!$hasCorrectBaseClass && FALSE != get_parent_class($this->objectInstance)) {
 			$hasCorrectBaseClass = is_subclass_of($this->objectInstance, 'tx_saltedpasswords_salts_blowfish');
 		}
 
@@ -158,7 +158,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
 		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
 			// reset hashcount
-		$this->objectInstance->setHashCount(null);
+		$this->objectInstance->setHashCount(NULL);
 	}
 
 	/**
@@ -173,7 +173,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$saltedHashPW = $this->objectInstance->getHashedPassword($password);
 		$this->assertTrue($this->objectInstance->isValidSaltedPW($saltedHashPW));
 			// reset hashcount
-		$this->objectInstance->setHashCount(null);
+		$this->objectInstance->setHashCount(NULL);
 	}
 
 	/**
@@ -257,7 +257,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$this->objectInstance->setHashCount($hashCount - 1);
 		$this->assertTrue($this->objectInstance->getHashCount() < $hashCount);
 			// reset hashcount
-		$this->objectInstance->setHashCount(null);
+		$this->objectInstance->setHashCount(NULL);
 	}
 
 	/**
@@ -282,7 +282,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$this->objectInstance->setHashCount($increasedHashCount);
 		$this->assertTrue($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
 			// reset hashcount
-		$this->objectInstance->setHashCount(null);
+		$this->objectInstance->setHashCount(NULL);
 	}
 
 	/**
@@ -298,7 +298,7 @@ class tx_saltedpasswords_salts_blowfish_testcase extends tx_phpunit_testcase {
 		$this->objectInstance->setHashCount($decreasedHashCount);
 		$this->assertFalse($this->objectInstance->isHashUpdateNeeded($saltedHashPW));
 			// reset hashcount
-		$this->objectInstance->setHashCount(null);
+		$this->objectInstance->setHashCount(NULL);
 	}
 }
 ?>

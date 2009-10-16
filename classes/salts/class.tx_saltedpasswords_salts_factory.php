@@ -49,7 +49,7 @@ class tx_saltedpasswords_salts_factory {
 	 *
 	 * @var	tx_saltedpasswords_abstract_salts
 	 */
-	static protected $instance = null;
+	static protected $instance = NULL;
 
 
 	/**
@@ -58,9 +58,9 @@ class tx_saltedpasswords_salts_factory {
 	 * This function will return an instance of a class that implements
 	 * tx_saltedpasswords_abstract_salts.
 	 *
-	 * Use parameter null to reset the factory!
+	 * Use parameter NULL to reset the factory!
 	 *
-	 * @param	string		$saltedHash: (optional) salted hashed password to determine the type of used method from or null to reset the factory
+	 * @param	string		$saltedHash: (optional) salted hashed password to determine the type of used method from or NULL to reset the factory
 	 * @param	string		$mode: (optional) The TYPO3 mode (FE or BE) saltedpasswords shall be used for
 	 * @return	tx_saltedpasswords_abstract_salts	an instance of salting hashing method object
 	 */
@@ -68,14 +68,14 @@ class tx_saltedpasswords_salts_factory {
 			// creating new instance when
 			// * no instance existing
 			// * a salted hash given to determine salted hashing method from
-			// * a null parameter given to reset instance back to default method
-		if (!is_object(self::$instance) || !empty($saltedHash) || is_null($saltedHash)) {
+			// * a NULL parameter given to reset instance back to default method
+		if (!is_object(self::$instance) || !empty($saltedHash) || is_NULL($saltedHash)) {
 
 				// determine method by checking the given hash
 			if (!empty($saltedHash)) {
 				$result = self::determineSaltingHashingMethod($saltedHash);
 				if(!$result) {
-					self::$instance = null;
+					self::$instance = NULL;
 				}
 			} else {
 				$classNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod($mode);
@@ -93,10 +93,10 @@ class tx_saltedpasswords_salts_factory {
 	 * Method implicitly sets the instance of the found method object in the class property when found.
 	 *
 	 * @param	string		$saltedHash
-	 * @return	boolean		true, if salting hashing method has been found, otherwise false
+	 * @return	boolean		TRUE, if salting hashing method has been found, otherwise FALSE
 	 */
 	static protected function determineSaltingHashingMethod($saltedHash) {
-		$methodFound = false;
+		$methodFound = FALSE;
 		$defaultMethods = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods'];
 		foreach($defaultMethods as $method) {
 			$objectInstance = t3lib_div::getUserObj($method, 'tx_');

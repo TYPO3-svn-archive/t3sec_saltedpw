@@ -130,7 +130,7 @@ class tx_saltedpasswords_div {
 		 * indeed used in the TYPO3_MODE.
 		 *
 		 * @param	string		$mode: (optional) The TYPO3 mode (FE or BE) saltedpasswords shall be used for
-		 * @return	boolean		true, if salted password hashes are used in the TYPO3_MODE, otherwise false
+		 * @return	boolean		TRUE, if salted password hashes are used in the TYPO3_MODE, otherwise FALSE
 		 */
 		public static function isUsageEnabled($mode = TYPO3_MODE) {
 				// Login Security Level Recognition
@@ -142,7 +142,7 @@ class tx_saltedpasswords_div {
 				return t3lib_div::inList('normal,rsa', $securityLevel);
 			}
 
-			return false;
+			return FALSE;
 		}
 }
 

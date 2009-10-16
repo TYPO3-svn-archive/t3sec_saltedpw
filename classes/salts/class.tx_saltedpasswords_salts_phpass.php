@@ -148,7 +148,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 *
 	 * @param	string		$plainPW: plain-text password to compare with salted hash
 	 * @param	string		$saltedHashPW: salted hash to compare plain-text password with
-	 * @return	boolean		true, if plain-text password matches the salted hash, otherwise false
+	 * @return	boolean		TRUE, if plain-text password matches the salted hash, otherwise FALSE
 	 */
 	public function checkPassword($plainPW, $saltedHashPW) {
 		$hash = $this->cryptPassword($plainPW, $saltedHashPW);
@@ -162,7 +162,7 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @return	boolean		method available
 	 */
 	public function isAvailable() {
-		return true;
+		return TRUE;
 	}
 
 	/**
@@ -263,8 +263,8 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @param	string		$salt: optional custom salt with setting to use
 	 * @return	string		salted hashed password
 	 */
-	public function getHashedPassword($password, $salt = null) {
-		$saltedPW = null;
+	public function getHashedPassword($password, $salt = NULL) {
+		$saltedPW = NULL;
 
 		if (!empty($password)) {
 			if (empty($salt) || !$this->isValidSalt($salt)) {
@@ -337,12 +337,12 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * with class ext_update.
 	 *
 	 * @param	string		$passString  salted hash to check if it needs an update
-	 * @return	boolean		true if salted hash needs an update, otherwise false
+	 * @return	boolean		TRUE if salted hash needs an update, otherwise FALSE
 	 */
 	public function isHashUpdateNeeded($passString) {
 			// Check whether this was an updated password.
 		if ((strncmp($passString, '$P$', 3)) || (strlen($passString) != 34)) {
-			return true;
+			return TRUE;
 		}
 			// Check whether the iteration count used differs from the standard number.
 		return ($this->getCountLog2($passString) < $this->getHashCount());
@@ -352,10 +352,10 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * Method determines if a given string is a valid salt.
 	 *
 	 * @param	string		$salt:  string to check
-	 * @return	boolean		true if it's valid salt, otherwise false
+	 * @return	boolean		TRUE if it's valid salt, otherwise FALSE
 	 */
 	public function isValidSalt($salt) {
-		$isValid = $skip = false;
+		$isValid = $skip = FALSE;
 
 		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
 
@@ -363,17 +363,17 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 				// salt with prefixed setting
 			if (!strncmp('$', $salt, 1)) {
 				if (!strncmp($this->getSetting(), $salt, strlen($this->getSetting()))) {
-					$isValid = true;
+					$isValid = TRUE;
 					$salt = substr($salt, strrpos($salt, '$') + 2);
 				} else {
-					$skip = true;
+					$skip = TRUE;
 				}
 			}
 
 				// checking base64 characters
 			if (!$skip && (strlen($salt) >= $reqLenBase64)) {
 				if (preg_match('/^[' . preg_quote($this->getItoa64(),'/') . ']{' . $reqLenBase64 . ',' . $reqLenBase64 . '}$/', substr($salt, 0, $reqLenBase64))) {
-					$isValid = true;
+					$isValid = TRUE;
 				}
 			}
 		}
@@ -385,12 +385,12 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * Method determines if a given string is a valid salted hashed password.
 	 *
 	 * @param	string		$saltedPW: string to check
-	 * @return	boolean		true if it's valid salted hashed password, otherwise false
+	 * @return	boolean		TRUE if it's valid salted hashed password, otherwise FALSE
 	 */
 	public function isValidSaltedPW($saltedPW) {
-		$isValid = false;
+		$isValid = FALSE;
 
-		$isValid = (!strncmp($this->getSetting(), $saltedPW, strlen($this->getSetting()))) ? true : false;
+		$isValid = (!strncmp($this->getSetting(), $saltedPW, strlen($this->getSetting()))) ? TRUE : FALSE;
 		if ($isValid) {
 			$isValid = $this->isValidSalt($saltedPW);
 		}
@@ -406,8 +406,8 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @see		$hashCount
 	 * @see		getHashCount()
 	 */
-	public function setHashCount($hashCount = null) {
-		self::$hashCount = !is_null($hashCount) && is_int($hashCount) && $hashCount >= $this->getMinHashCount() && $hashCount <= $this->getMaxHashCount() ? $hashCount : self::HASH_COUNT;
+	public function setHashCount($hashCount = NULL) {
+		self::$hashCount = !is_NULL($hashCount) && is_int($hashCount) && $hashCount >= $this->getMinHashCount() && $hashCount <= $this->getMaxHashCount() ? $hashCount : self::HASH_COUNT;
 	}
 
 	/**
@@ -418,8 +418,8 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @see		$maxHashCount
 	 * @see		getMaxHashCount()
 	 */
-	public function setMaxHashCount($maxHashCount = null) {
-		self::$maxHashCount = !is_null($maxHashCount) && is_int($maxHashCount) ? $maxHashCount : self::MAX_HASH_COUNT;
+	public function setMaxHashCount($maxHashCount = NULL) {
+		self::$maxHashCount = !is_NULL($maxHashCount) && is_int($maxHashCount) ? $maxHashCount : self::MAX_HASH_COUNT;
 	}
 
 	/**
@@ -430,8 +430,8 @@ class tx_saltedpasswords_salts_phpass extends tx_saltedpasswords_abstract_salts 
 	 * @see		$minHashCount
 	 * @see		getMinHashCount()
 	 */
-	public function setMinHashCount($minHashCount = null) {
-		self::$minHashCount = !is_null($minHashCount) && is_int($minHashCount) ? $minHashCount : self::MIN_HASH_COUNT;
+	public function setMinHashCount($minHashCount = NULL) {
+		self::$minHashCount = !is_NULL($minHashCount) && is_int($minHashCount) ? $minHashCount : self::MIN_HASH_COUNT;
 	}
 }
 

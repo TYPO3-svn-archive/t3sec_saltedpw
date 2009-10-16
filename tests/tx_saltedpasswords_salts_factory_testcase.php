@@ -48,7 +48,7 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 	 *
 	 * @var tx_saltedpasswords_abstract_salts
 	 */
-	protected $objectInstance = null;
+	protected $objectInstance = NULL;
 
 	/**
 	 * Sets up the fixtures for this testcase.
@@ -156,7 +156,7 @@ class tx_saltedpasswords_salts_factory_testcase extends tx_phpunit_testcase {
 		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance($saltedPW);
 
 			// resetting
-		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance(null);
+		$this->objectInstance = tx_saltedpasswords_salts_factory::getSaltingInstance(NULL);
 		$this->assertTrue((get_class($this->objectInstance) == $defaultClassNameToUse) || (is_subclass_of($this->objectInstance, $defaultClassNameToUse)));
 	}
 }

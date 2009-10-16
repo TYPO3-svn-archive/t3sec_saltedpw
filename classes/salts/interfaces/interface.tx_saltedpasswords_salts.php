@@ -51,7 +51,7 @@ interface tx_saltedpasswords_salts {
 	 *
 	 * @param	string		$plainPW:  plain-text password to compare with salted hash
 	 * @param	string		$saltedHashPW:  salted hash to compare plain-text password with
-	 * @return	boolean		true, if plaintext password is correct, otherwise false
+	 * @return	boolean		TRUE, if plaintext password is correct, otherwise FALSE
 	 */
 	public function checkPassword($plainPW, $saltedHashPW);
 
@@ -77,7 +77,7 @@ interface tx_saltedpasswords_salts {
 	 * @param	string		$salt:  optional custom salt to use
 	 * @return	string		salted hashed password
 	 */
-	public function getHashedPassword($password, $salt = null);
+	public function getHashedPassword($password, $salt = NULL);
 
 	/**
 	 * Checks whether a user's hashed password needs to be replaced with a new hash.
@@ -89,7 +89,7 @@ interface tx_saltedpasswords_salts {
 	 * with class ext_update.
 	 *
 	 * @param	string		$passString  salted hash to check if it needs an update
-	 * @return	boolean		true if salted hash needs an update, otherwise false
+	 * @return	boolean		TRUE if salted hash needs an update, otherwise FALSE
 	 */
 	public function isHashUpdateNeeded($passString);
 
@@ -97,7 +97,7 @@ interface tx_saltedpasswords_salts {
 	 * Method determines if a given string is a valid salt
 	 *
 	 * @param	string		$salt: string to check
-	 * @return	boolean		true if it's valid salt, otherwise false
+	 * @return	boolean		TRUE if it's valid salt, otherwise FALSE
 	 */
 	public function isValidSalt($salt);
 
@@ -105,7 +105,7 @@ interface tx_saltedpasswords_salts {
 	 * Method determines if a given string is a valid salted hashed password.
 	 *
 	 * @param	string		$saltedPW: string to check
-	 * @return	boolean		true if it's valid salted hashed password, otherwise false
+	 * @return	boolean		TRUE if it's valid salted hashed password, otherwise FALSE
 	 */
 	public function isValidSaltedPW($saltedPW);
 }

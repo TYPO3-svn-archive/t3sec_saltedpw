@@ -134,12 +134,12 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * @return	integer		used hashcount for given hash string
 	 */
 	protected function getCountLog2($setting) {
-		$countLog2 = null;
+		$countLog2 = NULL;
 		$setting = substr($setting, strlen($this->getSetting()));
 		$firstSplitPos = strpos($setting, '$');
 
 			// hashcount existing
-		if (($firstSplitPos !== false)
+		if (($firstSplitPos !== FALSE)
 			&& ($firstSplitPos <= 2) && is_numeric(substr($setting, 0, $firstSplitPos))) {
 			$countLog2 = intval(substr($setting, 0, $firstSplitPos));
 		}
@@ -225,17 +225,17 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * HASH_COUNT.
 	 *
 	 * @param	string		$saltedPW: salted hash to check if it needs an update
-	 * @return	boolean		true if salted hash needs an update, otherwise false
+	 * @return	boolean		TRUE if salted hash needs an update, otherwise FALSE
 	 */
 	public function isHashUpdateNeeded($saltedPW) {
 			// Check whether this was an updated password.
 		if ((strncmp($saltedPW, '$2', 2)) || !$this->isValidSalt($saltedPW)) {
-			return true;
+			return TRUE;
 		}
 			// Check whether the iteration count used differs from the standard number.
 		$countLog2 = $this->getCountLog2($saltedPW);
 
-		return (!is_null($countLog2) && ($countLog2 < $this->getHashCount()));
+		return (!is_NULL($countLog2) && ($countLog2 < $this->getHashCount()));
 	}
 
 	/**
@@ -245,10 +245,10 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * Blowfish specifics.
 	 *
 	 * @param	string		$salt: string to check
-	 * @return	boolean		true if it's valid salt, otherwise false
+	 * @return	boolean		TRUE if it's valid salt, otherwise FALSE
 	 */
 	public function isValidSalt($salt) {
-		$isValid = $skip = false;
+		$isValid = $skip = FALSE;
 
 		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
 
@@ -256,17 +256,17 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 				// salt with prefixed setting
 			if (!strncmp('$', $salt, 1)) {
 				if (!strncmp($this->getSetting(), $salt, strlen($this->getSetting()))) {
-					$isValid = true;
+					$isValid = TRUE;
 					$salt = substr($salt, strrpos($salt, '$') + 1);
 				} else {
-					$skip = true;
+					$skip = TRUE;
 				}
 			}
 
 				// checking base64 characters
 			if (!$skip && (strlen($salt) >= $reqLenBase64)) {
 				if (preg_match('/^[' . preg_quote($this->getItoa64(),'/') . ']{' . $reqLenBase64 . ',' . $reqLenBase64 . '}$/', substr($salt, 0, $reqLenBase64))) {
-					$isValid = true;
+					$isValid = TRUE;
 				}
 			}
 		}
@@ -278,12 +278,12 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * Method determines if a given string is a valid salted hashed password.
 	 *
 	 * @param	string		$saltedPW: string to check
-	 * @return	boolean		true if it's valid salted hashed password, otherwise false
+	 * @return	boolean		TRUE if it's valid salted hashed password, otherwise FALSE
 	 */
 	public function isValidSaltedPW($saltedPW) {
-		$isValid = false;
+		$isValid = FALSE;
 
-		$isValid = (!strncmp($this->getSetting(), $saltedPW, strlen($this->getSetting()))) ? true : false;
+		$isValid = (!strncmp($this->getSetting(), $saltedPW, strlen($this->getSetting()))) ? TRUE : FALSE;
 
 		if ($isValid) {
 			$isValid = $this->isValidSalt($saltedPW);
@@ -300,8 +300,8 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * @see		$hashCount
 	 * @see		getHashCount()
 	 */
-	public function setHashCount($hashCount = null) {
-		self::$hashCount = !is_null($hashCount) && is_int($hashCount) && $hashCount >= $this->getMinHashCount() && $hashCount <= $this->getMaxHashCount() ? $hashCount : self::HASH_COUNT;
+	public function setHashCount($hashCount = NULL) {
+		self::$hashCount = !is_NULL($hashCount) && is_int($hashCount) && $hashCount >= $this->getMinHashCount() && $hashCount <= $this->getMaxHashCount() ? $hashCount : self::HASH_COUNT;
 	}
 
 	/**
@@ -312,8 +312,8 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * @see		$maxHashCount
 	 * @see		getMaxHashCount()
 	 */
-	public function setMaxHashCount($maxHashCount = null) {
-		self::$maxHashCount = !is_null($maxHashCount) && is_int($maxHashCount) ? $maxHashCount : self::MAX_HASH_COUNT;
+	public function setMaxHashCount($maxHashCount = NULL) {
+		self::$maxHashCount = !is_NULL($maxHashCount) && is_int($maxHashCount) ? $maxHashCount : self::MAX_HASH_COUNT;
 	}
 
 	/**
@@ -324,8 +324,8 @@ class tx_saltedpasswords_salts_blowfish extends tx_saltedpasswords_salts_md5 {
 	 * @see		$minHashCount
 	 * @see		getMinHashCount()
 	 */
-	public function setMinHashCount($minHashCount = null) {
-		self::$minHashCount = !is_null($minHashCount) && is_int($minHashCount) ? $minHashCount : self::MIN_HASH_COUNT;
+	public function setMinHashCount($minHashCount = NULL) {
+		self::$minHashCount = !is_NULL($minHashCount) && is_int($minHashCount) ? $minHashCount : self::MIN_HASH_COUNT;
 	}
 }
 
