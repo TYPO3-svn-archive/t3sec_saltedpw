@@ -38,18 +38,32 @@ if (!defined ('TYPO3_MODE')) die ('Access denied.');
  * @subpackage	tx_saltedpasswords
  */
 class tx_saltedpasswords_emconfhelper {
-
+	/**
+	 * @var	integer
+	 */
 	protected $errorType = t3lib_FlashMessage::OK;
-	protected $header;
-	protected $preText;
-	protected $problems = array();
 
+	/**
+	 * @var	string
+	 */
+	protected $header;
+
+	/**
+	 * @var	string
+	 */
+	protected $preText;
+
+	/*
+	 * @var	array
+	 */
+	protected $problems = array();
 
 	/**
 	 * Set the error level if no higher level
 	 * is set already
 	 *
-	 * @param	string	$level, one of: error,ok,warning,info
+	 * @param	string		$level: one out of error, ok, warning, info
+	 * @return	void
 	 */
 	private function setErrorLevel($level) {
 

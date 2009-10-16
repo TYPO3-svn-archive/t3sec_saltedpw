@@ -37,7 +37,6 @@
  * @subpackage	tx_saltedpasswords
  */
 class tx_saltedpasswords_eval {
-
 	/**
 	 * Keeps TYPO3 mode.
 	 *
@@ -46,7 +45,6 @@ class tx_saltedpasswords_eval {
 	 * @var string
 	 */
 	protected $mode = NULL;
-
 
 	/**
 	 * This function just return the field value as it is. No transforming,
@@ -72,14 +70,14 @@ class tx_saltedpasswords_eval {
 		if ($isEnabled) {
 			$set = FALSE;
 			$isMD5 = preg_match('/[0-9abcdef]{32,32}/', $value);
-			$isSaltedHash = t3lib_div::inList('$1$,$2$,$2a,$P$',substr($value,0,3));
+			$isSaltedHash = t3lib_div::inList('$1$,$2$,$2a,$P$', substr($value, 0, 3));
 
-			$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(NULL,$this->mode);
+			$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance(NULL, $this->mode);
 
 			if ($isMD5) {
 				$set = TRUE;
 				$value = 'M' . $this->objInstanceSaltedPW->getHashedPassword($value);
-			} else if (!$isSaltedHash ) {
+			} else if (!$isSaltedHash) {
 				$set = TRUE;
 				$value = $this->objInstanceSaltedPW->getHashedPassword($value);
 			}

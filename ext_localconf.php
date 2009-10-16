@@ -1,6 +1,7 @@
 <?php
-	// Make sure that we are executed only in TYPO3 context
-if (!defined ('TYPO3_MODE'))	die ('Access denied.');
+if (!defined ('TYPO3_MODE')) {
+	die ('Access denied.');
+}
 
 	// form evaluation function for fe_users
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['tx_saltedpasswords_eval_fe'] = 'EXT:saltedpasswords/classes/eval/class.tx_saltedpasswords_eval_fe.php';

@@ -45,32 +45,27 @@
  * @subpackage  tx_saltedpasswords
  */
 interface tx_saltedpasswords_salts {
-
-
 	/**
 	 * Method checks if a given plaintext password is correct by comparing it with
 	 * a given salted hashed password.
 	 *
-	 * @access  public
-	 * @param   string   $plainPW:  plain-text password to compare with salted hash
-	 * @param   string   $saltedHashPW:  salted hash to compare plain-text password with
-	 * @return  boolean  true, if plaintext password is correct, otherwise false
+	 * @param	string		$plainPW:  plain-text password to compare with salted hash
+	 * @param	string		$saltedHashPW:  salted hash to compare plain-text password with
+	 * @return	boolean		true, if plaintext password is correct, otherwise false
 	 */
 	public function checkPassword($plainPW, $saltedHashPW);
 
 	/**
 	 * Returns length of required salt.
 	 *
-	 * @access  public
-	 * @return  integer  length of required salt
+	 * @return	integer		length of required salt
 	 */
 	public function getSaltLength();
 
 	/**
 	 * Returns wether all prequesites for the hashing methods are matched
 	 *
-	 * @access  public
-	 * @return  boolean  method available
+	 * @return	boolean		method available
 	 */
 	public function isAvailable();
 
@@ -78,10 +73,9 @@ interface tx_saltedpasswords_salts {
 	/**
 	 * Method creates a salted hash for a given plaintext password
 	 *
-	 * @access  public
-	 * @param   string  $password:  plaintext password to create a salted hash from
-	 * @param   string  $salt:  optional custom salt to use
-	 * @return  string  salted hashed password
+	 * @param	string		$password:  plaintext password to create a salted hash from
+	 * @param	string		$salt:  optional custom salt to use
+	 * @return	string		salted hashed password
 	 */
 	public function getHashedPassword($password, $salt = null);
 
@@ -94,28 +88,24 @@ interface tx_saltedpasswords_salts {
 	 * HASH_COUNT or if the user's password hash was generated in an bulk update
 	 * with class ext_update.
 	 *
-	 * @access  public
-	 * @param   string   $passString  salted hash to check if it needs an update
-	 * @return  boolean	              true if salted hash needs an update,
-	 *                                otherwise false
+	 * @param	string		$passString  salted hash to check if it needs an update
+	 * @return	boolean		true if salted hash needs an update, otherwise false
 	 */
 	public function isHashUpdateNeeded($passString);
 
 	/**
 	 * Method determines if a given string is a valid salt
 	 *
-	 * @access  public
-	 * @param   string   $salt: string to check
-	 * @return  boolean  true if it's valid salt, otherwise false
+	 * @param	string		$salt: string to check
+	 * @return	boolean		true if it's valid salt, otherwise false
 	 */
 	public function isValidSalt($salt);
 
 	/**
 	 * Method determines if a given string is a valid salted hashed password.
 	 *
-	 * @access  public
-	 * @param   string   $saltedPW: string to check
-	 * @return  boolean  true if it's valid salted hashed password, otherwise false
+	 * @param	string		$saltedPW: string to check
+	 * @return	boolean		true if it's valid salted hashed password, otherwise false
 	 */
 	public function isValidSaltedPW($saltedPW);
 }
@@ -124,5 +114,4 @@ interface tx_saltedpasswords_salts {
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/interfaces/interface.tx_saltedpasswords_salts.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/interfaces/interface.tx_saltedpasswords_salts.php']);
 }
-
 ?>

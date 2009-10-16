@@ -44,52 +44,44 @@
  * @subpackage  tx_saltedpasswords
  */
 abstract class tx_saltedpasswords_abstract_salts {
-
-
 	/**
 	 * Method applies settings (prefix, optional hash count, optional suffix)
 	 * to a salt.
 	 *
-	 * @access  protected
-	 * @param   string     $salt:  a salt to apply setting to
-	 * @return  string     salt with setting
+	 * @param	string		$salt:  a salt to apply setting to
+	 * @return	string		salt with setting
 	 */
 	abstract protected function applySettingsToSalt($salt);
 
 	/**
 	 * Generates a random base salt settings for the hash.
 	 *
-	 * @access  protected
-	 * @return  string     a string containing settings and a random salt
+	 * @return	string		a string containing settings and a random salt
 	 */
 	abstract protected function getGeneratedSalt();
 
 	/**
 	 * Returns a string for mapping an int to the corresponding base 64 character.
 	 *
-	 * @access  protected
-	 * @return  string     string for mapping an int to the corresponding
-	 *                     base 64 character
+	 * @return	string		string for mapping an int to the corresponding base 64 character
 	 */
 	abstract protected function getItoa64();
 
 	/**
 	 * Returns setting string to indicate type of hashing method.
 	 *
-	 * @access  protected
-	 * @return  string     setting string of hashing method
+	 * @return	string		setting string of hashing method
 	 */
 	abstract protected function getSetting();
 
 	/**
 	 * Encodes bytes into printable base 64 using the *nix standard from crypt().
 	 *
-	 * @access  public
-	 * @param   string   $input: the string containing bytes to encode.
-	 * @param   integer  $count: the number of characters (bytes) to encode.
-	 * @return  string   encoded string
+	 * @param	string		$input: the string containing bytes to encode.
+	 * @param	integer		$count: the number of characters (bytes) to encode.
+	 * @return	string		encoded string
 	 */
-	public function base64Encode($input, $count)  {
+	public function base64Encode($input, $count) {
 		$output = '';
 		$i = 0;
 		$itoa64 = $this->getItoa64();
@@ -119,9 +111,8 @@ abstract class tx_saltedpasswords_abstract_salts {
 	 * Method determines required length of base64 characters for a given
 	 * length of a byte string.
 	 *
-	 * @access  protected
-	 * @param   integer    $byteLength: length of bytes to calculate in base64 chars
-	 * @return  integer    required length of base64 characters
+	 * @param	integer		$byteLength: length of bytes to calculate in base64 chars
+	 * @return	integer		required length of base64 characters
 	 */
 	protected function getLengthBase64FromBytes($byteLength) {
 			// calculates bytes in bits in base64
@@ -133,5 +124,4 @@ abstract class tx_saltedpasswords_abstract_salts {
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_abstract_salts.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/saltedpasswords/classes/salts/class.tx_saltedpasswords_abstract_salts.php']);
 }
-
 ?>

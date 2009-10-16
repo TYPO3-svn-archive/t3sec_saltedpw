@@ -37,8 +37,6 @@
  * @subpackage	tx_saltedpasswords
  */
 class tx_saltedpasswords_eval_be extends tx_saltedpasswords_eval {
-
-
 	/**
 	 * Class constructor.
 	 *

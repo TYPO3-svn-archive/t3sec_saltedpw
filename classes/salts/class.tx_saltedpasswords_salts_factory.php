@@ -43,13 +43,11 @@
  * @subpackage  tx_saltedpasswords
  */
 class tx_saltedpasswords_salts_factory {
-
-
 	/**
 	 * An instance of the salted hashing method.
 	 * This member is set in the getSaltingInstance() function.
 	 *
-	 * @var tx_saltedpasswords_abstract_salts
+	 * @var	tx_saltedpasswords_abstract_salts
 	 */
 	static protected $instance = null;
 
@@ -62,8 +60,9 @@ class tx_saltedpasswords_salts_factory {
 	 *
 	 * Use parameter null to reset the factory!
 	 *
-	 * @param   string  (optional) salted hashed password to determine the type of used method from or null to reset the factory
-	 * @return  tx_saltedpasswords_abstract_salts  an instance of salting hashing method object
+	 * @param	string		$saltedHash: (optional) salted hashed password to determine the type of used method from or null to reset the factory
+	 * @param	string		$mode: (optional) The TYPO3 mode (FE or BE) saltedpasswords shall be used for
+	 * @return	tx_saltedpasswords_abstract_salts	an instance of salting hashing method object
 	 */
 	static public function getSaltingInstance($saltedHash = '', $mode = TYPO3_MODE) {
 			// creating new instance when
@@ -81,9 +80,10 @@ class tx_saltedpasswords_salts_factory {
 			} else {
 				$classNameToUse = tx_saltedpasswords_div::getDefaultSaltingHashingMethod($mode);
 				$availableClasses = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods'];
-				self::$instance = t3lib_div::getUserObj($availableClasses[$classNameToUse],'tx_');
+				self::$instance = t3lib_div::getUserObj($availableClasses[$classNameToUse], 'tx_');
 			}
 		}
+
 		return self::$instance;
 	}
 
@@ -92,39 +92,38 @@ class tx_saltedpasswords_salts_factory {
 	 *
 	 * Method implicitly sets the instance of the found method object in the class property when found.
 	 *
-	 * @access  protected
-	 * @param   string    $saltedHash
-	 * @return  boolean   true, if salting hashing method has been found, otherwise false
+	 * @param	string		$saltedHash
+	 * @return	boolean		true, if salting hashing method has been found, otherwise false
 	 */
 	static protected function determineSaltingHashingMethod($saltedHash) {
 		$methodFound = false;
 		$defaultMethods = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/saltedpasswords']['saltMethods'];
 		foreach($defaultMethods as $method) {
-			$objectInstance = t3lib_div::getUserObj($method,'tx_');
-			if($objectInstance instanceof tx_saltedpasswords_salts) {
+			$objectInstance = t3lib_div::getUserObj($method, 'tx_');
+			if ($objectInstance instanceof tx_saltedpasswords_salts) {
 				$methodFound = $objectInstance->isValidSaltedPW($saltedHash);
 				if ($methodFound) {
-					self::$instance = &$objectInstance;
+					self::$instance = $objectInstance;
 					break;
 				}
 			}
 		}
+
 		return $methodFound;
 	}
 
 	/**
 	 * Method sets a custom salting hashing method class.
 	 *
-	 * @access  public
-	 * @param   string  $resource  object resource to use (e.g. 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php:tx_saltedpasswords_salts_blowfish')
-	 * @return  tx_saltedpasswords_abstract_salts  an instance of salting hashing method object
+	 * @param	string		$resource: object resource to use (e.g. 'EXT:saltedpasswords/classes/salts/class.tx_saltedpasswords_salts_blowfish.php:tx_saltedpasswords_salts_blowfish')
+	 * @return	tx_saltedpasswords_abstract_salts	an instance of salting hashing method object
 	 */
 	static public function setPreferredHashingMethod($resource) {
 		self::$instance = NULL;
 		$objectInstance = t3lib_div::getUserObj($resource);
 		if (is_object($objectInstance)
 			&& is_subclass_of($objectInstance, 'tx_saltedpasswords_abstract_salts')) {
-				self::$instance = &$objectInstance;
+				self::$instance = $objectInstance;
 		}
 
 		return self::$instance;
