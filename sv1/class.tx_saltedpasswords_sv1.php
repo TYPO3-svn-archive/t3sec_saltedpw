@@ -106,7 +106,7 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 * @param	string		login security level (optional)
 	 * @return	boolean		true if login data matched
 	 */
-	function compareUident($user, $loginData, $security_level = 'normal') {
+	function compareUident(array $user, array $loginData, $security_level = 'normal') {
 		$validPasswd = false;
 
 			// could be merged; still here to clarify
@@ -191,7 +191,7 @@ class tx_saltedpasswords_sv1 extends tx_sv_authbase {
 	 * @param	array		Array containing FE user data of the logged user.
 	 * @return	integer		authentication statuscode, one of 0,100 and 200
 	 */
-	public function authUser($user)	{
+	public function authUser(array $user)	{
 		$OK = 100;
 		$validPasswd = false;
 

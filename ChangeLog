@@ -2,6 +2,7 @@
 
 	* Fixed bug: Evaluation function for t3lib_TCEmain does not need to store already salted password again
 	* Cleanup: Fixed formatting and cleaned up PHPdoc comments
+	* Cleanup: Added type hints in signatures of methods
 
 2009-09-29  Oliver Hader  <oliver@typo3.org>
 

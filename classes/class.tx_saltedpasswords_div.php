@@ -80,12 +80,12 @@ class tx_saltedpasswords_div  {
 		 * Hook function for felogin "forgotPassword" functionality
 		 * encrypts the new password before storing in database
 		 *
-		 * @param	mixed		$params: Parameter the hook delivers
-		 * @param	object		$pObj: Parent Object from which the hook is called
+		 * @param	array			$params: Parameter the hook delivers
+		 * @param	tx_felogin_pi1	$pObj: Parent Object from which the hook is called
 		 * @return	void
 		 *
 		 */
-		public function feloginForgotPasswordHook(&$params, $pObj) {
+		public function feloginForgotPasswordHook(array &$params, tx_felogin_pi1 $pObj) {
 			if (self::isUsageEnabled('FE')) {
 				$this->objInstanceSaltedPW = tx_saltedpasswords_salts_factory::getSaltingInstance();
 				$params['newPassword'] = $this->objInstanceSaltedPW->getHashedPassword($params['newPassword']);
