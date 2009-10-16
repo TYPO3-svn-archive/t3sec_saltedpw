@@ -1,5 +1,9 @@
 2009-10-16  Oliver Hader  <oliver@typo3.org>
 
+	* Set version to 0.9.1
+
+2009-10-16  Oliver Hader  <oliver@typo3.org>
+
 	* Fixed bug: Evaluation function for t3lib_TCEmain does not need to store already salted password again
 	* Cleanup: Fixed formatting and cleaned up PHPdoc comments
 	* Cleanup: Added type hints in signatures of methods
