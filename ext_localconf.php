@@ -37,4 +37,6 @@ t3lib_extMgm::addService(
 	)
 );
 
+// Use popup window to refresh login instead of the AJAX relogin:
+$TYPO3_CONF_VARS['BE']['showRefreshLoginPopup'] = 1;
 ?>

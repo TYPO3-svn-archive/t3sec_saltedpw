@@ -1,3 +1,7 @@
+2009-10-21  Oliver Hader  <oliver@typo3.org>
+
+	* Fixed bug: Disable to use the AJAX relogin of the TYPO3 Core
+
 2009-10-16  Oliver Hader  <oliver@typo3.org>
 
 	* Set version to 0.9.1
