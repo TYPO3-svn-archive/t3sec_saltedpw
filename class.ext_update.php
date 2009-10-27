@@ -107,6 +107,7 @@ class ext_update {
 	/**
 	 * Enter description here...
 	 *
+	 * @deprecated
 	 * @return integer
 	 */
 	function checkRecentRecord() {
@@ -114,6 +115,13 @@ class ext_update {
 				| $this->checkRecentRecordByTable($this->tableFE);
 	}
 
+	/**
+	 * Enter description here...
+	 *
+	 * @deprecated
+	 * @param $table
+	 * @return unknown_type
+	 */
 	function checkRecentRecordByTable(&$table) {
 		$colCrdate = $this->getColumnNameByTCA($table, 'crdate', 'crdate');
 
@@ -147,6 +155,47 @@ class ext_update {
 	/**
 	 * Enter description here...
 	 *
+	 * @return unknown_type
+	 */
+	function checkForNonPHPassRecords() {
+				return $this->checkForNonPHPassRecordsByTable($this->tableBE)
+				| $this->checkForNonPHPassRecordsByTable($this->tableFE);
+	}
+
+	/**
+	 * Enter description here...
+	 *
+	 * @deprecated
+	 * @param $table
+	 * @return unknown_type
+	 */
+	function checkForNonPHPassRecordsByTable(&$table) {
+			// retrieving recent records from fe_users table
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+					'COUNT(*)',
+					$table,
+					'password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('M$P$%', $table) . ' '
+					.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('C$P$%', $table) . ' '
+					.'AND password NOT LIKE ' . $GLOBALS['TYPO3_DB']->fullQuoteStr('$P$%',  $table)
+				);
+		$row = $GLOBALS['TYPO3_DB']->sql_fetch_row($res);
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+
+		if (intval($row[0]) > 0) {
+			switch($table) {
+				case 'be_users':    $result = self::NEED_UPDATE_BE;
+									break;
+				case 'fe_users':	$result = self::NEED_UPDATE_FE;
+									break;
+				default:            break;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Enter description here...
+	 *
 	 * @return  boolean  true, if user record passwords need an update,
 	 *                   otherwise false
 	 */
@@ -157,7 +206,7 @@ class ext_update {
 		if (t3lib_extMgm::isLoaded(self::EXTKEY)) {
 			require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3secsaltedpw_div.php');
 			if (tx_t3secsaltedpw_div::isUsageEnabled('FE') || tx_t3secsaltedpw_div::isUsageEnabled('BE')) {
-				if ($this->checkRecentRecord() > 0) $accessAllowed = true;
+				if ($this->checkForNonPHPassRecords() > 0) $accessAllowed = true;
 			}
 		}
 		return $accessAllowed;
@@ -183,11 +232,11 @@ class ext_update {
 				$sumRecords += $this->updateUsersRecords($this->tableFE, in_array('be',t3lib_div::_GP('update')) ? ceil(2/3 * self::PASSWD_UPDATE_RUN) : self::PASSWD_UPDATE_RUN);
 			}
 			$content .= '<p>Updated records: ' . $sumRecords . '</p><p>&nbsp;</p>';
-			$intNeedUpdate = $this->checkRecentRecord();
+			$intNeedUpdate = $this->checkForNonPHPassRecords();
 			if ($intNeedUpdate > 0) {
 				$content .= '<p>You will need to run this script again to update '
 						.  'the remaining user records.</p></p><p>&nbsp;</p>'
-						.  $this->getUpdateForm($this->checkRecentRecord());
+						.  $this->getUpdateForm($this->checkForNonPHPassRecords());
 			} else {
 				require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
 				$extConfDefault = tx_t3secsaltedpw_div::returnExtConfDefaults();
@@ -213,7 +262,7 @@ class ext_update {
 					.  'Every script run will convert a <strong>maximum of '
 					.  self::PASSWD_UPDATE_RUN . ' user records</strong>.'
 					.  '</p><p>&nbsp;</p>'
-					.  $this->getUpdateForm($this->checkRecentRecord());
+					.  $this->getUpdateForm($this->checkForNonPHPassRecords());
 
 		}
 		return $content;
