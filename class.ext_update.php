@@ -158,8 +158,16 @@ class ext_update {
 	 * @return unknown_type
 	 */
 	function checkForNonPHPassRecords() {
-				return $this->checkForNonPHPassRecordsByTable($this->tableBE)
-				| $this->checkForNonPHPassRecordsByTable($this->tableFE);
+		$resultBitMask = 0;
+
+		if (tx_t3secsaltedpw_div::isUsageEnabled('FE')) {
+			$resultBitMask |= $this->checkForNonPHPassRecordsByTable($this->tableFE);
+		}
+
+		if (tx_t3secsaltedpw_div::isUsageEnabled('BE')) {
+			$resultBitMask |= $this->checkForNonPHPassRecordsByTable($this->tableBE);
+		}
+		return $resultBitMask;
 	}
 
 	/**
@@ -196,20 +204,10 @@ class ext_update {
 	/**
 	 * Enter description here...
 	 *
-	 * @return  boolean  true, if user record passwords need an update,
-	 *                   otherwise false
+	 * @return  boolean  always true
 	 */
 	function access() {
-		$accessAllowed = false;
-			// allow updating existing passwords only when ext usage
-			// is enabled for either BE or FE or both
-		if (t3lib_extMgm::isLoaded(self::EXTKEY)) {
-			require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3secsaltedpw_div.php');
-			if (tx_t3secsaltedpw_div::isUsageEnabled('FE') || tx_t3secsaltedpw_div::isUsageEnabled('BE')) {
-				if ($this->checkForNonPHPassRecords() > 0) $accessAllowed = true;
-			}
-		}
-		return $accessAllowed;
+		return true;
 	}
 
 	/**
@@ -221,49 +219,61 @@ class ext_update {
 
 		$content = '<h2 class="typo3-tstemplate-ceditor-subcat">Update of BE/FE user passwords</h2><p>&nbsp;</p>';
 
-		if (t3lib_div::_GP('update')) {
-			$sumRecords = 0;
-				// BE user update
-			if (in_array('be', t3lib_div::_GP('update'))) {
-				$sumRecords += $this->updateUsersRecords($this->tableBE, in_array('fe',t3lib_div::_GP('update')) ? ceil(1/3 * self::PASSWD_UPDATE_RUN) : self::PASSWD_UPDATE_RUN);
-			}
-				// FE user update
-			if (in_array('fe', t3lib_div::_GP('update'))) {
-				$sumRecords += $this->updateUsersRecords($this->tableFE, in_array('be',t3lib_div::_GP('update')) ? ceil(2/3 * self::PASSWD_UPDATE_RUN) : self::PASSWD_UPDATE_RUN);
-			}
-			$content .= '<p>Updated records: ' . $sumRecords . '</p><p>&nbsp;</p>';
-			$intNeedUpdate = $this->checkForNonPHPassRecords();
-			if ($intNeedUpdate > 0) {
-				$content .= '<p>You will need to run this script again to update '
-						.  'the remaining user records.</p></p><p>&nbsp;</p>'
-						.  $this->getUpdateForm($this->checkForNonPHPassRecords());
-			} else {
-				require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
-				$extConfDefault = tx_t3secsaltedpw_div::returnExtConfDefaults();
-				$extConf = tx_t3secsaltedpw_div::returnExtConf();
-				$content .= '<p>All records have been updated.</p><p>&nbsp;</p>'
-						.  '<strong>Please make sure that extension configuration variable '
-						.  '<i>forcePHPasswd</i> is disabled to use the updated passwords.</strong><br>'
-						.  'This variable is <strong>by default '
-						. (intval($extConfDefault['forcePHPasswd']) ? 'enabled' : 'disabled')
-						. '</strong>. ';
+		if (tx_t3secsaltedpw_div::isUsageEnabled('FE') || tx_t3secsaltedpw_div::isUsageEnabled('BE')) {
+			if (t3lib_div::_GP('update')) {
+				$sumRecords = 0;
+					// BE user update
+				if (in_array('be', t3lib_div::_GP('update'))) {
+					$sumRecords += $this->updateUsersRecords($this->tableBE, in_array('fe',t3lib_div::_GP('update')) ? ceil(1/3 * self::PASSWD_UPDATE_RUN) : self::PASSWD_UPDATE_RUN);
+				}
+					// FE user update
+				if (in_array('fe', t3lib_div::_GP('update'))) {
+					$sumRecords += $this->updateUsersRecords($this->tableFE, in_array('be',t3lib_div::_GP('update')) ? ceil(2/3 * self::PASSWD_UPDATE_RUN) : self::PASSWD_UPDATE_RUN);
+				}
+				$content .= '<p>Updated records: ' . $sumRecords . '</p><p>&nbsp;</p>';
+				$intNeedUpdate = $this->checkForNonPHPassRecords();
+				if ($intNeedUpdate > 0) {
+					$content .= '<p>You will need to run this script again to update '
+							.  'the remaining user records.</p></p><p>&nbsp;</p>'
+							.  $this->getUpdateForm($this->checkForNonPHPassRecords());
+				} else {
+					require_once t3lib_extMgm::extPath('t3sec_saltedpw').'res/staticlib/class.tx_t3secsaltedpw_div.php';
+					$extConfDefault = tx_t3secsaltedpw_div::returnExtConfDefaults();
+					$extConf = tx_t3secsaltedpw_div::returnExtConf();
+					$content .= '<p>All records have been updated.</p><p>&nbsp;</p>'
+							.  '<strong>Please make sure that extension configuration variable '
+							.  '<i>forcePHPasswd</i> is disabled to use the updated passwords.</strong><br>'
+							.  'This variable is <strong>by default '
+							. (intval($extConfDefault['forcePHPasswd']) ? 'enabled' : 'disabled')
+							. '</strong>. ';
 
-				$content .= 'This variable is <strong>currently '
-						. (intval($extConf['forcePHPasswd']) ? 'enabled' : 'disabled')
-						. '</strong>.</p>';
+					$content .= 'This variable is <strong>currently '
+							. (intval($extConf['forcePHPasswd']) ? 'enabled' : 'disabled')
+							. '</strong>.</p>';
+				}
+			} else {
+				$updateBitMask = $this->checkForNonPHPassRecords();
+
+				if ($updateBitMask != 0) {
+					$content.= '<p>It\'s most likely necessary to update user passwords as it seems that '
+							.  'they are not encrypted/hashed with the method brought with this extension.</p><p>&nbsp;</p>'
+							.  '<p>Do <strong>not execute</strong> the update if all or part of existing '
+							.  'passwords are <strong>neither clear-text nor md5 hashed</strong> ones!<p>&nbsp;</p>'
+							.  '<p>Do you want me to update the passwords for all records? Please mind that '
+							.  'it might take some time!<br>'
+							.  'Every script run will convert a <strong>maximum of '
+							.  self::PASSWD_UPDATE_RUN . ' user records</strong>.'
+							.  '</p><p>&nbsp;</p>'
+							.  $this->getUpdateForm($updateBitMask);
+				} else {
+					$content.= '<p>All user records have proper salted passwords for the TYPO3 mode(s) you have '
+							.  'configured to use salted passwords in.</p>';
+				}
 			}
 		} else {
-			$content.= '<p>It\'s most likely necessary to update user passwords as it seems that '
-					.  'they are not encrypted/hashed with the method brought with this extension.</p><p>&nbsp;</p>'
-					.  '<p>Do <strong>not execute</strong> the update if all or part of existing '
-					.  'passwords are <strong>neither clear-text nor md5 hashed</strong> ones!<p>&nbsp;</p>'
-					.  '<p>Do you want me to update the passwords for all records? Please mind that '
-					.  'it might take some time!<br>'
-					.  'Every script run will convert a <strong>maximum of '
-					.  self::PASSWD_UPDATE_RUN . ' user records</strong>.'
-					.  '</p><p>&nbsp;</p>'
-					.  $this->getUpdateForm($this->checkForNonPHPassRecords());
-
+			$content .= '<p>The usage of salted passwords is neither enabled for the TYPO3 Backend '
+					 .  'nor for the TYPO3 Frontend. Please refer to the manual to learn how to enable '
+					 .  'salted passwords.</p>';
 		}
 		return $content;
 	}

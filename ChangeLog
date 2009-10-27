@@ -1,5 +1,6 @@
 2009-10-27  Marcus Krause   <marcus#exp2009@t3sec.info>
 
+	* Bug #4629: Update-Module not very clear (thanks to Georg Ringer)
 	* Bug #4927: UPDATE! show up only if last created password is not encrypted (thanks to Dimitri Koenig)
 
 
