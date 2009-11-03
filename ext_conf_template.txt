@@ -8,13 +8,13 @@ checkConfigurationBE=0
 FE.enabled = 1
 
 # cat=basic/enable; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->buildHashMethodSelectorFE]; label=Hashing method for the frontend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress). Choose "MD5 salted hashing" to reuse TYPO3 passwords for OS level authentication (other servers could use TYPO3 passwords). Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (Blowfish might not be supported on your system TODO).
-FE.saltedPWHashingMethod = 1
+FE.saltedPWHashingMethod = tx_saltedpasswords_salts_phpass
 
 # cat=basic/enable; type=boolean; label=Enable BE: Enable SaltedPasswords in the backend
 BE.enabled = 1
 
 # cat=basic/enable; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->buildHashMethodSelectorBE]; label=Hashing method for the backend: Defines salted hashing method to use. Choose "Portable PHP password hashing" to stay compatible with other CMS (e.g. Drupal, Wordpress). Choose "MD5 salted hashing" to reuse TYPO3 passwords for OS level authentication (other servers could use TYPO3 passwords). Choose "Blowfish salted hashing" for advanced security to reuse passwords on OS level (Blowfish might not be supported on your system TODO).
-BE.saltedPWHashingMethod = 1
+BE.saltedPWHashingMethod = tx_saltedpasswords_salts_phpass
 
 # cat=advanced Frontend; type=user[EXT:saltedpasswords/classes/class.tx_saltedpasswords_emconfhelper.php:tx_saltedpasswords_emconfhelper->checkConfigurationFrontend]; label=Frontend configuration check
 checkConfigurationFE2=0

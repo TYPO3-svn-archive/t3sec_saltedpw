@@ -102,7 +102,7 @@ class tx_saltedpasswords_div {
 				'onlyAuthService' => '0',
 				'forceSalted' => '0',
 				'updatePasswd' => '1',
-				'saltedPWHashingMethod' => 'tx_saltedpasswords_salts_md5',
+				'saltedPWHashingMethod' => 'tx_saltedpasswords_salts_phpass',
 				'enabled' => '1',
 			);
 		}
