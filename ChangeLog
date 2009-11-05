@@ -1,3 +1,7 @@
+2009-11-05  Oliver Hader  <oliver@typo3.org>
+
+	* Set version to 0.9.2
+
 2009-11-03  Oliver Hader  <oliver@typo3.org>
 
 	* Fixed bug: Define tx_saltedpasswords_salts_phpass to be the default due to compatibility reasons
