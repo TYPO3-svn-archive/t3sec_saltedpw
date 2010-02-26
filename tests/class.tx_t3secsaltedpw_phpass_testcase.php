@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) Marcus Krause (marcus#exp2009@t3sec.info)
+*  (c) 2008-2010 Marcus Krause (marcus#exp2009@t3sec.info)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -112,6 +112,13 @@ class tx_t3secsaltedpw_phpass_testcase extends tx_phpunit_testcase {
 		$len = 32;
 		$pass = tx_t3secsaltedpw_div::generatePassword($len);
 		$this->assertEquals(strlen($pass), $len);
+	}
+
+	public function testIsValidSalt() {
+		$testString = 'test';
+		$this->assertFalse($this->objPHPass->isValidSalt($testString));
+		$testString = '$P$CZh07t4r5kaU.X3oyg0I0tupVrYPO91';
+		$this->assertTrue($this->objPHPass->isValidSalt($testString));
 	}
 
 	public function testPasswordCharPool() {

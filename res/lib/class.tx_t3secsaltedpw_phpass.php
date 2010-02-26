@@ -4,7 +4,7 @@
 *
 *  (c) 2004-2006 Solar Designer (solar at openwall.com)
 *  (c) 2008      Dries Buytaert (dries at buytaert.net)
-*  (c) 2008      Marcus Krause  (marcus#exp2009@t3sec.info)
+*  (c) 2008-2010 Marcus Krause  (marcus#exp2009@t3sec.info)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -46,7 +46,6 @@
 if (!defined ("TYPO3_MODE")) die ("Access denied.");
 
 require_once (PATH_t3lib.'class.t3lib_div.php');
-require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3secsaltedpw_div.php');
 
 
 /**
@@ -60,14 +59,22 @@ require_once t3lib_extMgm::extPath('t3sec_saltedpw', 'res/staticlib/class.tx_t3s
  */
 class tx_t3secsaltedpw_phpass {
 
+	/**
+	 * Keeps a string for mapping an int to the corresponding
+	 * base 64 character.
+	 */
+	const ITOA64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 	/**
 	 * The default log2 number of iterations for password stretching.
-	 * This should increased by 1 from time to time to counteract
-	 * increases in the speed and power of computers available to
-	 * crack the hashes.
 	 */
 	const HASH_COUNT = 14;
+
+	/**
+	 * The default maximum allowed log2 number of iterations for
+	 * password stretching.
+	 */
+	const MAX_HASH_COUNT = 24;
 
 	/**
 	 * The default minimum allowed log2 number of iterations for
@@ -75,39 +82,44 @@ class tx_t3secsaltedpw_phpass {
 	 */
 	const MIN_HASH_COUNT = 7;
 
-	/**
-	 * The default maximum allowed log2 number of iterations for
-	 * password stretching.
-	 */
-	const MAX_HASH_COUNT = 30;
-
 
 	/**
 	 * Keeps log2 number
 	 * of iterations for password stretching.
 	 *
-	 * @access protected
-	 * @var    integer
+	 * @var	integer
 	 */
-	protected $hashCount;
-
-	/**
-	 * Keeps minimum allowed log2 number
-	 * of iterations for password stretching.
-	 *
-	 * @access protected
-	 * @var    integer
-	 */
-	protected $minHashCount;
+	static protected $hashCount;
 
 	/**
 	 * Keeps maximum allowed log2 number
 	 * of iterations for password stretching.
 	 *
-	 * @access protected
-	 * @var    integer
+	 * @var	integer
 	 */
-	protected $maxHashCount;
+	static protected $maxHashCount;
+
+	/**
+	 * Keeps minimum allowed log2 number
+	 * of iterations for password stretching.
+	 *
+	 * @var	integer
+	 */
+	static protected $minHashCount;
+
+	/**
+	 * Keeps length of a PHPass salt in bytes.
+	 *
+	 * @var	integer
+	 */
+	static protected $saltLengthPhpass = 6;
+
+	/**
+	 * Setting string to indicate type of hashing method (PHPass).
+	 *
+	 * @var	string
+	 */
+	static protected $settingPhpass = '$P$';
 
 
 	/**
@@ -125,12 +137,11 @@ class tx_t3secsaltedpw_phpass {
 	/**
 	 * Encodes bytes into printable base 64 using the *nix standard from crypt().
 	 *
-	 * @access protected
-	 * @param  string     $input  the string containing bytes to encode.
-	 * @param  integer    $count  the number of characters (bytes) to encode.
-	 * @return string             encoded string
+	 * @param	string		$input: the string containing bytes to encode.
+	 * @param	integer		$count: the number of characters (bytes) to encode.
+	 * @return	string		encoded string
 	 */
-	protected function base64Encode($input, $count)  {
+	public function base64Encode($input, $count) {
 		$output = '';
 		$i = 0;
 		$itoa64 = $this->getItoa64();
@@ -157,16 +168,64 @@ class tx_t3secsaltedpw_phpass {
 	}
 
 	/**
-	 * Checks whether a plain text password matches a stored hashed password.
+	 * Method determines required length of base64 characters for a given
+	 * length of a byte string.
 	 *
-	 * @param   string  $plainPW         plain-text password to compare with salted hash
-	 * @param   string  $saltedHashPW    salted hash to compare plain-text password with
-	 * @return  boolean                  true if plain-text password matches the salted
-	 *                                   hash, otherwise false
+	 * @param	integer		$byteLength: length of bytes to calculate in base64 chars
+	 * @return	integer		required length of base64 characters
+	 */
+	protected function getLengthBase64FromBytes($byteLength) {
+			// calculates bytes in bits in base64
+		return intval(ceil(($byteLength * 8) / 6));
+	}
+
+	/**
+	 * Method applies settings (prefix, hash count) to a salt.
+	 *
+	 * Overwrites {@link tx_saltedpasswords_salts_md5::applySettingsToSalt()}
+	 * with Blowfish specifics.
+	 *
+	 * @param	string		$salt: a salt to apply setting to
+	 * @return	string		salt with setting
+	 */
+	protected function applySettingsToSalt($salt) {
+		$saltWithSettings = $salt;
+
+		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
+
+			// salt without setting
+		if (strlen($salt) == $reqLenBase64) {
+				// We encode the final log2 iteration count in base 64.
+			$itoa64 = $this->getItoa64();
+			$saltWithSettings = $this->getSetting() . $itoa64[$this->getHashCount()];
+
+			$saltWithSettings .= $salt;
+		}
+
+		return $saltWithSettings;
+	}
+
+	/**
+	 * Method checks if a given plaintext password is correct by comparing it with
+	 * a given salted hashed password.
+	 *
+	 * @param	string		$plainPW: plain-text password to compare with salted hash
+	 * @param	string		$saltedHashPW: salted hash to compare plain-text password with
+	 * @return	boolean		TRUE, if plain-text password matches the salted hash, otherwise FALSE
 	 */
 	public function checkPassword($plainPW, $saltedHashPW) {
 		$hash = $this->cryptPassword($plainPW, $saltedHashPW);
-		return ($hash && !strcmp($saltedHashPW, $hash));
+
+		return ($hash && $saltedHashPW === $hash);
+	}
+
+	/**
+	 * Returns wether all prequesites for the hashing methods are matched
+	 *
+	 * @return	boolean		method available
+	 */
+	public function isAvailable() {
+		return TRUE;
 	}
 
 	/**
@@ -177,57 +236,62 @@ class tx_t3secsaltedpw_phpass {
 	 * for an attacker to try to break the hash by brute-force computation of the
 	 * hashes of a large number of plain-text words or strings to find a match.
 	 *
-	 * @param   string  $password  plain-text password to hash
-	 * @param   string  $setting   an existing hash or the output of getGeneratedSalt()
-	 * @return  mixed              a string containing the hashed password (and salt)
-	 *                             or boolean FALSE on failure.
+	 * @param	string		$password: plain-text password to hash
+	 * @param	string		$setting: an existing hash or the output of getGeneratedSalt()
+	 * @return	mixed		a string containing the hashed password (and salt)
+	 *						or boolean FALSE on failure.
 	 */
-	protected function cryptPassword($password, $setting)  {
-			// The first 12 characters of an existing hash are its setting string.
-		$setting = substr($setting, 0, 12);
+	protected function cryptPassword($password, $setting) {
+		$saltedPW = NULL;
 
-		if (strncmp($setting, '$P$', 3)) return FALSE;
+		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
 
-		$count_log2 = self::getCountLog2($setting);
+			// Retrieving settings with salt
+		$setting = substr($setting, 0, strlen($this->getSetting()) + 1 + $reqLenBase64);
+
+		$count_log2 = $this->getCountLog2($setting);
+
 			// Hashes may be imported from elsewhere, so we allow != HASH_COUNT
-		if ($count_log2 < $this->getMinHashCount() || $count_log2 > $this->getMaxHashCount()) {
-			return FALSE;
+		if ($count_log2 >= $this->getMinHashCount() && $count_log2 <= $this->getMaxHashCount()) {
+
+			$salt = substr($setting, strlen($this->getSetting()) + 1, $reqLenBase64);
+
+				// We must use md5() or sha1() here since they are the only cryptographic
+				// primitives always available in PHP 5. To implement our own low-level
+				// cryptographic function in PHP would result in much worse performance and
+				// consequently in lower iteration counts and hashes that are quicker to crack
+				// (by non-PHP code).
+			$count = 1 << $count_log2;
+
+			$hash = md5($salt . $password, TRUE);
+			do {
+				$hash = md5($hash . $password, TRUE);
+			} while (--$count);
+
+			$saltedPW =  $setting . $this->base64Encode($hash, 16);
+
+				// base64Encode() of a 16 byte MD5 will always be 22 characters.
+			return (strlen($saltedPW) == 34) ? $saltedPW : FALSE;
 		}
-		$salt = substr($setting, 4, 8);
-			// Hashes must have an 8 character salt.
-		if (!isset($salt{7})) return FALSE;
 
-			// We must use md5() or sha1() here since they are the only cryptographic
-			// primitives always available in PHP 5. To implement our own low-level
-			// cryptographic function in PHP would result in much worse performance and
-			// consequently in lower iteration counts and hashes that are quicker to crack
-			// (by non-PHP code).
-		$count = 1 << $count_log2;
-
-		$hash = md5($salt . $password, TRUE);
-		do {
-			$hash = md5($hash . $password, TRUE);
-		} while (--$count);
-
-		$output =  $setting . $this->base64Encode($hash, 16);
-			// base64Encode() of a 16 byte MD5 will always be 22 characters.
-		return (strlen($output) == 34) ? $output : FALSE;
+		return $saltedPW;
 	}
 
 	/**
 	 * Parses the log2 iteration count from a stored hash or setting string.
 	 *
-	 * @access  protected
-	 * @param   string     $setting  complete hash or a hash's setting string or to get log2 iteration count from
-	 * @return  int                  used hashcount for given hash string
+	 * @param	string		$setting: complete hash or a hash's setting string or to get log2 iteration count from
+	 * @return	int			used hashcount for given hash string
 	 */
 	protected function getCountLog2($setting) {
-		$itoa64 = $this->getItoa64();
-		return strpos($itoa64, $setting[3]);
+		return strpos(
+			$this->getItoa64(),
+			$setting[strlen($this->getSetting())]
+		);
 	}
 
 	/**
-	 * Generates a random base 64-encoded salt prefixed with settings for the hash.
+	 * Generates a random base 64-encoded salt prefixed and suffixed with settings for the hash.
 	 *
 	 * Proper use of salts may defeat a number of attacks, including:
 	 *  - The ability to try candidate passwords against multiple hashes at once.
@@ -235,93 +299,95 @@ class tx_t3secsaltedpw_phpass {
 	 *  - The ability to determine whether two users have the same (or different)
 	 *    password without actually having to guess one of the passwords.
 	 *
-	 * @access  protected
-	 * @param   integer    $countLog2  determines the number of iterations used in the hashing
-	 *                                 process; a larger value is more secure, but takes more
-	 *                                 time to complete.
-	 * @return  string                 a 12 character string containing the iteration count and
-	 *                                 a random salt.
+	 * @return	string		a character string containing settings and a random salt
 	 */
-	protected function getGeneratedSalt($countLog2) {
-		$output = '$P$';
-			// Minimum log2 iterations is MIN_HASH_COUNT.
-		$countLog2 = max($countLog2, $this->getMinHashCount());
-			// Maximum log2 iterations is MAX_HASH_COUNT.
-			// We encode the final log2 iteration count in base 64.
-		$itoa64 = $this->getItoa64();
-		$output .= $itoa64[min($countLog2, $this->getMaxHashCount())];
+	protected function getGeneratedSalt() {
+		$randomBytes = t3lib_div::generateRandomBytes($this->getSaltLength());
 
-			// 6 bytes is the standard salt for a portable phpass hash.
-		$randomBytes = t3lib_div::generateRandomBytes(6);
-		$output .= $this->base64Encode($randomBytes, 6);
-		return $output;
+		return $this->base64Encode($randomBytes, $this->getSaltLength());
 	}
 
 	/**
 	 * Method returns log2 number of iterations for password stretching.
 	 *
-	 * @access  protected
-	 * @return  integer    log2 number of iterations for password stretching
-	 * @see                HASH_COUNT
-	 * @see                $hashCount
-	 * @see                setHashCount()
+	 * @return	integer		log2 number of iterations for password stretching
+	 * @see		HASH_COUNT
+	 * @see		$hashCount
+	 * @see		setHashCount()
 	 */
 	public function getHashCount() {
-		return isset($this->hashCount) ? $this->hashCount : self::HASH_COUNT;
+		return isset(self::$hashCount) ? self::$hashCount : self::HASH_COUNT;
 	}
 
 	/**
-	 * Hashes a password using a secure hash.
+	 * Method creates a salted hash for a given plaintext password
 	 *
-	 * @access  public
-	 * @param   string   $password   plain-text password.
-	 * @param   integer  $countLog2  optional integer to specify the iteration count;
-	 *                               generally used only during bulk operations where
-	 *                               a value less than the default is needed for speed
-	 * @return  mixed                string containing the hashed password (and a salt),
-	 *                               or boolean FALSE on failure.
+	 * @param	string		$password: plaintext password to create a salted hash from
+	 * @param	string		$salt: optional custom salt with setting to use
+	 * @return	string		salted hashed password
 	 */
-	public function getHashedPassword($password, $countLog2 = 0) {
-		if (empty($countLog2)) {
-				// uses the standard iteration count
-			$countLog2 = $this->getHashCount();
+	public function getHashedPassword($password, $salt = NULL) {
+		$saltedPW = NULL;
+
+		if (!empty($password)) {
+			if (empty($salt) || !$this->isValidSalt($salt)) {
+				$salt = $this->getGeneratedSalt();
+			}
+			$saltedPW = $this->cryptPassword($password, $this->applySettingsToSalt($salt));
 		}
-		return $this->cryptPassword($password, $this->getGeneratedSalt($countLog2));
+
+		return $saltedPW;
 	}
 
 	/**
 	 * Returns a string for mapping an int to the corresponding base 64 character.
 	 *
-	 * @access  protected
-	 * @return  string     string for mapping an int to the corresponding
-	 *                     base 64 character
+	 * @return	string		string for mapping an int to the corresponding base 64 character
 	 */
 	protected function getItoa64() {
-		return './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+		return self::ITOA64;
 	}
 
 	/**
 	 * Method returns maximum allowed log2 number of iterations for password stretching.
 	 *
-	 * @return  integer  maximum allowed log2 number of iterations for password stretching
-	 * @see              MAX_HASH_COUNT
-	 * @see              $maxHashCount
-	 * @see              setMaxHashCount()
+	 * @return	integer		maximum allowed log2 number of iterations for password stretching
+	 * @see		MAX_HASH_COUNT
+	 * @see		$maxHashCount
+	 * @see		setMaxHashCount()
 	 */
 	public function getMaxHashCount() {
-		return isset($this->maxHashCount) ? $this->maxHashCount : self::MAX_HASH_COUNT;
+		return isset(self::$maxHashCount) ? self::$maxHashCount : self::MAX_HASH_COUNT;
 	}
 
 	/**
 	 * Method returns minimum allowed log2 number of iterations for password stretching.
 	 *
-	 * @return  integer  minimum allowed log2 number of iterations for password stretching
-	 * @see              MIN_HASH_COUNT
-	 * @see              $minHashCount
-	 * @see              setMinHashCount()
+	 * @return	integer		minimum allowed log2 number of iterations for password stretching
+	 * @see		MIN_HASH_COUNT
+	 * @see		$minHashCount
+	 * @see		setMinHashCount()
 	 */
 	public function getMinHashCount() {
-		return isset($this->minHashCount) ? $this->minHashCount : self::MIN_HASH_COUNT;
+		return isset(self::$minHashCount) ? self::$minHashCount : self::MIN_HASH_COUNT;
+	}
+
+	/**
+	 * Returns length of a Blowfish salt in bytes.
+	 *
+	 * @return	integer		length of a Blowfish salt in bytes
+	 */
+	public function getSaltLength() {
+		return self::$saltLengthPhpass;
+	}
+
+	/**
+	 * Returns setting string of PHPass salted hashes.
+	 *
+	 * @return	string		setting string of PHPass salted hashes
+	 */
+	public function getSetting() {
+		return self::$settingPhpass;
 	}
 
 	/**
@@ -333,56 +399,102 @@ class tx_t3secsaltedpw_phpass {
 	 * HASH_COUNT or if the user's password hash was generated in an bulk update
 	 * with class ext_update.
 	 *
-	 * @access  public
-	 * @param   string   $passString  salted hash to check if it needs an update
-	 * @return  boolean	              true if salted hash needs an update,
-	 *                                otherwise false
+	 * @param	string		$passString  salted hash to check if it needs an update
+	 * @return	boolean		TRUE if salted hash needs an update, otherwise FALSE
 	 */
 	public function isHashUpdateNeeded($passString) {
 			// Check whether this was an updated password.
 		if ((strncmp($passString, '$P$', 3)) || (strlen($passString) != 34)) {
-			return true;
+			return TRUE;
 		}
 			// Check whether the iteration count used differs from the standard number.
 		return ($this->getCountLog2($passString) < $this->getHashCount());
 	}
 
 	/**
-	 * Method sets log2 number of iterations for password stretching.
+	 * Method determines if a given string is a valid salt.
 	 *
-	 * @param  integer  $hashCount  log2 number of iterations for password stretching to set
-	 * @see                         HASH_COUNT
-	 * @see                         $hashCount
-	 * @see                         getHashCount()
+	 * @param	string		$salt:  string to check
+	 * @return	boolean		TRUE if it's valid salt, otherwise FALSE
 	 */
-	public function setHashCount($hashCount = null) {
-		$this->hashCount = isset($hashCount) ? intval($hashCount) : self::HASH_COUNT;
+	public function isValidSalt($salt) {
+		$isValid = $skip = FALSE;
+
+		$reqLenBase64 = $this->getLengthBase64FromBytes($this->getSaltLength());
+
+		if (strlen($salt) >= $reqLenBase64) {
+				// salt with prefixed setting
+			if (!strncmp('$', $salt, 1)) {
+				if (!strncmp($this->getSetting(), $salt, strlen($this->getSetting()))) {
+					$isValid = TRUE;
+					$salt = substr($salt, strrpos($salt, '$') + 2);
+				} else {
+					$skip = TRUE;
+				}
+			}
+
+				// checking base64 characters
+			if (!$skip && (strlen($salt) >= $reqLenBase64)) {
+				if (preg_match('/^[' . preg_quote($this->getItoa64(),'/') . ']{' . $reqLenBase64 . ',' . $reqLenBase64 . '}$/', substr($salt, 0, $reqLenBase64))) {
+					$isValid = TRUE;
+				}
+			}
+		}
+
+		return $isValid;
 	}
 
 	/**
-	 * Method sets minimum allowed log2 number of iterations for password stretching.
+	 * Method determines if a given string is a valid salted hashed password.
 	 *
-	 * @param  integer  $minHashCount  minimum allowed log2 number of iterations
-	 *                                 for password stretching to set
-	 * @see                            MIN_HASH_COUNT
-	 * @see                            $minHashCount
-	 * @see                            getMinHashCount()
+	 * @param	string		$saltedPW: string to check
+	 * @return	boolean		TRUE if it's valid salted hashed password, otherwise FALSE
 	 */
-	public function setMinHashCount($minHashCount = null) {
-		$this->minHashCount = isset($minHashCount) ? intval($minHashCount) : self::MIN_HASH_COUNT;
+	public function isValidSaltedPW($saltedPW) {
+		$isValid = FALSE;
+
+		$isValid = (!strncmp($this->getSetting(), $saltedPW, strlen($this->getSetting()))) ? TRUE : FALSE;
+		if ($isValid) {
+			$isValid = $this->isValidSalt($saltedPW);
+		}
+
+		return $isValid;
+	}
+
+	/**
+	 * Method sets log2 number of iterations for password stretching.
+	 *
+	 * @param	integer		$hashCount: log2 number of iterations for password stretching to set
+	 * @see		HASH_COUNT
+	 * @see		$hashCount
+	 * @see		getHashCount()
+	 */
+	public function setHashCount($hashCount = NULL) {
+		self::$hashCount = !is_NULL($hashCount) && is_int($hashCount) && $hashCount >= $this->getMinHashCount() && $hashCount <= $this->getMaxHashCount() ? $hashCount : self::HASH_COUNT;
 	}
 
 	/**
 	 * Method sets maximum allowed log2 number of iterations for password stretching.
 	 *
-	 * @param  integer  $maxHashCount  maximum allowed log2 number of iterations
-	 *                                 for password stretching to set
-	 * @see                            MAX_HASH_COUNT
-	 * @see                            $maxHashCount
-	 * @see                            getMaxHashCount()
+	 * @param	integer		$maxHashCount: maximum allowed log2 number of iterations for password stretching to set
+	 * @see		MAX_HASH_COUNT
+	 * @see		$maxHashCount
+	 * @see		getMaxHashCount()
 	 */
-	public function setMaxHashCount($maxHashCount = null) {
-		$this->maxHashCount = isset($maxHashCount) ? $maxHashCount : self::MAX_HASH_COUNT;
+	public function setMaxHashCount($maxHashCount = NULL) {
+		self::$maxHashCount = !is_NULL($maxHashCount) && is_int($maxHashCount) ? $maxHashCount : self::MAX_HASH_COUNT;
+	}
+
+	/**
+	 * Method sets minimum allowed log2 number of iterations for password stretching.
+	 *
+	 * @param	integer		$minHashCount  minimum allowed log2 number of iterations for password stretching to set
+	 * @see		MIN_HASH_COUNT
+	 * @see		$minHashCount
+	 * @see		getMinHashCount()
+	 */
+	public function setMinHashCount($minHashCount = NULL) {
+		self::$minHashCount = !is_NULL($minHashCount) && is_int($minHashCount) ? $minHashCount : self::MIN_HASH_COUNT;
 	}
 }
 
