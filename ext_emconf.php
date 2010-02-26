@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext: "t3sec_saltedpw"
 #
-# Auto generated 27-10-2009 13:35
+# Auto generated 26-02-2010 05:58
 #
 # Manual updates:
 # Only the data in the array - anything else is removed by next write.
@@ -31,7 +31,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'author_company' => 'TYPO3 Security Team',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
-	'version' => '0.2.12',
+	'version' => '0.2.13',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '4.2.5-4.3.0',
@@ -49,7 +49,7 @@ $EM_CONF[$_EXTKEY] = array(
 			'phpunit' => '',
 		),
 	),
-	'_md5_values_when_last_written' => 'a:24:{s:9:"ChangeLog";s:4:"ff01";s:11:"LICENSE.txt";s:4:"6f86";s:20:"class.ext_update.php";s:4:"0a8e";s:21:"ext_conf_template.txt";s:4:"10ef";s:12:"ext_icon.gif";s:4:"4324";s:17:"ext_localconf.php";s:4:"b313";s:14:"ext_tables.php";s:4:"e703";s:14:"ext_tables.sql";s:4:"de0e";s:28:"ext_typoscript_constants.txt";s:4:"887f";s:24:"ext_typoscript_setup.txt";s:4:"8748";s:48:"tests/class.tx_t3secsaltedpw_phpass_testcase.php";s:4:"5cf6";s:34:"res/ux/class.ux_tx_felogin_pi1.php";s:4:"0367";s:30:"res/ux/class.ux_tx_install.php";s:4:"0c2c";s:25:"res/ux/ux_fe_adminLib.inc";s:4:"c3d0";s:41:"res/lib/class.tx_t3secsaltedpw_phpass.php";s:4:"ca71";s:31:"res/tmpl/fe_admin_fe_users.tmpl";s:4:"064e";s:30:"res/tmpl/felogin_template.html";s:4:"2abe";s:44:"res/staticlib/class.tx_t3secsaltedpw_div.php";s:4:"c223";s:28:"res/LL/felogin_locallang.xml";s:4:"94dc";s:42:"res/eval/class.tx_t3secsaltedpw_salted.php";s:4:"388b";s:45:"res/eval/class.tx_t3secsaltedpw_salted_be.php";s:4:"cde7";s:45:"res/eval/class.tx_t3secsaltedpw_salted_fe.php";s:4:"92d3";s:14:"doc/manual.sxw";s:4:"3807";s:34:"sv1/class.tx_t3secsaltedpw_sv1.php";s:4:"196d";}',
+	'_md5_values_when_last_written' => 'a:24:{s:9:"ChangeLog";s:4:"2a57";s:11:"LICENSE.txt";s:4:"c635";s:20:"class.ext_update.php";s:4:"7e26";s:21:"ext_conf_template.txt";s:4:"b26e";s:12:"ext_icon.gif";s:4:"4324";s:17:"ext_localconf.php";s:4:"6d8a";s:14:"ext_tables.php";s:4:"bea3";s:14:"ext_tables.sql";s:4:"9fb2";s:28:"ext_typoscript_constants.txt";s:4:"bbc9";s:24:"ext_typoscript_setup.txt";s:4:"57ef";s:48:"tests/class.tx_t3secsaltedpw_phpass_testcase.php";s:4:"e2ac";s:34:"res/ux/class.ux_tx_felogin_pi1.php";s:4:"3dd8";s:30:"res/ux/class.ux_tx_install.php";s:4:"983e";s:25:"res/ux/ux_fe_adminLib.inc";s:4:"9a5a";s:41:"res/lib/class.tx_t3secsaltedpw_phpass.php";s:4:"a863";s:31:"res/tmpl/fe_admin_fe_users.tmpl";s:4:"8ba9";s:30:"res/tmpl/felogin_template.html";s:4:"d51e";s:44:"res/staticlib/class.tx_t3secsaltedpw_div.php";s:4:"7ff2";s:28:"res/LL/felogin_locallang.xml";s:4:"1d96";s:42:"res/eval/class.tx_t3secsaltedpw_salted.php";s:4:"d82d";s:45:"res/eval/class.tx_t3secsaltedpw_salted_be.php";s:4:"30dc";s:45:"res/eval/class.tx_t3secsaltedpw_salted_fe.php";s:4:"58a1";s:14:"doc/manual.sxw";s:4:"3807";s:34:"sv1/class.tx_t3secsaltedpw_sv1.php";s:4:"02a4";}',
 	'suggests' => array(
 	),
 );
