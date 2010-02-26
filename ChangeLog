@@ -1,5 +1,6 @@
 2010-02-26  Marcus Krause   <marcus#exp2010@t3sec.info>
 
+	* Security fix: Authentication Bypass in frontend user authentication
 	* Feature: backported PHPass library from sysext:saltedpasswords (TYPO3 4.3+)
 
 2009-10-27  Marcus Krause   <marcus#exp2009@t3sec.info>

@@ -78,6 +78,16 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 	 */
 	protected $extConf;
 
+	/**
+	 * Indicates whether the salted password authentication has failed.
+	 *
+	 * Prevents authentication bypass. For details have a look at
+	 * {@link http://typo3.org/teams/security/security-bulletins/typo3-sa-2010-004/ TYPO3-SA-2010-004}
+	 *
+	 * @var boolean
+	 */
+	protected $authenticationFailed = FALSE;
+
 
 	/**
 	 * Checks if service is available. In case of this service we check that
@@ -120,6 +130,11 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 			// existing record is in format of Portable PHP password hashing framework
 		if (!strncmp($user['password'], '$P$', 3)) {
 			$validPasswd = $objPHPass->checkPassword($password, $user['password']);
+				// record is in format of Salted Hash password but authentication failed
+				// skip further authentication methods
+			if (!$validPasswd && $objPHPass->isValidSalt($user['password'])) {
+				$this->authenticationFailed = TRUE;
+			}
 				// test if password needs hash update due to change of hash count value
 			if ($validPasswd && $objPHPass->isHashUpdateNeeded($user['password'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
@@ -128,18 +143,30 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 		else if (!intval($this->extConf['forcePHPasswd'])) {
 			if (!strncmp($user['password'], 'M$P$', 4)) {
 				$validPasswd = $objPHPass->checkPassword(md5($password), substr($user['password'], 1));
+					// skip further authentication methods
+				if (!$validPasswd && $objPHPass->isValidSalt(substr($user['password'], 1))) {
+					$this->authenticationFailed = TRUE;
+				}
 					// test if password needs to be updated
 				if ($validPasswd && intval($this->extConf['updatePasswd'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
 				}
 			} else if (!strncmp($user['password'], 'C$P$', 4)) {
 				$validPasswd = $objPHPass->checkPassword($password, substr($user['password'], 1));
+					// skip further authentication methods
+				if (!$validPasswd && $objPHPass->isValidSalt(substr($user['password'], 1))) {
+					$this->authenticationFailed = TRUE;
+				}
 					// test if password needs to be updated
 				if ($validPasswd && intval($this->extConf['updatePasswd'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
 				}
 			} else if (preg_match('/[0-9abcdef]{32,32}/', $user['password'])) {
 				$validPasswd = (!strcmp(md5($password), $user['password']) ? true : false);
+					// skip further authentication methods
+				if (!$validPasswd) {
+					$this->authenticationFailed = TRUE;
+				}
 					// test if password needs to be updated
 				if ($validPasswd && intval($this->extConf['updatePasswd'])) {
 					$this->updatePassword(intval($user['uid']), array( 'password' => $objPHPass->getHashedPassword($password)));
@@ -179,7 +206,7 @@ class tx_t3secsaltedpw_sv1 extends tx_sv_authbase {
 									$this->login);
 			}
 
-			if (!$validPasswd && intval($this->extConf['onlyAuthService'])) {
+			if (!$validPasswd && (intval($this->extConf['onlyAuthService']) || $this->authenticationFailed)) {
 					// Failed login attempt (wrong password) - no delegation to further services
 				$this->writeLog(TYPO3_MODE . ' Authentication failed - wrong password for username \'%s\'', $this->login['uname']);
 				$OK = 0;
